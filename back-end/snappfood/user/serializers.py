@@ -14,6 +14,11 @@ class CustomerSignUpSerializer(serializers.ModelSerializer):
             'password': {'write_only': True} 
         }
 
+    def validate_phone_number(self, value):
+        if User.objects.filter(phone_number=value).exists():
+            raise serializers.ValidationError("A user with this phone number already exists.")
+        return value
+    
     def create(self, validated_data):
         state = validated_data.pop('state')
         

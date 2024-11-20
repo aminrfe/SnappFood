@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class RestaurantManager(BaseUserManager):
     def create_restaurant(self, phone_number, name, password=None, **extra_fields):
@@ -32,6 +33,18 @@ class Restaurant(AbstractBaseUser, PermissionsMixin):
     coordinate = models.JSONField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    groups = models.ManyToManyField(
+        Group,
+        related_name='restaurant_groups',  # Custom reverse accessor name
+        blank=True
+    )
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        related_name='restaurant_permissions',  # Custom reverse accessor name
+        blank=True
+    )
 
     objects = RestaurantManager()
 

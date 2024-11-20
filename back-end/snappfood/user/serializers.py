@@ -5,7 +5,9 @@ from customer.models import CustomerProfile
 class CustomerSignUpSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=30)
     first_name = serializers.CharField(max_length=30)
+    last_name = serializers.CharField(max_length=30, required=False)
     state = serializers.CharField(max_length=30)
+    role = 'customer'
 
     class Meta:
         model = User
@@ -21,8 +23,10 @@ class CustomerSignUpSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         state = validated_data.pop('state')
+        role = 'customer'
+
+        user = User.objects.create_user(**validated_data, role=role)
         
-        user = User.objects.create_user(**validated_data)
         CustomerProfile.objects.create(user=user, state=state)
 
         return user

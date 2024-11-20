@@ -1,0 +1,84 @@
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: white;
+  font-family: Arial, sans-serif;
+}
+
+/* Container Styling */
+.login-container, .signup-container {
+  width: 410px;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  text-align: center;
+}
+
+/* Typography Styling */
+h5 {
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Buttons Styling */
+button.MuiButton-root {
+  background-color: #f0871f !important;
+  color: white !important;
+  font-size: 16px !important;
+  font-weight: bold !important;
+  padding: 10px 0 !important;
+  border-radius: 8px !important;
+  margin-top: 20px !important;
+}
+
+/* TextField Styling */
+.MuiOutlinedInput-root {
+  border-radius: 8px !important;
+}
+
+.MuiFormLabel-root {
+  color: #888 !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #ddd !important;
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #f0871f !important;
+}
+
+/* Links Styling */
+.signup-container .MuiTypography-root,
+.login-container .MuiTypography-root {
+  margin-top: 15px;
+  color: #f0871f;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.signup-container .MuiTypography-root:hover,
+.login-container .MuiTypography-root:hover {
+  color: #d06a15;
+}
+
+/* TextField Styling */
+.MuiInput-underline:before {
+  border-bottom: 1px solid #ddd !important;
+}
+
+.MuiInput-underline:hover:before {
+  border-bottom: 1px solid #f0871f !important;
+}
+
+.MuiInput-underline.Mui-focused:before {
+  border-bottom: 2px solid #f0871f !important;
+}
+
+.MuiInput-underline.Mui-focused:after {
+  border-bottom: 2px solid #f0871f !important;
+}

@@ -83,7 +83,7 @@ function Login({ onSwitch }) {
 			<Box sx={{ display: "flex", alignItems: "flex-end" }}>
 				<KeyIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<FormControl sx={{ m: 1 }} variant="standard" fullWidth>
-					<InputLabel htmlFor="standard-adornment-password">رمزعبور</InputLabel>
+					<InputLabel>رمزعبور</InputLabel>
 					<Input
 						fullWidth
 						type={showPassword ? "text" : "password"}

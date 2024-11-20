@@ -108,7 +108,6 @@ function SignUp({ onSwitch }) {
 					name="provinceName"
 					value={formData.provinceName}
 					onChange={handleChange}
-					required
 					error={!!errors.provinceName}
 					helperText={errors.provinceName}
 				/>
@@ -125,7 +124,6 @@ function SignUp({ onSwitch }) {
 					name="storeName"
 					value={formData.storeName}
 					onChange={handleChange}
-					required
 					error={!!errors.storeName}
 					helperText={errors.storeName}
 				/>
@@ -134,7 +132,6 @@ function SignUp({ onSwitch }) {
 			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
 				<PhoneEnabledIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<TextField
-					required
 					fullWidth
 					type="tel"
 					label="شماره تلفن"
@@ -152,7 +149,6 @@ function SignUp({ onSwitch }) {
 				<KeyIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<FormControl
 					sx={{ m: 1 }}
-					required
 					fullWidth
 					variant="standard"
 					id="password"
@@ -192,7 +188,6 @@ function SignUp({ onSwitch }) {
 				<KeyIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<FormControl
 					sx={{ m: 1 }}
-					required
 					fullWidth
 					variant="standard"
 					id="confirmPassword"

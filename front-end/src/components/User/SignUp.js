@@ -33,6 +33,7 @@ function SignUp({ onSwitch }) {
 	const [errors, setErrors] = useState({});
 	const [formData, setFormData] = useState({
 		name: "",
+		lastName: "",
 		phoneNumber: "",
 		password: "",
 		confirmPassword: "",
@@ -46,6 +47,7 @@ function SignUp({ onSwitch }) {
 	const validateForm = () => {
 		const newErrors = {};
 		if (!formData.name) newErrors.name = "نام الزامی است.";
+		if (!formData.name) newErrors.lastName = "نام خانوادگی الزامی است.";
 		if (!formData.phoneNumber) newErrors.phoneNumber = "شماره تلفن الزامی است.";
 		if (!formData.password) newErrors.password = "رمزعبور الزامی است.";
 		if (formData.password !== formData.confirmPassword)
@@ -75,7 +77,6 @@ function SignUp({ onSwitch }) {
 			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
 				<PermIdentityIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<TextField
-					required
 					fullWidth
 					type="name"
 					label="نام"
@@ -94,17 +95,20 @@ function SignUp({ onSwitch }) {
 				<TextField
 					fullWidth
 					type="name"
-					id="input-with-sx"
 					label="نام خانوادگی"
 					variant="standard"
 					margin="normal"
+					name="lastName"
+					value={formData.lastName}
+					onChange={handleChange}
+					error={!!errors.lastName}
+					helperText={errors.lastName}
 				/>
 			</Box>
 
 			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
 				<PhoneEnabledIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<TextField
-					required
 					fullWidth
 					type="tel"
 					label="شماره موبایل"

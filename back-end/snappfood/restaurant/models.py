@@ -1,15 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
-from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.models import AbstractUser, Group, Permission
 from user.models import User
 
 class RestaurantProfile(models.Model):
-    user = models.OneToOneField(
+    manager = models.OneToOneField(
         User, 
         on_delete=models.CASCADE, 
-        related_name="restaurant_profile", 
-        primary_key=True
+        related_name="restaurant_profile"
     )  
     name = models.CharField(max_length=255) 
     business_type = models.CharField(max_length=255)  

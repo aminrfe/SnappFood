@@ -58,17 +58,17 @@ class RestaurantSignUpSerializer(serializers.ModelSerializer):
         
         role = 'restaurant_manager'
 
-        user = User.objects.create_user(
+        manager = User.objects.create_user(
             **validated_data,
             role=role,
         )
 
         RestaurantProfile.objects.create(
-            user=user,
+            manager=manager,
             name=name,
             business_type=business_type,
             city_name=city_name,
             state = state
         )
 
-        return user
+        return manager

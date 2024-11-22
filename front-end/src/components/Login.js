@@ -15,44 +15,72 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import LoginImg from "../assets/imgs/login.png";
+import axios from "../utills/axiosInstance.js";
 
-function Login({ onSwitch }) {
+function Login({ onUserSignUp, onRestaurantSignUp }) {
 	const [showPassword, setShowPassword] = useState(false);
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 
-	const handleClickShowPassword = () => {
-		setShowPassword((show) => !show);
-	};
+	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
-	const handleMouseDownPassword = (event) => {
+	const handleMouseDownPassword = (event) => event.preventDefault();
+
+	const handleSubmit = async (event) => {
 		event.preventDefault();
-	};
+		setError("");
 
-	const [errors, setErrors] = useState({});
-	const [formData, setFormData] = useState({
-		phoneNumber: "",
-		password: "",
-	});
+		if (!phoneNumber) {
+			setError("لطفاً شماره تلفن خود را وارد کنید");
+			return;
+		}
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
-	};
+		if (
+			!/^\d+$/.test(phoneNumber) ||
+			!phoneNumber.startsWith("09") ||
+			phoneNumber.length !== 11
+		) {
+			setError("شماره موبایل وارد شده صحیح نیست");
+			return;
+		}
 
-	const validateForm = () => {
-		const newErrors = {};
-		if (!formData.phoneNumber)
-			newErrors.phoneNumber = "لطفا شماره موبایل خود را وارد کنید.";
-		if (!formData.password) newErrors.password = "رمزعبور خود را وارد کنید.";
+		if (!password) {
+			setError("لطفاً رمز عبور خود را وارد کنید");
+			return;
+		}
 
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+		if (!passwordRegex.test(password)) {
+			setError(
+				"رمز عبور باید شامل حروف کوچک، حروف بزرگ انگلیسی و عدد باشد و حداقل 8 کاراکتر داشته باشد",
+			);
+			return;
+		}
 
-	const handleSubmit = () => {
-		if (validateForm()) {
-			console.log("Form submitted successfully!", formData);
-		} else {
-			console.log("Validation failed", errors);
+		console.log("Sending login request...");
+		console.log("Phone Number:", phoneNumber);
+		console.log("Password:", password);
+
+		try {
+			const response = await axios.post(
+				"http://127.0.0.1:8000/api/auth/token",
+				{
+					phone_number: `98${phoneNumber.slice(1)}`,
+					password: password,
+				},
+			);
+
+			// localStorage.setItem("access", response.data.access);
+			// localStorage.setItem("refresh", response.data.refresh);
+
+			alert("ورود موفقیت‌آمیز بود!");
+		} catch (error) {
+			if (error.response?.status === 401) {
+				setError("اطلاعات ورود صحیح نیست.");
+			} else {
+				setError("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
+			}
 		}
 	};
 
@@ -61,10 +89,14 @@ function Login({ onSwitch }) {
 			<img
 				src={LoginImg}
 				alt="Login Illustration"
-				style={{ width: "100%", marginBottom: "20px" }}
+				style={{ width: "80%", marginBottom: "20px" }}
 			/>
-
-			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
+			<Box
+				sx={{ display: "flex", alignItems: "flex-end" }}
+				marginBottom={0.9}
+				paddingRight={1.5}
+				paddingLeft={1}
+			>
 				<PhoneEnabledIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<TextField
 					fullWidth
@@ -72,26 +104,19 @@ function Login({ onSwitch }) {
 					label="شماره موبایل"
 					variant="standard"
 					margin="normal"
-					name="phoneNumber"
-					value={formData.phoneNumber}
-					onChange={handleChange}
-					error={!!errors.phoneNumber}
-					helperText={errors.phoneNumber}
+					value={phoneNumber}
+					onChange={(e) => setPhoneNumber(e.target.value)}
 				/>
 			</Box>
-
 			<Box sx={{ display: "flex", alignItems: "flex-end" }}>
 				<KeyIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />
 				<FormControl sx={{ m: 1 }} variant="standard" fullWidth>
-					<InputLabel>رمزعبور</InputLabel>
+					<InputLabel htmlFor="standard-adornment-password">رمزعبور</InputLabel>
 					<Input
 						fullWidth
 						type={showPassword ? "text" : "password"}
-						name="password"
-						value={formData.password}
-						onChange={handleChange}
-						error={!!errors.password}
-						helperText={errors.password}
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
 						endAdornment={
 							<InputAdornment position="end">
 								<IconButton
@@ -100,7 +125,6 @@ function Login({ onSwitch }) {
 									}
 									onClick={handleClickShowPassword}
 									onMouseDown={handleMouseDownPassword}
-									// onMouseUp={handleMouseUpPassword}
 								>
 									{showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
@@ -109,18 +133,40 @@ function Login({ onSwitch }) {
 					/>
 				</FormControl>
 			</Box>
-
+			{error && <Typography style={{ color: "red" }}>{error}</Typography>}
 			<Button
-				fullWidth
-				color="primary"
 				variant="contained"
+				color="primary"
+				fullWidth
 				onClick={handleSubmit}
 			>
 				ورود
 			</Button>
-
-			<Typography variant="body2" onClick={onSwitch}>
-				حساب کاربری ندارید؟ ثبت‌نام کنید.
+			<Typography
+				display="inline"
+				variant="body2"
+				style={{ marginTop: "15px", color: "#616161" }}
+			>
+				حساب کاربری ندارید؟
+			</Typography>
+			<Typography
+				display="inline"
+				variant="body2"
+				onClick={onUserSignUp}
+				style={{
+					marginTop: "15px",
+					marginRight: "10px",
+					cursor: "pointer",
+				}}
+			>
+				ثبت‌نام
+			</Typography>
+			<Typography
+				variant="body2"
+				onClick={onRestaurantSignUp}
+				style={{ marginTop: "0px", cursor: "pointer" }}
+			>
+				ثبت نام فروشندگان
 			</Typography>
 		</div>
 	);

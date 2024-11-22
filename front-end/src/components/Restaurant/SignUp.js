@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
 	Box,
 	TextField,
@@ -20,44 +21,88 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
-function SignUp({ onSwitch }) {
-	const [errors, setErrors] = useState({});
+function SignUp({ onUserSignUp }) {
+	const [businessType, setBusinessType] = useState("");
+	const [provinceName, setProvinceName] = useState("");
+	const [storeName, setStoreName] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const [error, setErrors] = useState();
 	const [showPassword, setShowPassword] = useState(false);
-	const [formData, setFormData] = useState({
-		businessType: "",
-		provinceName: "",
-		storeName: "",
-		phoneNumber: "",
-		password: "",
-		confirmPassword: "",
-	});
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
-	};
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 
-	const validateForm = () => {
-		const newErrors = {};
-		if (!formData.businessType)
-			newErrors.businessType = "نوع کسب و کار الزامی است.";
-		if (!formData.provinceName)
-			newErrors.provinceName = "نام استان الزامی است.";
-		if (!formData.storeName) newErrors.storeName = "نام فروشگاه الزامی است.";
-		if (!formData.phoneNumber) newErrors.phoneNumber = "شماره تلفن الزامی است.";
-		if (!formData.password) newErrors.password = "رمزعبور الزامی است.";
-		if (formData.password !== formData.confirmPassword)
-			newErrors.confirmPassword = "رمزعبور و تکرار آن یکسان نیست.";
+		if (
+			!businessType ||
+			!provinceName ||
+			!storeName ||
+			!phoneNumber ||
+			!password ||
+			!confirmPassword
+		) {
+			setErrors("لطفاً همه فیلدها را پر کنید");
+			return;
+		}
 
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+		if (
+			!/^\d+$/.test(phoneNumber) ||
+			!phoneNumber.startsWith("09") ||
+			phoneNumber.length != 11
+		) {
+			setErrors("شماره موبایل وارد شده صحیح نیست");
+			return;
+		}
 
-	const handleSubmit = () => {
-		if (validateForm()) {
-			console.log("Form submitted successfully!", formData);
-		} else {
-			console.log("Validation failed", errors);
+		let formattedPhoneNumber = phoneNumber.trim();
+		if (formattedPhoneNumber.startsWith("0")) {
+			formattedPhoneNumber = `98${formattedPhoneNumber.slice(1)}`;
+		} else if (!formattedPhoneNumber.startsWith("98")) {
+			setErrors("لطفاً شماره موبایل را به‌درستی وارد کنید");
+			return;
+		}
+
+		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+		if (!passwordRegex.test(password)) {
+			setErrors(
+				"رمز عبور باید شامل حروف کوچک، حروف بزرگ انگلیسی و عدد باشد و حداقل 8 کاراکتر داشته باشد",
+			);
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			setErrors("رمز عبور و تکرار آن همخوانی ندارند");
+			return;
+		}
+
+		const RestaurantData = {
+			name: storeName,
+			city_name: provinceName,
+			phone_number: phoneNumber,
+			password: password,
+			business_type: businessType,
+		};
+
+		try {
+			const response = await axios.post(
+				"http://localhost:8000/api/auth/signup/restaurant",
+				RestaurantData,
+			);
+
+			if (response.status === 201) {
+				alert("ثبت نام با موفقیت انجام شد. اکنون وارد شوید!");
+				onUserSignUp();
+			}
+		} catch (error) {
+			if (error.response?.status === 400) {
+				setErrors("این شماره قبلاً ثبت‌نام کرده است.");
+			} else {
+				setErrors(
+					error.response?.data?.message ||
+						"مشکلی پیش آمده، لطفاً دوباره تلاش کنید.",
+				);
+			}
 		}
 	};
 
@@ -74,28 +119,22 @@ function SignUp({ onSwitch }) {
 			<img
 				src={FoodiImg}
 				alt="Login Illustration"
-				style={{ width: "50%", marginBottom: "20px" }}
+				style={{ width: "50%", marginBottom: "20px", marginTop: "60px" }}
 			/>
 
 			<Divider />
 
-			<FormControl
-				fullWidth
-				variant="standard"
-				sx={{ marginTop: "30px" }}
-				error={!!errors.businessType}
-			>
+			<FormControl fullWidth variant="standard" sx={{ marginTop: "30px" }}>
 				<InputLabel>نوع کسب و کار</InputLabel>
 				<Select
-					value={formData.businessType}
+					value={businessType}
 					name="businessType"
-					onChange={handleChange}
+					onChange={(e) => setBusinessType(e.target.value)}
 				>
 					<MenuItem value={10}>کافه</MenuItem>
 					<MenuItem value={20}>رستوران</MenuItem>
 					<MenuItem value={30}>کیترینگ</MenuItem>
 				</Select>
-				<Typography color="error" sx={{textAlign: "start"}}>{errors.businessType}</Typography>
 			</FormControl>
 
 			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
@@ -106,10 +145,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="provinceName"
-					value={formData.provinceName}
-					onChange={handleChange}
-					error={!!errors.provinceName}
-					helperText={errors.provinceName}
+					value={provinceName}
+					onChange={(e) => setProvinceName(e.target.value)}
 				/>
 			</Box>
 
@@ -122,10 +159,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="storeName"
-					value={formData.storeName}
-					onChange={handleChange}
-					error={!!errors.storeName}
-					helperText={errors.storeName}
+					value={storeName}
+					onChange={(e) => setStoreName(e.target.value)}
 				/>
 			</Box>
 
@@ -138,10 +173,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="phoneNumber"
-					value={formData.phoneNumber}
-					onChange={handleChange}
-					error={!!errors.phoneNumber}
-					helperText={errors.phoneNumber}
+					value={phoneNumber}
+					onChange={(e) => setPhoneNumber(e.target.value)}
 				/>
 			</Box>
 
@@ -153,10 +186,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					id="password"
 					name="password"
-					value={formData.password}
-					onChange={handleChange}
-					error={!!errors.password}
-					helperText={errors.password}
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
 				>
 					<InputLabel htmlFor="standard-adornment-password">رمزعبور</InputLabel>
 					<Input
@@ -171,16 +202,12 @@ function SignUp({ onSwitch }) {
 									}
 									onClick={handleClickShowPassword}
 									onMouseDown={handleMouseDownPassword}
-									// onMouseUp={handleMouseUpPassword}
 								>
 									{showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
 							</InputAdornment>
 						}
 					/>
-					<Typography color="error" variant="body2">
-						{errors.confirmPassword}
-					</Typography>
 				</FormControl>
 			</Box>
 
@@ -193,10 +220,8 @@ function SignUp({ onSwitch }) {
 					id="confirmPassword"
 					name="confirmPassword"
 					type={showPassword ? "text" : "password"}
-					value={formData.confirmPassword}
-					onChange={handleChange}
-					error={!!errors.password}
-					helperText={errors.password}
+					value={confirmPassword}
+					onChange={(e) => setConfirmPassword(e.target.value)}
 				>
 					<InputLabel htmlFor="standard-adornment-password">
 						تکرار رمزعبور
@@ -213,18 +238,16 @@ function SignUp({ onSwitch }) {
 									}
 									onClick={handleClickShowPassword}
 									onMouseDown={handleMouseDownPassword}
-									// onMouseUp={handleMouseUpPassword}
 								>
 									{showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
 							</InputAdornment>
 						}
 					/>
-					<Typography color="error" variant="body2">
-						{errors.confirmPassword}
-					</Typography>
 				</FormControl>
 			</Box>
+
+			{error && <Typography style={{ color: "red" }}>{error}</Typography>}
 
 			<Button
 				variant="contained"
@@ -238,10 +261,19 @@ function SignUp({ onSwitch }) {
 
 			<Typography
 				variant="body2"
-				style={{ marginTop: "15px", cursor: "pointer" }}
-				onClick={onSwitch}
+				display={"inline"}
+				style={{ marginTop: "15px", color: "#616161" }}
 			>
-				حساب کاربری دارید؟ وارد شوید.
+				حساب کاربری دارید؟
+			</Typography>
+
+			<Typography
+				variant="body2"
+				display={"inline"}
+				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
+				onClick={onUserSignUp}
+			>
+				وارد شوید
 			</Typography>
 		</div>
 	);

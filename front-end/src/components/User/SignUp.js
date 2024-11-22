@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
 	Box,
 	TextField,
@@ -19,8 +20,14 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
-function SignUp({ onSwitch }) {
+function SignUp({ onUserSignUp }) {
+	const [name, setName] = useState("");
+	const [lastName, setLastName] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);
@@ -30,38 +37,70 @@ function SignUp({ onSwitch }) {
 		event.preventDefault();
 	};
 
-	const [errors, setErrors] = useState({});
-	const [formData, setFormData] = useState({
-		name: "",
-		lastName: "",
-		phoneNumber: "",
-		password: "",
-		confirmPassword: "",
-	});
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 
-	const handleChange = (event) => {
-		const { name, value } = event.target;
-		setFormData({ ...formData, [name]: value });
-	};
+		if (!name || !lastName || !phoneNumber || !password || !confirmPassword) {
+			setErrorMessage("لطفاً همه فیلدها را پر کنید");
+			return;
+		}
 
-	const validateForm = () => {
-		const newErrors = {};
-		if (!formData.name) newErrors.name = "نام الزامی است.";
-		if (!formData.name) newErrors.lastName = "نام خانوادگی الزامی است.";
-		if (!formData.phoneNumber) newErrors.phoneNumber = "شماره تلفن الزامی است.";
-		if (!formData.password) newErrors.password = "رمزعبور الزامی است.";
-		if (formData.password !== formData.confirmPassword)
-			newErrors.confirmPassword = "رمزعبور و تکرار آن یکسان نیست.";
+		if (
+			!/^\d+$/.test(phoneNumber) ||
+			!phoneNumber.startsWith("09") ||
+			phoneNumber.length != 11
+		) {
+			setErrorMessage("شماره موبایل وارد شده صحیح نیست");
+			return;
+		}
 
-		setErrors(newErrors);
-		return Object.keys(newErrors).length === 0;
-	};
+		let formattedPhoneNumber = phoneNumber.trim();
+		if (formattedPhoneNumber.startsWith("0")) {
+			formattedPhoneNumber = `98${formattedPhoneNumber.slice(1)}`;
+		} else if (!formattedPhoneNumber.startsWith("98")) {
+			setErrorMessage("لطفاً شماره موبایل را به‌درستی وارد کنید");
+			return;
+		}
 
-	const handleSubmit = () => {
-		if (validateForm()) {
-			console.log("Form submitted successfully!", formData);
-		} else {
-			console.log("Validation failed", errors);
+		const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+		if (!passwordRegex.test(password)) {
+			setErrorMessage(
+				"رمز عبور باید شامل حروف کوچک، حروف بزرگ انگلیسی و عدد باشد و حداقل 8 کاراکتر داشته باشد",
+			);
+			return;
+		}
+
+		if (password !== confirmPassword) {
+			setErrorMessage("رمز عبور و تکرار آن همخوانی ندارند");
+			return;
+		}
+
+		const userData = {
+			first_name: name,
+			last_name: lastName,
+			phone_number: formattedPhoneNumber,
+			password,
+		};
+
+		try {
+			const response = await axios.post(
+				"http://localhost:8000/api/auth/signup/customer",
+				userData,
+			);
+
+			if (response.status === 201) {
+				alert("ثبت نام با موفقیت انجام شد. اکنون وارد شوید!");
+				onUserSignUp();
+			}
+		} catch (error) {
+			if (error.response?.status === 400) {
+				setErrorMessage("این شماره قبلاً ثبت‌نام کرده است.");
+			} else {
+				setErrorMessage(
+					error.response?.data?.message ||
+						"مشکلی پیش آمده، لطفاً دوباره تلاش کنید.",
+				);
+			}
 		}
 	};
 
@@ -83,10 +122,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="name"
-					value={formData.name}
-					onChange={handleChange}
-					error={!!errors.name}
-					helperText={errors.name}
+					value={name}
+					onChange={(e) => setName(e.target.value)}
 				/>
 			</Box>
 
@@ -99,10 +136,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="lastName"
-					value={formData.lastName}
-					onChange={handleChange}
-					error={!!errors.lastName}
-					helperText={errors.lastName}
+					value={lastName}
+					onChange={(e) => setLastName(e.target.value)}
 				/>
 			</Box>
 
@@ -115,10 +150,8 @@ function SignUp({ onSwitch }) {
 					variant="standard"
 					margin="normal"
 					name="phoneNumber"
-					value={formData.phoneNumber}
-					onChange={handleChange}
-					error={!!errors.phoneNumber}
-					helperText={errors.phoneNumber}
+					value={phoneNumber}
+					onChange={(e) => setPhoneNumber(e.target.value)}
 				/>
 			</Box>
 
@@ -130,6 +163,8 @@ function SignUp({ onSwitch }) {
 						fullWidth
 						id="standard-adornment-password"
 						type={showPassword ? "text" : "password"}
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
 						endAdornment={
 							<InputAdornment position="end">
 								<IconButton
@@ -138,7 +173,6 @@ function SignUp({ onSwitch }) {
 									}
 									onClick={handleClickShowPassword}
 									onMouseDown={handleMouseDownPassword}
-									// onMouseUp={handleMouseUpPassword}
 								>
 									{showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
@@ -158,6 +192,8 @@ function SignUp({ onSwitch }) {
 						fullWidth
 						id="standard-adornment-password"
 						type={showPassword ? "text" : "password"}
+						value={confirmPassword}
+						onChange={(e) => setConfirmPassword(e.target.value)}
 						endAdornment={
 							<InputAdornment position="end">
 								<IconButton
@@ -166,7 +202,6 @@ function SignUp({ onSwitch }) {
 									}
 									onClick={handleClickShowPassword}
 									onMouseDown={handleMouseDownPassword}
-									// onMouseUp={handleMouseUpPassword}
 								>
 									{showPassword ? <VisibilityOff /> : <Visibility />}
 								</IconButton>
@@ -175,6 +210,10 @@ function SignUp({ onSwitch }) {
 					/>
 				</FormControl>
 			</Box>
+
+			{errorMessage && (
+				<Typography style={{ color: "red" }}>{errorMessage}</Typography>
+			)}
 
 			<Button
 				variant="contained"
@@ -188,10 +227,19 @@ function SignUp({ onSwitch }) {
 
 			<Typography
 				variant="body2"
-				style={{ marginTop: "15px", cursor: "pointer" }}
-				onClick={onSwitch}
+				display={"inline"}
+				style={{ marginTop: "15px", color: "#616161" }}
 			>
-				حساب کاربری دارید؟ وارد شوید.
+				حساب کاربری دارید؟
+			</Typography>
+
+			<Typography
+				variant="body2"
+				display={"inline"}
+				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
+				onClick={onUserSignUp}
+			>
+				وارد شوید
 			</Typography>
 		</div>
 	);

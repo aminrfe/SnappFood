@@ -2,22 +2,34 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import User
 
-class CustomUserAdmin(UserAdmin):
-    model = User
-    list_display = ('phone_number', 'first_name', 'last_name', 'is_staff')
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from django.utils.translation import gettext_lazy as _
+
+from .models import User
+
+class UserAdmin(BaseUserAdmin):
+    list_display = ('phone_number', 'first_name', 'last_name', 'role', 'is_active', 'is_staff')
+    list_filter = ('role', 'is_active', 'is_staff', 'is_superuser')
+    search_fields = ('phone_number', 'first_name', 'last_name')
+    ordering = ('phone_number',)
+
     fieldsets = (
         (None, {'fields': ('phone_number', 'password')}),
-        ('Personal Info', {'fields': ('first_name', 'last_name')}),
-        ('Permissions', {'fields': ('is_staff', 'is_active', 'is_superuser', 'groups', 'user_permissions')}),
-        ('Important dates', {'fields': ('last_login',)}),
+        (_('Personal info'), {'fields': ('first_name', 'last_name')}),
+        (_('Permissions'), {
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+        }),
+        (_('Important dates'), {'fields': ('last_login',)}),
+        (_('Role'), {'fields': ('role',)}),
     )
+
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('phone_number', 'password1', 'password2', 'first_name', 'last_name', 'is_staff', 'is_active')}
-        ),
+            'fields': ('phone_number', 'password1', 'password2', 'first_name', 'last_name', 'role', 'is_staff', 'is_active'),
+        }),
     )
-    search_fields = ('phone_number',)
-    ordering = ('phone_number',)
 
-admin.site.register(User, CustomUserAdmin)
+admin.site.register(User, UserAdmin)
+

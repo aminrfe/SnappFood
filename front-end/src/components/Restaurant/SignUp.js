@@ -79,7 +79,7 @@ function SignUp({ onUserSignUp }) {
 		const RestaurantData = {
 			name: storeName,
 			city_name: provinceName,
-			phone_number: phoneNumber,
+			phone_number: formattedPhoneNumber,
 			password: password,
 			business_type: businessType,
 		};

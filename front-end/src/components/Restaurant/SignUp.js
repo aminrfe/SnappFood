@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
 	Box,
@@ -22,14 +23,15 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
 function SignUp({ onUserSignUp }) {
+	const [showPassword, setShowPassword] = useState(false);
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [businessType, setBusinessType] = useState("");
 	const [provinceName, setProvinceName] = useState("");
-	const [storeName, setStoreName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
+	const [storeName, setStoreName] = useState("");
 	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setErrors] = useState();
-	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -271,7 +273,7 @@ function SignUp({ onUserSignUp }) {
 				variant="body2"
 				display={"inline"}
 				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
-				onClick={onUserSignUp}
+				onClick={() => navigate("/login")}
 			>
 				وارد شوید
 			</Typography>

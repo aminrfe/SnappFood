@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
 	Box,
 	TextField,
@@ -26,6 +27,8 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
 	const handleMouseDownPassword = (event) => event.preventDefault();
+
+	const navigate = useNavigate();
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -152,7 +155,7 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 			<Typography
 				display="inline"
 				variant="body2"
-				onClick={onUserSignUp}
+				onClick={() => navigate("/user-signup")}
 				style={{
 					marginTop: "15px",
 					marginRight: "10px",
@@ -163,7 +166,7 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 			</Typography>
 			<Typography
 				variant="body2"
-				onClick={onRestaurantSignUp}
+				onClick={() => navigate("/restaurant-signup")}
 				style={{ marginTop: "0px", cursor: "pointer" }}
 			>
 				ثبت نام فروشندگان

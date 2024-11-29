@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
 	Box,
@@ -23,11 +24,12 @@ import FoodiImg from "../../assets/imgs/foodiIcon.png";
 function SignUp({ onUserSignUp }) {
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
-	const [showPassword, setShowPassword] = useState(false);
+	const [phoneNumber, setPhoneNumber] = useState("");
 	const [errorMessage, setErrorMessage] = useState("");
+	const [showPassword, setShowPassword] = useState(false);
+	const [confirmPassword, setConfirmPassword] = useState("");
+	const navigate = useNavigate();
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);
@@ -237,7 +239,7 @@ function SignUp({ onUserSignUp }) {
 				variant="body2"
 				display={"inline"}
 				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
-				onClick={onUserSignUp}
+				onClick={() => navigate("/login")}
 			>
 				وارد شوید
 			</Typography>

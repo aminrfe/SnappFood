@@ -1,43 +1,56 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
 import UserSignUp from "./components/User/SignUp";
+import HomePage from "./components/User/HomePage";
+import Header from "./components/User/Header";
 import RTLProvider from "./ThemeProvider";
 import Login from "./components/Login";
 import "./App.css";
 
 function App() {
-	const [isLoginPage, setIsLoginPage] = useState(true);
-	const [isRestaurantSignUp, setIsRestaurantSignUp] = useState(false);
-
-	const switchToRestaurantSignUp = () => {
-		setIsLoginPage(false);
-		setIsRestaurantSignUp(true);
-	};
-
-	const switchToUserSignUp = () => {
-		setIsLoginPage(false);
-		setIsRestaurantSignUp(false);
-	};
-
 	return (
-		<div className="app-container">
-			{isLoginPage ? (
-				<RTLProvider>
-					<Login
-						onUserSignUp={switchToUserSignUp}
-						onRestaurantSignUp={switchToRestaurantSignUp}
+		<Router>
+			<div className="app-container">
+				<Routes>
+					<Route
+						path="/"
+						element={
+							<>
+								<RTLProvider>
+									<Header />
+									<HomePage />
+								</RTLProvider>
+							</>
+						}
 					/>
-				</RTLProvider>
-			) : isRestaurantSignUp ? (
-				<RTLProvider>
-					<RestaurantSignUp onUserSignUp={() => setIsLoginPage(true)} />
-				</RTLProvider>
-			) : (
-				<RTLProvider>
-					<UserSignUp onUserSignUp={() => setIsLoginPage(true)} />
-				</RTLProvider>
-			)}
-		</div>
+					<Route
+						path="/login"
+						element={
+							<RTLProvider>
+								<Login />
+							</RTLProvider>
+						}
+					/>
+					<Route
+						path="/user-signup"
+						element={
+							<RTLProvider>
+								<UserSignUp />
+							</RTLProvider>
+						}
+					/>
+					<Route
+						path="/restaurant-signup"
+						element={
+							<RTLProvider>
+								<RestaurantSignUp />
+							</RTLProvider>
+						}
+					/>
+				</Routes>
+			</div>
+		</Router>
 	);
 }
 

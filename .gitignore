@@ -2,5 +2,6 @@
 env
 **/migrations/*
 **/__pycache__/
+**/media/*
 back-end/snappfood/db.sqlite3
 !**/migrations/__init__.py

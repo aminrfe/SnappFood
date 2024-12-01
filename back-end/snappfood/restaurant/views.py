@@ -11,8 +11,6 @@ class RestaurantProfileView(generics.RetrieveUpdateAPIView):
     serializer_class = RestaurantProfileSerializer
     # permission_classes = [permissions.IsAuthenticated, IsRestaurantManager]
 
-    # def get_queryset(self):
-    #     return RestaurantProfile.objects.filter(manager=self.request.user)
 
     @swagger_auto_schema(
         operation_description="Retrieve a restaurant's profile details.",

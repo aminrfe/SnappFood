@@ -1,9 +1,23 @@
-import React from "react";
-import { Box, Card, CardMedia, CardContent, Typography } from "@mui/material";
+import React, { useRef } from "react";
+import {
+	Box,
+	Card,
+	CardMedia,
+	CardContent,
+	Typography,
+	IconButton,
+	Button,
+} from "@mui/material";
 import Header from "./Header";
 import Footer from "./Footer";
 import Grid from "@mui/material/Grid2";
 import BigPizza from "../../assets/imgs/big-pizza.png";
+import { FavoriteBorder, Star } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
+import Food1 from "../../assets/imgs/food1.png";
+import Food2 from "../../assets/imgs/food2.png";
+import Food3 from "../../assets/imgs/food3.png";
+import Food4 from "../../assets/imgs/food4.png";
 
 const HeroSection = () => {
 	return (
@@ -11,16 +25,12 @@ const HeroSection = () => {
 			sx={{
 				width: "100%",
 				display: "flex",
-				// justifyContent: "center",
-				// alignItems: "center",
-				minHeight: "400px",
+				paddingTop: "100px",
+				paddingBottom: "40px",
 				backgroundColor: "#fff",
-				padding: "20px",
-				marginTop: "400px",
 			}}
 		>
 			<Grid container spacing={2} alignItems="center">
-				{/* Text Section */}
 				<Grid item xs={12} md={6} marginLeft={12}>
 					<Typography
 						variant="h4"
@@ -66,14 +76,12 @@ const HeroSection = () => {
 };
 
 const categories = [
-	{ title: "فست فود", icon: "🍔" },
+	{ title: "برگر", icon: "🍔" },
 	{ title: "پیتزا", icon: "🍕" },
-	{ title: "سوپ", icon: "🥣" },
-	{ title: "کافه", icon: "☕" },
-	{ title: "پروتئین", icon: "🍗" },
-	{ title: "سوپ", icon: "🥣" },
-	// { title: "کافه", icon: "☕" },
-	// { title: "پروتئین", icon: "🍗" },
+	{ title: "سوخاری", icon: "🍗" },
+	{ title: "نوشیدنی", icon: "🍹" },
+	{ title: "ایرانی", icon: "🍽️" },
+	{ title: "نان و شیرینی", icon: "🍞" },
 ];
 
 const CategoryCards = () => {
@@ -82,7 +90,7 @@ const CategoryCards = () => {
 			<Typography
 				variant="h5"
 				sx={{
-					marginBottom: 2,
+					margin: 2,
 					color: "#D68240",
 					fontWeight: "bold",
 					pointerEvents: "none",
@@ -96,6 +104,11 @@ const CategoryCards = () => {
 				backgroundColor={"#F4DCC9"}
 				padding={3}
 				width={"100%"}
+				sx={{
+					alignItems: "center",
+					justifyContent: "center",
+					display: "flex",
+				}}
 			>
 				{categories.map((category, index) => (
 					<Grid xs={6} sm={4} md={2.4} key={index}>
@@ -114,10 +127,13 @@ const CategoryCards = () => {
 								},
 							}}
 						>
-							<Typography variant="h3" sx={{ pointerEvents: "none" }}>
+							<Typography
+								variant="h3"
+								sx={{ pointerEvents: "none", paddingTop: "11px" }}
+							>
 								{category.icon}
 							</Typography>
-							<CardContent>
+							<CardContent sx={{ paddingBottom: "10px !important" }}>
 								<Typography sx={{ pointerEvents: "none" }}>
 									{category.title}
 								</Typography>
@@ -130,30 +146,145 @@ const CategoryCards = () => {
 	);
 };
 
-const products = [
-	{ title: "رستوران نمونه", image: "https://via.placeholder.com/200x150" },
-	{ title: "رستوران دوم", image: "https://via.placeholder.com/200x150" },
-	{ title: "رستوران سوم", image: "https://via.placeholder.com/200x150" },
-];
-
 const ProductSlider = () => {
+	const restaurants = [
+		{
+			id: 1,
+			name: "رستوران نمونه یک",
+			image: Food1,
+			cost: "15 هزار تومان",
+			rating: 4.3,
+		},
+		{
+			id: 2,
+			name: "رستوران نمونه دو",
+			image: Food2,
+			cost: "15 هزار تومان",
+			rating: 4.3,
+		},
+		{
+			id: 3,
+			name: "رستوران نمونه سه",
+			image: Food3,
+			cost: "15 هزار تومان",
+			rating: 4.3,
+		},
+		{
+			id: 4,
+			name: "رستوران نمونه چهار",
+			image: Food4,
+			cost: "15 هزار تومان",
+			rating: 4.3,
+		},
+	];
+
 	return (
-		<Grid container spacing={2} sx={{ padding: 3 }}>
-			{products.map((product, index) => (
-				<Grid item xs={12} sm={6} md={4} key={index}>
-					<Card>
+		<Box sx={{ width: "100%" }}>
+			<Typography
+				variant="h5"
+				sx={{
+					margin: 2,
+					marginTop: 8,
+					color: "#D68240",
+					fontWeight: "bold",
+					pointerEvents: "none",
+				}}
+			>
+				محبوب ترین ها
+			</Typography>
+			<Grid
+				container
+				spacing={2}
+				backgroundColor={"#F4DCC9"}
+				padding={3}
+				width={"100%"}
+			>
+				{restaurants.map((restaurant) => (
+					<Card
+						key={restaurant.id}
+						sx={{
+							cursor: "pointer",
+							// textAlign: "center",
+							padding: 2,
+							margin: 1,
+							minWidth: 250,
+							// width: "200px",
+							borderRadius: "20px",
+							boxShadow: 0,
+							"&:hover": {
+								transform: "scale(1.05)",
+								border: "2px solid #D68240",
+							},
+						}}
+					>
 						<CardMedia
 							component="img"
-							height="150"
-							image={product.image}
-							alt={product.title}
+							height="140"
+							image={restaurant.image}
+							alt={restaurant.name}
 						/>
 						<CardContent>
-							<Typography>{product.title}</Typography>
+							<Typography variant="h6">{restaurant.name}</Typography>
+							<Typography variant="body2" color="text.secondary">
+								<Star sx={{ paddingTop: "12px" }} />
+								امتیاز: {restaurant.rating}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								هزینه ارسال: {restaurant.cost}
+							</Typography>
 						</CardContent>
+						<IconButton sx={{ position: "absolute", top: 8, right: 8 }}>
+							<FavoriteBorder />
+						</IconButton>
 					</Card>
-				</Grid>
-			))}
+				))}
+			</Grid>
+		</Box>
+	);
+};
+
+const UpFooter = () => {
+	const navigate = useNavigate();
+	return (
+		<Grid container>
+			<Box marginLeft={12} marginTop={8} marginBottom={8} marginRight={15}>
+				<Typography
+					variant="h4"
+					sx={{
+						marginBottom: 2,
+						color: "#D68240",
+						fontWeight: "bold",
+						pointerEvents: "none",
+					}}
+				>
+					صاحب یک کسب و کار هستید؟
+				</Typography>
+				<Typography
+					variant="h5"
+					sx={{
+						marginBottom: 2,
+						color: "black",
+						// fontWeight: "bold",
+						pointerEvents: "none",
+					}}
+				>
+					با فودی کسب و کارتان را آنلاین کنید و فروشتان را افزایش دهید.
+				</Typography>
+			</Box>
+			<Button
+				variant="contained"
+				color="primary"
+				onClick={() => navigate("/restaurant-signup")}
+				sx={{
+					marginTop: "100px !important",
+					width: "155px",
+					height: "50px",
+					borderRadius: "50px !important",
+					fontWeight: "400 !important",
+				}}
+			>
+				ثبت نام فروشندگان
+			</Button>
 		</Grid>
 	);
 };
@@ -165,6 +296,7 @@ const HomePage = () => {
 			<HeroSection />
 			<CategoryCards />
 			<ProductSlider />
+			<UpFooter />
 			<Footer />
 		</div>
 	);

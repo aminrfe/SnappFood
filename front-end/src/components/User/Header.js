@@ -18,24 +18,24 @@ const Search = styled("div")(({ theme }) => ({
 	alignItems: "center",
 	[theme.breakpoints.up("sm")]: {
 		marginLeft: theme.spacing(3),
-		width: "400px", // Fixed width for medium screens and up
+		width: "400px",
 	},
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
 	position: "absolute",
-	left: "8px", // Move the icon to the left
+	left: "8px",
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-	color: "#D68240", // Add orange color for the icon
+	color: "#D68240",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-	color: "#000", // Black text for contrast
+	color: "#000",
 	"& .MuiInputBase-input": {
-		padding: theme.spacing(0.8, 1, 0.8, 4), // Adjust padding for icon spacing
-		fontSize: "14px", // Match font size in the design
+		padding: theme.spacing(0.8, 1, 0.8, 4),
+		fontSize: "14px",
 		width: "100%",
 	},
 }));
@@ -57,7 +57,7 @@ const Header = () => {
 				/>
 				<Search>
 					<SearchIconWrapper>
-						<SearchIcon  />
+						<SearchIcon />
 					</SearchIconWrapper>
 					<StyledInputBase
 						placeholder="جستجو در فودی"
@@ -69,7 +69,7 @@ const Header = () => {
 					color="primary"
 					onClick={handleLoginClick}
 					sx={{
-                        marginTop:"10px !important",
+						marginTop: "10px !important",
 						width: "130px",
 						height: "45px",
 						borderRadius: "50px !important",

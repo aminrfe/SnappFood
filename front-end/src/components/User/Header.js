@@ -41,15 +41,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Header = () => {
-	const navigate = useNavigate();
+  const navigate = useNavigate();
 
-	const handleLoginClick = () => {
-		navigate("/login");
-	};
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
 
-	return (
-		<AppBar elevation={0.5} sx={{ backgroundColor: "#F4DCC9" }}>
-			<Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+  const handleProfileClick = () => {
+    navigate("/profile");
+  };
+
+  const isAuthenticated = () => {
+    const accessToken = localStorage.getItem("access");
+    const refreshToken = localStorage.getItem("refresh");
+    return !!(accessToken && refreshToken); // true یا false
+  };
+
+  return (
+    <AppBar elevation={0.5} sx={{ backgroundColor: "#F4DCC9" }}>
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
 				<img
 					src={FoodiImg}
 					alt="Login Illustration"
@@ -64,23 +74,40 @@ const Header = () => {
 						inputProps={{ "aria-label": "search" }}
 					/>
 				</Search>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={handleLoginClick}
-					sx={{
-						marginTop: "10px !important",
-						width: "130px",
-						height: "45px",
-						borderRadius: "50px !important",
-						fontWeight: "400 !important",
-					}}
-				>
-					ورود یا عضویت
-				</Button>
-			</Toolbar>
-		</AppBar>
-	);
+        {!isAuthenticated() ? (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleLoginClick}
+            sx={{
+              marginTop: "10px !important",
+              width: "130px",
+              height: "45px",
+              borderRadius: "50px !important",
+              fontWeight: "400 !important",
+            }}
+          >
+            ورود یا عضویت
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleProfileClick}
+            sx={{
+              marginTop: "10px !important",
+              width: "130px",
+              height: "45px",
+              borderRadius: "50px !important",
+              fontWeight: "400 !important",
+            }}
+          >
+            پروفایل
+          </Button>
+        )}
+      </Toolbar>
+    </AppBar>
+  );
 };
 
 export default Header;

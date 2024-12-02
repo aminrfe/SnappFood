@@ -1,56 +1,75 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import RestaurantSignUp from "./components/Restaurant/SignUp";
-import UserSignUp from "./components/User/SignUp";
-import HomePage from "./components/User/HomePage";
-import Header from "./components/User/Header";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import RTLProvider from "./ThemeProvider";
-import Login from "./components/Login";
+import HomePage from "./components/User/HomePage";
+import LoginPage from "./components/Login";
+import UserProfilePage from "./components/User/profile";
+import EditProfile from "./components/User/EditProfile";
+import Header from "./components/User/Header";
+import UserSignUp from "./components/User/SignUp";
+import RestaurantSignUp from "./components/Restaurant/SignUp";
+import UserProvider from "./components/User/UserContext"; 
+import FoodItemPage from "./components/User/MenuItem";
 import "./App.css";
 
-function App() {
-	return (
-		<Router>
-			<div className="app-container">
-				<Routes>
-					<Route
-						path="/"
-						element={
-							<>
-								<RTLProvider>
-									<Header />
-									<HomePage />
-								</RTLProvider>
-							</>
-						}
-					/>
-					<Route
-						path="/login"
-						element={
-							<RTLProvider>
-								<Login />
-							</RTLProvider>
-						}
-					/>
-					<Route
-						path="/user-signup"
-						element={
-							<RTLProvider>
-								<UserSignUp />
-							</RTLProvider>
-						}
-					/>
-					<Route
-						path="/restaurant-signup"
-						element={
-							<RTLProvider>
-								<RestaurantSignUp />
-							</RTLProvider>
-						}
-					/>
-				</Routes>
-			</div>
-		</Router>
+
+function App() {function isAuthenticated() {
+    const accessToken = localStorage.getItem("access");
+    const refreshToken = localStorage.getItem("refresh");
+    return !!(accessToken && refreshToken); 
+  }
+
+
+  return (
+		<div className="app-container">
+			<RTLProvider>
+				<UserProvider>
+					<Router>
+						<Routes>
+							<Route
+								path="/"
+								element={
+									<>
+										<Header isAuthenticated={isAuthenticated} />
+										<HomePage isAuthenticated={isAuthenticated} />
+									</>
+								}
+							/>
+
+							{/* <Route
+              path="/profile"
+              element={isAuthenticated() ? <UserProfilePage /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/edit-profile"
+              element={isAuthenticated() ? <EditProfilePage /> : <Navigate to="/login" />}
+            /> */}
+
+							<Route path="/login" element={<LoginPage />} />
+							<Route path="/userSignUp" element={<UserSignUp />} />
+							<Route path="/menu-item" element={<FoodItemPage />} />
+							<Route path="/restaurantSignUp" element={<RestaurantSignUp />} />
+							<Route
+								path="/profile"
+								element={
+									isAuthenticated() ? (
+										<UserProfilePage />
+									) : (
+										<Navigate to="/login" />
+									)
+								}
+							/>
+							<Route
+								path="/edit-profile"
+								element={
+									isAuthenticated() ? <EditProfile /> : <Navigate to="/login" />
+								}
+							/>
+						</Routes>
+					</Router>
+				</UserProvider>
+			</RTLProvider>
+		</div>
 	);
 }
 

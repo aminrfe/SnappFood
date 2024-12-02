@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import {
 	Box,
@@ -23,15 +23,20 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
 function SignUp({ onUserSignUp }) {
-	const [showPassword, setShowPassword] = useState(false);
-	const [confirmPassword, setConfirmPassword] = useState("");
 	const [businessType, setBusinessType] = useState("");
 	const [provinceName, setProvinceName] = useState("");
-	const [phoneNumber, setPhoneNumber] = useState("");
 	const [storeName, setStoreName] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [error, setErrors] = useState();
-	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = useState(false);
+
+	const navigate = useNavigate(); // Initialize navigate
+
+ 	const handleLoginClick = () => {
+    navigate("/login"); 
+  	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -94,7 +99,7 @@ function SignUp({ onUserSignUp }) {
 
 			if (response.status === 201) {
 				alert("ثبت نام با موفقیت انجام شد. اکنون وارد شوید!");
-				onUserSignUp();
+				handleLoginClick();
 			}
 		} catch (error) {
 			if (error.response?.status === 400) {
@@ -273,7 +278,7 @@ function SignUp({ onUserSignUp }) {
 				variant="body2"
 				display={"inline"}
 				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
-				onClick={() => navigate("/login")}
+				onClick={handleLoginClick}
 			>
 				وارد شوید
 			</Typography>

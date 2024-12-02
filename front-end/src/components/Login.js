@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 import {
 	Box,
 	TextField,
@@ -18,7 +18,7 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import LoginImg from "../assets/imgs/login.png";
 import axios from "../utills/axiosInstance.js";
 
-function Login({ onUserSignUp, onRestaurantSignUp }) {
+function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
@@ -28,7 +28,15 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 
 	const handleMouseDownPassword = (event) => event.preventDefault();
 
-	const navigate = useNavigate();
+	const navigate = useNavigate(); // Initialize navigate
+
+ 	const handleSignUpClick = () => {
+    navigate("/userSignUp"); // Navigate to sign up page
+  	};
+
+  	const handleStoreSignUpClick = () => {
+    navigate("/restaurantSignUp"); // Navigate to store sign up page
+  	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -67,24 +75,26 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:8000/api/auth/token",
-				{
-					phone_number: `98${phoneNumber.slice(1)}`,
-					password: password,
-				},
+			  "http://127.0.0.1:8000/api/auth/token",
+			  {
+				phone_number: `98${phoneNumber.slice(1)}`,
+				password: password,
+			  }
 			);
-
-			// localStorage.setItem("access", response.data.access);
-			// localStorage.setItem("refresh", response.data.refresh);
-
-			alert("ورود موفقیت‌آمیز بود!");
-		} catch (error) {
+		  
+			// ذخیره توکن‌ها در localStorage
+			localStorage.setItem("access", response.data.access);
+			localStorage.setItem("refresh", response.data.refresh);
+		  
+			navigate("/"); // هدایت به صفحه اصلی بعد از ورود موفقیت‌آمیز
+		  } catch (error) {
 			if (error.response?.status === 401) {
-				setError("اطلاعات ورود صحیح نیست.");
+			  setError("اطلاعات ورود صحیح نیست.");
 			} else {
-				setError("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
+			  setError("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
 			}
-		}
+		  }
+		  
 	};
 
 	return (
@@ -155,7 +165,7 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 			<Typography
 				display="inline"
 				variant="body2"
-				onClick={() => navigate("/user-signup")}
+				onClick={handleSignUpClick}
 				style={{
 					marginTop: "15px",
 					marginRight: "10px",
@@ -166,7 +176,7 @@ function Login({ onUserSignUp, onRestaurantSignUp }) {
 			</Typography>
 			<Typography
 				variant="body2"
-				onClick={() => navigate("/restaurant-signup")}
+				onClick={handleStoreSignUpClick}
 				style={{ marginTop: "0px", cursor: "pointer" }}
 			>
 				ثبت نام فروشندگان

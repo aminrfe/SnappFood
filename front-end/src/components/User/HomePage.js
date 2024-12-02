@@ -147,6 +147,7 @@ const CategoryCards = () => {
 };
 
 const ProductSlider = () => {
+	const navigate = useNavigate();
 	const restaurants = [
 		{
 			id: 1,
@@ -202,13 +203,12 @@ const ProductSlider = () => {
 				{restaurants.map((restaurant) => (
 					<Card
 						key={restaurant.id}
+						onClick={() => navigate("/menu-item")}
 						sx={{
 							cursor: "pointer",
-							// textAlign: "center",
 							padding: 2,
 							margin: 1,
 							minWidth: 250,
-							// width: "200px",
 							borderRadius: "20px",
 							boxShadow: 0,
 							"&:hover": {
@@ -274,7 +274,7 @@ const UpFooter = () => {
 			<Button
 				variant="contained"
 				color="primary"
-				onClick={() => navigate("/restaurant-signup")}
+				onClick={() => navigate("/restaurantSignUp")}
 				sx={{
 					marginTop: "100px !important",
 					width: "155px",
@@ -292,7 +292,6 @@ const UpFooter = () => {
 const HomePage = () => {
 	return (
 		<div>
-			<Header />
 			<HeroSection />
 			<CategoryCards />
 			<ProductSlider />

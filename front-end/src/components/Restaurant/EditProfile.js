@@ -25,9 +25,10 @@ const EditProfile = ({ userId }) => {
 
   const fetchProfileData = async () => {
     try {
-      const response = await axiosInstance.get(`/restaurant/profile`);
+      const response = await axiosInstance.get(`/restaurant/${userId}/profile`);
       const data = response.data;
-
+      console.log(data);
+  
       setName(data.name || "");
       setAddress(data.address || "");
       setDeliveryCost(data.delivery_price || "");
@@ -35,7 +36,7 @@ const EditProfile = ({ userId }) => {
       setBusinessType(data.business_type || "");
       setOpeningTime(data.open_hour || null);
       setClosingTime(data.close_hour || null);
-
+  
       if (data.coordinate) {
         setMapCenter({
           lat: data.coordinate.lat || 35.6892,
@@ -50,6 +51,7 @@ const EditProfile = ({ userId }) => {
       console.error("Error fetching profile data:", error);
     }
   };
+  
 
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);

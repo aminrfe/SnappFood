@@ -1,8 +1,19 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
 from customer.models import CustomerProfile
 from restaurant.models import RestaurantProfile
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        if self.user.role == "restaurant_manager":
+            restaurant = RestaurantProfile.objects.get(manager_id=self.user.id)
+            data['restaurant_id'] = restaurant.id
+
+        return data
+    
 class CustomerSignUpSerializer(serializers.ModelSerializer):
     phone_number = serializers.CharField(max_length=30)
     first_name = serializers.CharField(max_length=30)

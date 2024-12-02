@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import CustomTokenObtainPairView, TokenRefreshView, CustomerSignUpView, TestAuthenticationView,RestaurantSignUpView
+from rest_framework_simplejwt.views import TokenRefreshView
+from .views import CustomTokenObtainPairView, CustomerSignUpView, TestAuthenticationView,RestaurantSignUpView
 
 urlpatterns = [
     path('signup/restaurant', RestaurantSignUpView.as_view(), name='restaurant_signup'),

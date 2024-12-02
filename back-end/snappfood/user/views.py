@@ -1,11 +1,9 @@
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from .serializers import CustomerSignUpSerializer
-from .serializers import RestaurantSignUpSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .serializers import CustomTokenObtainPairSerializer, CustomerSignUpSerializer, RestaurantSignUpSerializer
 
 class CustomerSignUpView(APIView):
     def post(self, request, *args, **kwargs):
@@ -29,15 +27,6 @@ class TestAuthenticationView(APIView):
     def get(self, request):
         return Response({"message": "Authentication successful!"})
     
-
-class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    def validate(self, attrs):
-        data = super().validate(attrs)
-
-        user = self.user
-        data['role'] = user.role
-
-        return data
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer

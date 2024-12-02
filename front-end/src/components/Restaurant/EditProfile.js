@@ -2,21 +2,21 @@ import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
 import axiosInstance from "../../utils/axiosInstance.js";
 import { Box, TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl, Grid } from "@mui/material";
-import { FaMapMarkerAlt } from "react-icons/fa"; // آیکون Location Dot
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
-const EditProfile = () => {
-  const [name, setName] = useState("نام فعلی فروشگاه");
-  const [address, setAddress] = useState("آدرس فعلی فروشگاه");
+const EditProfile = ({ userId }) => {
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
   const [deliveryCost, setDeliveryCost] = useState("");
-  const [description, setDescription] = useState("توضیحات فعلی فروشگاه...");
+  const [description, setDescription] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [openingTime, setOpeningTime] = useState(null);
   const [closingTime, setClosingTime] = useState(null);
-  const [logo, setLogo] = useState(null);  // برای ذخیره لوگوی انتخابی
-  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 }); // Tehran location
+  const [logo, setLogo] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 });
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
 
   useEffect(() => {
@@ -55,8 +55,26 @@ const EditProfile = () => {
     setter(e.target.value);
   };
 
-  const handleSave = () => {
-    alert("اطلاعات ذخیره شد");
+  const handleSave = async () => {
+    try {
+      const payload = {
+        name,
+        address,
+        delivery_price: deliveryCost,
+        description,
+        business_type: businessType,
+        open_hour: openingTime,
+        close_hour: closingTime,
+        coordinate: mapMarker,
+      };
+
+      await axiosInstance.put(`/restaurant/${userId}/profile`, payload);
+
+      alert("اطلاعات با موفقیت ذخیره شد.");
+    } catch (error) {
+      console.error("Error saving profile data:", error);
+      alert("خطا در ذخیره اطلاعات.");
+    }
   };
 
   const handleLogoUpload = (e) => {
@@ -170,7 +188,9 @@ const EditProfile = () => {
           >
             <MenuItem value="restaurant">رستوران</MenuItem>
             <MenuItem value="cafe">کافه</MenuItem>
-            <MenuItem value="bakery">نان و شیرینی</MenuItem>
+            <MenuItem value="bakery">نانوایی</MenuItem>
+            <MenuItem value="sweets">شیرینی</MenuItem>
+            <MenuItem value="icecream">آبمیوه و بستنی</MenuItem>
           </Select>
         </FormControl>
 

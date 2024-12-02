@@ -67,7 +67,7 @@ function App() {function isAuthenticated() {
 								}
 							/>
 							<Route
-								path="/restuarant-edit-profile"
+								path="/restaurant-edit-profile"
 								element={
 									isAuthenticated() ? <RestaurantEditProfile /> : <Navigate to="/login" />
 								}

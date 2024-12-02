@@ -49,7 +49,7 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
-    navigate("/profile");
+    navigate("/restuarant-edit-profile");
   };
 
   const isAuthenticated = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
-import axiosInstance from "../../utils/axiosInstance.js";
+import axiosInstance from "../../utills/axiosInstance";
 import { Box, TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl, Grid } from "@mui/material";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';

@@ -4,7 +4,8 @@ import RTLProvider from "./ThemeProvider";
 import HomePage from "./components/User/HomePage";
 import LoginPage from "./components/Login";
 import UserProfilePage from "./components/User/profile";
-import EditProfile from "./components/User/EditProfile";
+import UserEditProfile from "./components/User/EditProfile";
+import RestaurantEditProfile from "./components/Restaurant/EditProfile";
 import Header from "./components/User/Header";
 import UserSignUp from "./components/User/SignUp";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
@@ -46,9 +47,9 @@ function App() {function isAuthenticated() {
             /> */}
 
 							<Route path="/login" element={<LoginPage />} />
-							<Route path="/userSignUp" element={<UserSignUp />} />
+							<Route path="/user-signup" element={<UserSignUp />} />
 							<Route path="/menu-item" element={<FoodItemPage />} />
-							<Route path="/restaurantSignUp" element={<RestaurantSignUp />} />
+							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
 							<Route
 								path="/profile"
 								element={
@@ -60,9 +61,15 @@ function App() {function isAuthenticated() {
 								}
 							/>
 							<Route
-								path="/edit-profile"
+								path="/user-edit-profile"
 								element={
-									isAuthenticated() ? <EditProfile /> : <Navigate to="/login" />
+									isAuthenticated() ? <UserEditProfile /> : <Navigate to="/login" />
+								}
+							/>
+							<Route
+								path="/restuarant-edit-profile"
+								element={
+									isAuthenticated() ? <RestaurantEditProfile /> : <Navigate to="/login" />
 								}
 							/>
 						</Routes>

@@ -37,6 +37,7 @@ const EditProfile = ({ userId }) => {
     }
   
     try {
+<<<<<<< HEAD
       const response = await axiosInstance.get(`/restaurant/${id}/profile`);
       const data = response.data;
   
@@ -61,13 +62,39 @@ const EditProfile = ({ userId }) => {
         }
       } else {
         console.error("No data received from API");
+=======
+      const response = await axiosInstance.get(`/restaurant/${userId}/profile`);
+      const data = response.data;
+      console.log(data);
+  
+      setName(data.name || "");
+      setAddress(data.address || "");
+      setDeliveryCost(data.delivery_price || "");
+      setDescription(data.description || "");
+      setBusinessType(data.business_type || "");
+      setOpeningTime(data.open_hour || null);
+      setClosingTime(data.close_hour || null);
+  
+      if (data.coordinate) {
+        setMapCenter({
+          lat: data.coordinate.lat || 35.6892,
+          lng: data.coordinate.lng || 51.389,
+        });
+        setMapMarker({
+          lat: data.coordinate.lat || 35.6892,
+          lng: data.coordinate.lng || 51.389,
+        });
+>>>>>>> 4a6f706 (view profile button bug fixed)
       }
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
   
+<<<<<<< HEAD
   
+=======
+>>>>>>> 4a6f706 (view profile button bug fixed)
 
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);

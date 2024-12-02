@@ -8,7 +8,11 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useParams } from "react-router-dom";
 
+<<<<<<< HEAD
 const EditProfile = () => {
+=======
+const EditProfile = ({ userId }) => {
+>>>>>>> 17cf3f2 (restuarant edit profile updated)
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [deliveryCost, setDeliveryCost] = useState("");
@@ -82,7 +86,11 @@ const EditProfile = () => {
         coordinate: mapMarker,
       };
 
+<<<<<<< HEAD
       await axiosInstance.put(`/restaurant/${id}/profile`, payload);
+=======
+      await axiosInstance.put(`/restaurant/${userId}/profile`, payload);
+>>>>>>> 17cf3f2 (restuarant edit profile updated)
 
       alert("اطلاعات با موفقیت ذخیره شد.");
     } catch (error) {

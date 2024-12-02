@@ -51,7 +51,11 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
+<<<<<<< HEAD
     navigate("/restaurant/${restaurantId}/profile");
+=======
+    navigate("/restuarant-edit-profile");
+>>>>>>> 796f094 (package bug fixes)
   };
 
   const checkAuthentication = () => {

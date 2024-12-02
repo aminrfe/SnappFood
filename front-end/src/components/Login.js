@@ -31,11 +31,11 @@ function Login() {
 	const navigate = useNavigate(); // Initialize navigate
 
  	const handleSignUpClick = () => {
-    navigate("/userSignUp"); // Navigate to sign up page
+    navigate("/user-signup"); // Navigate to sign up page
   	};
 
   	const handleStoreSignUpClick = () => {
-    navigate("/restaurantSignUp"); // Navigate to store sign up page
+    navigate("/restuarant-signup"); // Navigate to store sign up page
   	};
 
 	const handleSubmit = async (event) => {

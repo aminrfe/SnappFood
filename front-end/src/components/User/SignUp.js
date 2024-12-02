@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom"; 
 import axios from "axios";
 import {
 	Box,
@@ -24,12 +24,17 @@ import FoodiImg from "../../assets/imgs/foodiIcon.png";
 function SignUp({ onUserSignUp }) {
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
-	const [password, setPassword] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
-	const [errorMessage, setErrorMessage] = useState("");
-	const [showPassword, setShowPassword] = useState(false);
+	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
-	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = useState(false);
+	const [errorMessage, setErrorMessage] = useState("");
+
+	const navigate = useNavigate(); // Initialize navigate
+
+ 	const handleLoginClick = () => {
+    navigate("/login"); 
+  	};
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);
@@ -92,7 +97,7 @@ function SignUp({ onUserSignUp }) {
 
 			if (response.status === 201) {
 				alert("ثبت نام با موفقیت انجام شد. اکنون وارد شوید!");
-				onUserSignUp();
+				handleLoginClick();
 			}
 		} catch (error) {
 			if (error.response?.status === 400) {
@@ -239,7 +244,7 @@ function SignUp({ onUserSignUp }) {
 				variant="body2"
 				display={"inline"}
 				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
-				onClick={() => navigate("/login")}
+				onClick={handleLoginClick}
 			>
 				وارد شوید
 			</Typography>

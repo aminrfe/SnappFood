@@ -6,8 +6,6 @@ from django.conf import settings
 class CustomerProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer_profile", primary_key=True)
     state = models.CharField(max_length=30)
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
 
     
     def __str__(self):

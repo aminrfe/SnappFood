@@ -8,7 +8,6 @@ import {
 	IconButton,
 	Button,
 } from "@mui/material";
-import Header from "./Header";
 import Footer from "./Footer";
 import Grid from "@mui/material/Grid2";
 import BigPizza from "../../assets/imgs/big-pizza.png";

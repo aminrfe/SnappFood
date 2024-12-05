@@ -6,8 +6,9 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { useParams } from "react-router-dom";
 
-const EditProfile = ({ userId }) => {
+const EditProfile = () => {
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [deliveryCost, setDeliveryCost] = useState("");
@@ -18,39 +19,50 @@ const EditProfile = ({ userId }) => {
   const [logo, setLogo] = useState(null);
   const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 });
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
+  const { id } = useParams();
+  console.log("Extracted userId:", id);
 
   useEffect(() => {
     fetchProfileData();
   }, []);
 
   const fetchProfileData = async () => {
+    if (!id) {
+      console.error("userId is undefined. Cannot fetch profile data.");
+      return;
+    }
+  
     try {
-      const response = await axiosInstance.get(`/restaurant/${userId}/profile`);
+      const response = await axiosInstance.get(`/restaurant/${id}/profile`);
       const data = response.data;
-      console.log(data);
   
-      setName(data.name || "");
-      setAddress(data.address || "");
-      setDeliveryCost(data.delivery_price || "");
-      setDescription(data.description || "");
-      setBusinessType(data.business_type || "");
-      setOpeningTime(data.open_hour || null);
-      setClosingTime(data.close_hour || null);
+      if (data) {
+        setName(data.name || "");
+        setAddress(data.address || "");
+        setDeliveryCost(data.delivery_price || "");
+        setDescription(data.description || "");
+        setBusinessType(data.business_type || "");
+        setOpeningTime(data.open_hour || null);
+        setClosingTime(data.close_hour || null);
   
-      if (data.coordinate) {
-        setMapCenter({
-          lat: data.coordinate.lat || 35.6892,
-          lng: data.coordinate.lng || 51.389,
-        });
-        setMapMarker({
-          lat: data.coordinate.lat || 35.6892,
-          lng: data.coordinate.lng || 51.389,
-        });
+        if (data.coordinate) {
+          setMapCenter({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+          setMapMarker({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+        }
+      } else {
+        console.error("No data received from API");
       }
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
+  
   
 
   const handleFieldChange = (setter) => (e) => {
@@ -70,7 +82,7 @@ const EditProfile = ({ userId }) => {
         coordinate: mapMarker,
       };
 
-      await axiosInstance.put(`/restaurant/${userId}/profile`, payload);
+      await axiosInstance.put(`/restaurant/${id}/profile`, payload);
 
       alert("اطلاعات با موفقیت ذخیره شد.");
     } catch (error) {

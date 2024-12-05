@@ -42,6 +42,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -49,12 +50,16 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
-    navigate("/restaurant-edit-profile");
+    navigate("/restaurant/${restaurantId}/profile");
   };
 
   const checkAuthentication = () => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
+    const id = localStorage.getItem("id");
+    if(id){
+      setRestaurantId(id);
+    }
     const isAuthenticated = !!(accessToken && refreshToken); // وضعیت ورود را مشخص می‌کند
     setIsLoggedIn(isAuthenticated);
   };

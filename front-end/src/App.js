@@ -50,6 +50,7 @@ function App() {function isAuthenticated() {
 							<Route path="/user-signup" element={<UserSignUp />} />
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
+							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 							<Route
 								path="/profile"
 								element={
@@ -67,10 +68,11 @@ function App() {function isAuthenticated() {
 								}
 							/>
 							<Route
-								path="/restaurant-edit-profile"
-								element={
-									isAuthenticated() ? <RestaurantEditProfile /> : <Navigate to="/login" />
-								}
+  								path="/restaurant/:id/profile"
+  								element={
+    							isAuthenticated() ? (	<RestaurantEditProfile />
+    							) : (<Navigate to="/login" replace />)
+  							}
 							/>
 						</Routes>
 					</Router>

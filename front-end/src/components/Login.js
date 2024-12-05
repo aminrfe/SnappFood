@@ -81,10 +81,12 @@ function Login() {
 				password: password,
 			  }
 			);
-		  
+			
+			console.log(response.data);
 			// ذخیره توکن‌ها در localStorage
 			localStorage.setItem("access", response.data.access);
 			localStorage.setItem("refresh", response.data.refresh);
+
 		  
 			navigate("/"); // هدایت به صفحه اصلی بعد از ورود موفقیت‌آمیز
 		  } catch (error) {

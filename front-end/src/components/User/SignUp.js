@@ -21,7 +21,7 @@ import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
-function SignUp({ onUserSignUp }) {
+function SignUp() {
 	const [name, setName] = useState("");
 	const [lastName, setLastName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");

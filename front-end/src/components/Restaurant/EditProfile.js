@@ -1,68 +1,134 @@
 import React, { useState, useEffect } from "react";
 import GoogleMapReact from "google-map-react";
-import axiosInstance from "../../utils/axiosInstance.js";
+import axiosInstance from "../../utills/axiosInstance";
 import { Box, TextField, Button, Typography, MenuItem, Select, InputLabel, FormControl, Grid } from "@mui/material";
-import { FaMapMarkerAlt } from "react-icons/fa"; // آیکون Location Dot
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { data, useParams } from "react-router-dom";
+import { format, parse } from 'date-fns';
 
 const EditProfile = () => {
-  const [name, setName] = useState("نام فعلی فروشگاه");
-  const [address, setAddress] = useState("آدرس فعلی فروشگاه");
+  const [name, setName] = useState("");
+  const [address, setAddress] = useState("");
   const [deliveryCost, setDeliveryCost] = useState("");
-  const [description, setDescription] = useState("توضیحات فعلی فروشگاه...");
+  const [description, setDescription] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [openingTime, setOpeningTime] = useState(null);
   const [closingTime, setClosingTime] = useState(null);
-  const [logo, setLogo] = useState(null);  // برای ذخیره لوگوی انتخابی
-  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 }); // Tehran location
+  const [logo, setLogo] = useState(null);
+  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 });
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
+  const { id } = useParams();
 
   useEffect(() => {
     fetchProfileData();
   }, []);
 
   const fetchProfileData = async () => {
+
+    if (!id) {
+      console.error("userId is undefined. Cannot fetch profile data.");
+      return;
+    }
+  
     try {
-      const response = await axiosInstance.get(`/restaurant/profile`);
+      const response = await axiosInstance.get(`/restaurant/${id}/profile`);
       const data = response.data;
+  
+      if (data) {
+        console.log(data);
+        setName(data.name || "");
+        setAddress(data.address || "");
+        setDeliveryCost(data.delivery_price || "");
+        setDescription(data.description || "");
+        setBusinessType(data.business_type || "");
+        const opening = parse(data.open_hour, "HH:mm:ss", new Date());
+        const closing = parse(data.close_hour, "HH:mm:ss", new Date());
+        setOpeningTime(opening);
+        setClosingTime(closing);
 
-      setName(data.name || "");
-      setAddress(data.address || "");
-      setDeliveryCost(data.delivery_price || "");
-      setDescription(data.description || "");
-      setBusinessType(data.business_type || "");
-      setOpeningTime(data.open_hour || null);
-      setClosingTime(data.close_hour || null);
+  
+        if (data.coordinate) {
+          setMapCenter({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+          setMapMarker({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+        }
 
-      if (data.coordinate) {
-        setMapCenter({
-          lat: data.coordinate.lat || 35.6892,
-          lng: data.coordinate.lng || 51.389,
-        });
-        setMapMarker({
-          lat: data.coordinate.lat || 35.6892,
-          lng: data.coordinate.lng || 51.389,
-        });
+        if (data.photo) {
+          setLogo(data.photo);
+        }
+      } else {
+        console.error("No data received from API");
       }
     } catch (error) {
       console.error("Error fetching profile data:", error);
     }
   };
+  
+  
 
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);
   };
 
-  const handleSave = () => {
-    alert("اطلاعات ذخیره شد");
+  const handleSave = async () => {
+    try {
+
+      const formattedOpeningTime = openingTime instanceof Date && !isNaN(openingTime) 
+      ? format(openingTime, 'HH:mm:ss') 
+      : null;
+
+    const formattedClosingTime = closingTime instanceof Date && !isNaN(closingTime) 
+      ? format(closingTime, 'HH:mm:ss') 
+      : null;
+
+
+      const formData = new FormData();
+    formData.append("name", name);
+    formData.append("address", address);
+    formData.append("delivery_price", deliveryCost);
+    formData.append("description", description);
+    formData.append("business_type", businessType);
+    formData.append("open_hour", formattedOpeningTime);
+    formData.append("close_hour", formattedClosingTime);
+    formData.append("coordinate", JSON.stringify(mapMarker)); 
+
+    if (logo instanceof File) {
+      formData.append("photo", logo); 
+    } else {
+      console.warn("No valid file selected for photo.");
+    }
+
+    console.log([...formData]); 
+
+    await axiosInstance.put(`/restaurant/${id}/profile`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+      alert("اطلاعات با موفقیت ذخیره شد.");
+    } catch (error) {
+      if (error.response) {
+        console.error("Server Response:", error.response.data);
+      } else {
+        console.error("Error saving profile data:", error);
+      }
+      alert("خطا در ذخیره اطلاعات.");
+    }
   };
 
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLogo(URL.createObjectURL(file)); // نمایش تصویر لوگو در حالت پیش‌نمایش
+      setLogo(file); 
     }
   };
 
@@ -73,7 +139,7 @@ const EditProfile = () => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
           setMapMarker({ lat: latitude, lng: longitude });
-          fetchAddress(latitude, longitude); // Fetch address when current location is fetched
+          fetchAddress(latitude, longitude); 
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -98,7 +164,7 @@ const EditProfile = () => {
         const suburb = data.address.suburb || '';
         const city = data.address.city || '';
         const cityDistrict = data.address.city_district || '';
-        const state = data.address.state || ''; // برای منطقه یا استان
+        const state = data.address.state || ''; 
 
         const fullAddress = `${neighbourhood || suburb || ''} ${road || ''} ${cityDistrict || city || ''} ${state || ''}`;
         setAddress(fullAddress.trim());
@@ -112,10 +178,11 @@ const EditProfile = () => {
   };
 
   const handleMapClick = ({ lat, lng }) => {
-    setMapCenter({ lat, lng }); // Set map center to clicked location
-    setMapMarker({ lat, lng }); // Set marker to clicked location
-    fetchAddress(lat, lng); // Fetch address when map is clicked
+    setMapCenter({ lat, lng }); 
+    setMapMarker({ lat, lng }); 
+    fetchAddress(lat, lng); 
   };
+
 
   return (
     <Box
@@ -123,12 +190,11 @@ const EditProfile = () => {
         width: "70%",
         height: "100vh",
         margin: "0 auto",
-        paddingTop: "80px", // Offset for the fixed header
+        paddingTop: "80px", 
         paddingRight: "15px",
         paddingLeft: "15px",
         backgroundColor: "#fff",
         borderRadius: "8px",
-        // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         boxSizing: "border-box",
         position: "relative",
       }}
@@ -170,7 +236,9 @@ const EditProfile = () => {
           >
             <MenuItem value="restaurant">رستوران</MenuItem>
             <MenuItem value="cafe">کافه</MenuItem>
-            <MenuItem value="bakery">نان و شیرینی</MenuItem>
+            <MenuItem value="bakery">نانوایی</MenuItem>
+            <MenuItem value="sweets">شیرینی</MenuItem>
+            <MenuItem value="icecream">آبمیوه و بستنی</MenuItem>
           </Select>
         </FormControl>
 
@@ -186,20 +254,35 @@ const EditProfile = () => {
 
         {/* Logo Upload */}
         <Box>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleLogoUpload}
-            style={{ display: "none" }}
-            id="logo-upload"
-          />
-          <label htmlFor="logo-upload">
-            <Button variant="contained" component="span" fullWidth style={{backgroundColor:"#f0871f"}}>
-              بارگذاری لوگو
-            </Button>
-          </label>
-          {logo && <img src={logo} alt="Logo preview" style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }} />}
-        </Box>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleLogoUpload}
+    style={{ display: "none" }}
+    id="logo-upload"
+  />
+  <label htmlFor="logo-upload">
+    <Button variant="contained" component="span" fullWidth style={{ backgroundColor: "#f0871f" }}>
+      بارگذاری لوگو
+    </Button>
+  </label>
+
+  {logo && typeof logo === "string" ? (
+    <img
+      src={logo}
+      alt="Logo preview"
+      style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
+    />
+  ) : (
+    logo && (
+      <img
+        src={URL.createObjectURL(logo)} 
+        alt="Logo preview"
+        style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
+      />
+    )
+  )}
+</Box>
 
 
 <Grid container spacing={2}>
@@ -208,7 +291,8 @@ const EditProfile = () => {
       <TimePicker
         label="ساعت بازگشایی"
         value={openingTime}
-        onChange={setOpeningTime}
+        onChange={(time) => setOpeningTime(time)}
+        format="HH:mm:ss" 
         renderInput={(params) => (
           <TextField
             {...params}
@@ -224,7 +308,8 @@ const EditProfile = () => {
       <TimePicker
         label="ساعت تعطیلی"
         value={closingTime}
-        onChange={setClosingTime}
+        onChange={(time) => setClosingTime(time)}
+        format="HH:mm:ss" 
         renderInput={(params) => (
           <TextField
             {...params}
@@ -249,7 +334,7 @@ const EditProfile = () => {
         >
           <GoogleMapReact
             bootstrapURLKeys={{
-              key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", // Replace with your API key
+              key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", 
             }}
             center={mapCenter}
             zoom={14}
@@ -296,6 +381,7 @@ const EditProfile = () => {
           fullWidth
           style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
           onChange={handleFieldChange(setAddress)}
+          disabled
         />
 
         {/* Description */}

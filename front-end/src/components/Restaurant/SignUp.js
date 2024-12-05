@@ -138,9 +138,11 @@ function SignUp({ onUserSignUp }) {
 					name="businessType"
 					onChange={(e) => setBusinessType(e.target.value)}
 				>
-					<MenuItem value={10}>کافه</MenuItem>
-					<MenuItem value={20}>رستوران</MenuItem>
-					<MenuItem value={30}>کیترینگ</MenuItem>
+					<MenuItem value={"cafe"}>کافه</MenuItem>
+					<MenuItem value={"restaurant"}>رستوران</MenuItem>
+					<MenuItem value={"bakery"}>نانوایی</MenuItem>
+					<MenuItem value={"sweets"}>شیرینی</MenuItem>
+					<MenuItem value={"icecream"}>آبمیوه و بستنی</MenuItem>
 				</Select>
 			</FormControl>
 

@@ -20,9 +20,28 @@ const Search = styled("div")(({ theme }) => ({
     marginLeft: theme.spacing(3),
     width: "400px",
   },
+  position: "relative",
+  borderRadius: "16px !important",
+  backgroundColor: "#FDF5ED",
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: "100%",
+  height: "40px",
+  display: "flex",
+  alignItems: "center",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(3),
+    width: "400px",
+  },
 }));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
+  position: "absolute",
+  left: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#D68240",
   position: "absolute",
   left: "8px",
   display: "flex",
@@ -38,38 +57,71 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
     fontSize: "14px",
     width: "100%",
   },
+  color: "#000",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(0.8, 1, 0.8, 4),
+    fontSize: "14px",
+    width: "100%",
+  },
 }));
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
   const navigate = useNavigate();
+  // const { isLoggedIn, user, logout } = useUser();
 
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
+  
 
-  const handleProfileClick = () => {
-    navigate("/profile");
-  };
-
+  // Function to check if the user is authenticated
   const checkAuthentication = () => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
-    const isAuthenticated = !!(accessToken && refreshToken); // وضعیت ورود را مشخص می‌کند
-    setIsLoggedIn(isAuthenticated);
+    const id = localStorage.getItem("res_id");
+
+    // Update login status based on tokens presence
+    setIsLoggedIn(!!(accessToken && refreshToken)); 
+    console.log("!!(accessToken && refreshToken): " ,!!(accessToken && refreshToken));
+    console.log("isloggedin ",isLoggedIn);
+    if (id) {
+      setRestaurantId(id); // Set restaurantId if present in localStorage
+    }
   };
 
   useEffect(() => {
-    checkAuthentication(); // بررسی اولیه
-    // افزودن listener برای تغییرات localStorage
+    // Initial check when the component mounts
+    checkAuthentication(); 
+
+    // Listener for changes in localStorage
     const handleStorageChange = () => {
-      checkAuthentication();
+      checkAuthentication();  // Recheck authentication when localStorage changes
     };
+
+    // Attach event listener for storage changes
     window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup the event listener when the component unmounts
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, []); // Empty dependency array to only run on mount and unmount
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Navigate to login page
+  };
+
+  const handleProfileClick = () => {
+    if (restaurantId) {
+      navigate(`/restaurant/${restaurantId}/profile`); // Navigate to restaurant profile if logged in
+    }
+  };
+
+  // const handleLogoutClick = () => {
+  //   logout(); // Call logout from context to clear session
+  //   navigate("/"); // Redirect to home after logout
+  // };
+
+
 
   return (
     <AppBar elevation={1} sx={{ backgroundColor: "#F4DCC9", boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.2)" }}>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import { AppBar, Toolbar, Button } from "@mui/material";
@@ -7,6 +8,19 @@ import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 
 const Search = styled("div")(({ theme }) => ({
+  position: "relative",
+  borderRadius: "16px !important",
+  backgroundColor: "#FDF5ED",
+  marginRight: theme.spacing(2),
+  marginLeft: 0,
+  width: "100%",
+  height: "40px",
+  display: "flex",
+  alignItems: "center",
+  [theme.breakpoints.up("sm")]: {
+    marginLeft: theme.spacing(3),
+    width: "400px",
+  },
   position: "relative",
   borderRadius: "16px !important",
   backgroundColor: "#FDF5ED",
@@ -29,9 +43,21 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   color: "#D68240",
+  position: "absolute",
+  left: "8px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  color: "#D68240",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
+  color: "#000",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(0.8, 1, 0.8, 4),
+    fontSize: "14px",
+    width: "100%",
+  },
   color: "#000",
   "& .MuiInputBase-input": {
     padding: theme.spacing(0.8, 1, 0.8, 4),

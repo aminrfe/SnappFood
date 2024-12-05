@@ -15,7 +15,7 @@ const UserProvider = ({ children }) => {
     if (!accessToken) return;
 
     try {
-      const response = await axios.get("http://127.0.0.1:8000/api/user/", {
+      const response = await axios.get("http://127.0.0.1:8000/api/auth/token", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -24,8 +24,8 @@ const UserProvider = ({ children }) => {
     } catch (error) {
       console.error("خطا در دریافت اطلاعات کاربر:", error);
       // اگر توکن معتبر نباشد، کاربر از سیستم خارج شود
-      localStorage.removeItem("access");
-      localStorage.removeItem("refresh");
+      // localStorage.removeItem("access");
+      // localStorage.removeItem("refresh");
     }
   };
 

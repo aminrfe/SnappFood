@@ -6,7 +6,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "./UserContext"; // گرفتن اطلاعات کاربر
+import { useUser } from "../../contexts/UserContext"; // گرفتن اطلاعات کاربر
 
 const UserProfilePage = () => {
   const navigate = useNavigate();

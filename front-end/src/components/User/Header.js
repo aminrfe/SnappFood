@@ -44,37 +44,57 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [restaurantId, setRestaurantId] = useState(null);
   const navigate = useNavigate();
+  // const { isLoggedIn, user, logout } = useUser();
 
-  const handleLoginClick = () => {
-    navigate("/login");
-  };
+  
 
-  const handleProfileClick = () => {
-    navigate("/restaurant/${restaurantId}/profile");
-  };
-
+  // Function to check if the user is authenticated
   const checkAuthentication = () => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
-    const id = localStorage.getItem("id");
-    if(id){
-      setRestaurantId(id);
+    const id = localStorage.getItem("res_id");
+
+    // Update login status based on tokens presence
+    setIsLoggedIn(!!(accessToken && refreshToken)); 
+    if (id) {
+      setRestaurantId(id); // Set restaurantId if present in localStorage
     }
-    const isAuthenticated = !!(accessToken && refreshToken); // وضعیت ورود را مشخص می‌کند
-    setIsLoggedIn(isAuthenticated);
   };
 
   useEffect(() => {
-    checkAuthentication(); // بررسی اولیه
-    // افزودن listener برای تغییرات localStorage
+    // Initial check when the component mounts
+    checkAuthentication(); 
+
+    // Listener for changes in localStorage
     const handleStorageChange = () => {
-      checkAuthentication();
+      checkAuthentication();  // Recheck authentication when localStorage changes
     };
+
+    // Attach event listener for storage changes
     window.addEventListener("storage", handleStorageChange);
+
+    // Cleanup the event listener when the component unmounts
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, []); // Empty dependency array to only run on mount and unmount
+
+  const handleLoginClick = () => {
+    navigate("/login"); // Navigate to login page
+  };
+
+  const handleProfileClick = () => {
+    if (restaurantId) {
+      navigate(`/restaurant/${restaurantId}/profile`); // Navigate to restaurant profile if logged in
+    }
+  };
+
+  // const handleLogoutClick = () => {
+  //   logout(); // Call logout from context to clear session
+  //   navigate("/"); // Redirect to home after logout
+  // };
+
+
 
   return (
     <AppBar elevation={1} sx={{ backgroundColor: "#F4DCC9", boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.2)" }}>

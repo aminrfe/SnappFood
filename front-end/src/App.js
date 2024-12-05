@@ -9,7 +9,7 @@ import RestaurantEditProfile from "./components/Restaurant/EditProfile";
 import Header from "./components/User/Header";
 import UserSignUp from "./components/User/SignUp";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
-import UserProvider from "./components/User/UserContext"; 
+import UserProvider from "./contexts/UserContext"; 
 import FoodItemPage from "./components/User/MenuItem";
 import "./App.css";
 

@@ -69,10 +69,6 @@ function Login() {
 			return;
 		}
 
-		console.log("Sending login request...");
-		console.log("Phone Number:", phoneNumber);
-		console.log("Password:", password);
-
 		try {
 			const response = await axios.post(
 			  "http://127.0.0.1:8000/api/auth/token",
@@ -86,7 +82,9 @@ function Login() {
 			// ذخیره توکن‌ها در localStorage
 			localStorage.setItem("access", response.data.access);
 			localStorage.setItem("refresh", response.data.refresh);
+			localStorage.setItem("res_id", response.data.restaurant_id);
 
+			// login(response.data.access);
 		  
 			navigate("/"); // هدایت به صفحه اصلی بعد از ورود موفقیت‌آمیز
 		  } catch (error) {

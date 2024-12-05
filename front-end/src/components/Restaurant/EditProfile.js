@@ -6,7 +6,8 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
+import { format } from 'date-fns';
 
 const EditProfile = () => {
   const [name, setName] = useState("");
@@ -20,7 +21,7 @@ const EditProfile = () => {
   const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 });
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
   const { id } = useParams();
-  console.log("Extracted userId:", id);
+  // console.log("Extracted userId:", id);
 
   useEffect(() => {
     fetchProfileData();
@@ -37,6 +38,7 @@ const EditProfile = () => {
       const data = response.data;
   
       if (data) {
+        console.log(data);
         setName(data.name || "");
         setAddress(data.address || "");
         setDeliveryCost(data.delivery_price || "");
@@ -71,16 +73,24 @@ const EditProfile = () => {
 
   const handleSave = async () => {
     try {
+
+      const formattedOpeningTime = openingTime ? format(new Date(openingTime), 'HH:mm:ss') : null;
+      const formattedClosingTime = closingTime ? format(new Date(closingTime), 'HH:mm:ss') : null;
+
+
       const payload = {
         name,
         address,
         delivery_price: deliveryCost,
         description,
         business_type: businessType,
-        open_hour: openingTime,
-        close_hour: closingTime,
+        open_hour: formattedOpeningTime,
+        close_hour: formattedClosingTime,
         coordinate: mapMarker,
+        // photo: logo,
       };
+
+      console.log(payload);
 
       await axiosInstance.put(`/restaurant/${id}/profile`, payload);
 
@@ -94,7 +104,7 @@ const EditProfile = () => {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLogo(URL.createObjectURL(file)); // نمایش تصویر لوگو در حالت پیش‌نمایش
+      setLogo(file); // ذخیره فایل لوگو به جای URL
     }
   };
 
@@ -148,6 +158,7 @@ const EditProfile = () => {
     setMapMarker({ lat, lng }); // Set marker to clicked location
     fetchAddress(lat, lng); // Fetch address when map is clicked
   };
+
 
   return (
     <Box
@@ -241,7 +252,7 @@ const EditProfile = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TimePicker
         label="ساعت بازگشایی"
-        value={openingTime}
+        value={data.open_hour}
         onChange={setOpeningTime}
         renderInput={(params) => (
           <TextField
@@ -257,7 +268,7 @@ const EditProfile = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TimePicker
         label="ساعت تعطیلی"
-        value={closingTime}
+        value={data.close_hour}
         onChange={setClosingTime}
         renderInput={(params) => (
           <TextField

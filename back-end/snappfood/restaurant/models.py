@@ -27,11 +27,13 @@ class RestaurantProfile(models.Model):
     score = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     delivery_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     address = models.TextField(blank=True, null=True) 
-    description = models.TextField(blank=True, null=True)  
-    coordinate = models.JSONField(null=True, blank=True)
+    description = models.TextField(blank=True, null=True)
     state = models.CharField(max_length=30, default='approved')
     open_hour = models.TimeField(blank=True, default="9:00")
     close_hour = models.TimeField(blank=True, default="23:00")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    
     photo = models.ImageField(
         upload_to='restaurant_profile_photos/',
         blank=True,

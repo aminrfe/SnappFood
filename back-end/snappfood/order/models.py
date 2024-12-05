@@ -31,7 +31,7 @@ class Order(models.Model):
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    state = models.CharField(max_length=20, choices=STATE_CHOICES, default='pending')
+    state = models.CharField(max_length=20, choices=STATE_CHOICES, default='shopping_cart')
     delivery_method = models.CharField(max_length=20, choices=DELIVERY_METHOD_CHOICES)
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
 

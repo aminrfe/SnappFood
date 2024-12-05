@@ -57,6 +57,10 @@ const EditProfile = () => {
             lng: data.coordinate.lng || 51.389,
           });
         }
+
+        if (data.photo) {
+          setLogo(data.photo); // ذخیره آدرس لوگو
+        }
       } else {
         console.error("No data received from API");
       }
@@ -78,21 +82,44 @@ const EditProfile = () => {
       const formattedClosingTime = closingTime ? format(new Date(closingTime), 'HH:mm:ss') : null;
 
 
-      const payload = {
-        name,
-        address,
-        delivery_price: deliveryCost,
-        description,
-        business_type: businessType,
-        open_hour: formattedOpeningTime,
-        close_hour: formattedClosingTime,
-        coordinate: mapMarker,
-        // photo: logo,
-      };
+      // const payload = {
+      //   name,
+      //   address,
+      //   delivery_price: deliveryCost,
+      //   description,
+      //   business_type: businessType,
+      //   open_hour: formattedOpeningTime,
+      //   close_hour: formattedClosingTime,
+      //   coordinate: mapMarker,
+      //   // photo: logo,
+      // };
 
-      console.log(payload);
+      // console.log(payload);
 
-      await axiosInstance.put(`/restaurant/${id}/profile`, payload);
+      // await axiosInstance.put(`/restaurant/${id}/profile`, payload);
+
+      const formData = new FormData();
+    formData.append("name", name);
+    formData.append("address", address);
+    formData.append("delivery_price", deliveryCost);
+    formData.append("description", description);
+    formData.append("business_type", businessType);
+    formData.append("open_hour", formattedOpeningTime);
+    formData.append("close_hour", formattedClosingTime);
+    formData.append("coordinate", JSON.stringify(mapMarker)); // تبدیل مختصات به رشته JSON
+
+    if (logo) {
+      formData.append("photo", logo); // اضافه کردن فایل لوگو
+    }
+
+    console.log([...formData]); // بررسی داده‌های ارسالی
+
+    // ارسال درخواست PUT با فرم دیتا
+    await axiosInstance.put(`/restaurant/${id}/profile`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
       alert("اطلاعات با موفقیت ذخیره شد.");
     } catch (error) {
@@ -231,20 +258,35 @@ const EditProfile = () => {
 
         {/* Logo Upload */}
         <Box>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleLogoUpload}
-            style={{ display: "none" }}
-            id="logo-upload"
-          />
-          <label htmlFor="logo-upload">
-            <Button variant="contained" component="span" fullWidth style={{backgroundColor:"#f0871f"}}>
-              بارگذاری لوگو
-            </Button>
-          </label>
-          {logo && <img src={logo} alt="Logo preview" style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }} />}
-        </Box>
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleLogoUpload}
+    style={{ display: "none" }}
+    id="logo-upload"
+  />
+  <label htmlFor="logo-upload">
+    <Button variant="contained" component="span" fullWidth style={{ backgroundColor: "#f0871f" }}>
+      بارگذاری لوگو
+    </Button>
+  </label>
+
+  {logo && typeof logo === "string" ? (
+    <img
+      src={logo} // آدرس عکس از API
+      alt="Logo preview"
+      style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
+    />
+  ) : (
+    logo && (
+      <img
+        src={URL.createObjectURL(logo)} // پیش‌نمایش فایل آپلودی
+        alt="Logo preview"
+        style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
+      />
+    )
+  )}
+</Box>
 
 
 <Grid container spacing={2}>

@@ -7,7 +7,7 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { data, useParams } from "react-router-dom";
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 const EditProfile = () => {
   const [name, setName] = useState("");
@@ -21,13 +21,13 @@ const EditProfile = () => {
   const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 });
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
   const { id } = useParams();
-  // console.log("Extracted userId:", id);
 
   useEffect(() => {
     fetchProfileData();
   }, []);
 
   const fetchProfileData = async () => {
+
     if (!id) {
       console.error("userId is undefined. Cannot fetch profile data.");
       return;
@@ -44,8 +44,11 @@ const EditProfile = () => {
         setDeliveryCost(data.delivery_price || "");
         setDescription(data.description || "");
         setBusinessType(data.business_type || "");
-        setOpeningTime(data.open_hour || null);
-        setClosingTime(data.close_hour || null);
+        const opening = parse(data.open_hour, "HH:mm:ss", new Date());
+        const closing = parse(data.close_hour, "HH:mm:ss", new Date());
+        setOpeningTime(opening);
+        setClosingTime(closing);
+
   
         if (data.coordinate) {
           setMapCenter({
@@ -59,7 +62,7 @@ const EditProfile = () => {
         }
 
         if (data.photo) {
-          setLogo(data.photo); // ذخیره آدرس لوگو
+          setLogo(data.photo);
         }
       } else {
         console.error("No data received from API");
@@ -78,25 +81,14 @@ const EditProfile = () => {
   const handleSave = async () => {
     try {
 
-      const formattedOpeningTime = openingTime ? format(new Date(openingTime), 'HH:mm:ss') : null;
-      const formattedClosingTime = closingTime ? format(new Date(closingTime), 'HH:mm:ss') : null;
+      const formattedOpeningTime = openingTime instanceof Date && !isNaN(openingTime) 
+      ? format(openingTime, 'HH:mm:ss') 
+      : null;
 
+    const formattedClosingTime = closingTime instanceof Date && !isNaN(closingTime) 
+      ? format(closingTime, 'HH:mm:ss') 
+      : null;
 
-      // const payload = {
-      //   name,
-      //   address,
-      //   delivery_price: deliveryCost,
-      //   description,
-      //   business_type: businessType,
-      //   open_hour: formattedOpeningTime,
-      //   close_hour: formattedClosingTime,
-      //   coordinate: mapMarker,
-      //   // photo: logo,
-      // };
-
-      // console.log(payload);
-
-      // await axiosInstance.put(`/restaurant/${id}/profile`, payload);
 
       const formData = new FormData();
     formData.append("name", name);
@@ -106,15 +98,16 @@ const EditProfile = () => {
     formData.append("business_type", businessType);
     formData.append("open_hour", formattedOpeningTime);
     formData.append("close_hour", formattedClosingTime);
-    formData.append("coordinate", JSON.stringify(mapMarker)); // تبدیل مختصات به رشته JSON
+    formData.append("coordinate", JSON.stringify(mapMarker)); 
 
-    if (logo) {
-      formData.append("photo", logo); // اضافه کردن فایل لوگو
+    if (logo instanceof File) {
+      formData.append("photo", logo); 
+    } else {
+      console.warn("No valid file selected for photo.");
     }
 
-    console.log([...formData]); // بررسی داده‌های ارسالی
+    console.log([...formData]); 
 
-    // ارسال درخواست PUT با فرم دیتا
     await axiosInstance.put(`/restaurant/${id}/profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -123,7 +116,11 @@ const EditProfile = () => {
 
       alert("اطلاعات با موفقیت ذخیره شد.");
     } catch (error) {
-      console.error("Error saving profile data:", error);
+      if (error.response) {
+        console.error("Server Response:", error.response.data);
+      } else {
+        console.error("Error saving profile data:", error);
+      }
       alert("خطا در ذخیره اطلاعات.");
     }
   };
@@ -131,7 +128,7 @@ const EditProfile = () => {
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLogo(file); // ذخیره فایل لوگو به جای URL
+      setLogo(file); 
     }
   };
 
@@ -142,7 +139,7 @@ const EditProfile = () => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
           setMapMarker({ lat: latitude, lng: longitude });
-          fetchAddress(latitude, longitude); // Fetch address when current location is fetched
+          fetchAddress(latitude, longitude); 
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -167,7 +164,7 @@ const EditProfile = () => {
         const suburb = data.address.suburb || '';
         const city = data.address.city || '';
         const cityDistrict = data.address.city_district || '';
-        const state = data.address.state || ''; // برای منطقه یا استان
+        const state = data.address.state || ''; 
 
         const fullAddress = `${neighbourhood || suburb || ''} ${road || ''} ${cityDistrict || city || ''} ${state || ''}`;
         setAddress(fullAddress.trim());
@@ -181,9 +178,9 @@ const EditProfile = () => {
   };
 
   const handleMapClick = ({ lat, lng }) => {
-    setMapCenter({ lat, lng }); // Set map center to clicked location
-    setMapMarker({ lat, lng }); // Set marker to clicked location
-    fetchAddress(lat, lng); // Fetch address when map is clicked
+    setMapCenter({ lat, lng }); 
+    setMapMarker({ lat, lng }); 
+    fetchAddress(lat, lng); 
   };
 
 
@@ -193,12 +190,11 @@ const EditProfile = () => {
         width: "70%",
         height: "100vh",
         margin: "0 auto",
-        paddingTop: "80px", // Offset for the fixed header
+        paddingTop: "80px", 
         paddingRight: "15px",
         paddingLeft: "15px",
         backgroundColor: "#fff",
         borderRadius: "8px",
-        // boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
         boxSizing: "border-box",
         position: "relative",
       }}
@@ -273,14 +269,14 @@ const EditProfile = () => {
 
   {logo && typeof logo === "string" ? (
     <img
-      src={logo} // آدرس عکس از API
+      src={logo}
       alt="Logo preview"
       style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
     />
   ) : (
     logo && (
       <img
-        src={URL.createObjectURL(logo)} // پیش‌نمایش فایل آپلودی
+        src={URL.createObjectURL(logo)} 
         alt="Logo preview"
         style={{ marginTop: "10px", width: "100px", height: "100px", objectFit: "cover" }}
       />
@@ -294,8 +290,9 @@ const EditProfile = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TimePicker
         label="ساعت بازگشایی"
-        value={data.open_hour}
-        onChange={setOpeningTime}
+        value={openingTime}
+        onChange={(time) => setOpeningTime(time)}
+        format="HH:mm:ss" 
         renderInput={(params) => (
           <TextField
             {...params}
@@ -310,8 +307,9 @@ const EditProfile = () => {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <TimePicker
         label="ساعت تعطیلی"
-        value={data.close_hour}
-        onChange={setClosingTime}
+        value={closingTime}
+        onChange={(time) => setClosingTime(time)}
+        format="HH:mm:ss" 
         renderInput={(params) => (
           <TextField
             {...params}
@@ -336,7 +334,7 @@ const EditProfile = () => {
         >
           <GoogleMapReact
             bootstrapURLKeys={{
-              key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", // Replace with your API key
+              key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", 
             }}
             center={mapCenter}
             zoom={14}

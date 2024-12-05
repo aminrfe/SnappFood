@@ -44,4 +44,34 @@ class RestaurantProfile(models.Model):
     def __str__(self):
         return f"Restaurant: {self.name} ({self.user.phone_number})"
     
-    
+class Item(models.Model):
+    item_id = models.AutoField(primary_key=True)
+    restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')
+    price_id = models.OneToOneField('ItemPrice', on_delete=models.CASCADE, related_name='item', null=True, blank=True)
+    name = models.CharField(max_length=100)
+    score = models.FloatField(default=0.0)
+    description = models.TextField(null=True, blank=True)
+    state = models.CharField(max_length=50)
+    item_pic = models.ImageField(upload_to='item_images/', null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class ItemPrice(models.Model):
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
+
+    def __str__(self):
+        return f"{self.item.name} - ${self.price} ({self.discount}% discount)"
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='reviews')
+    score = models.PositiveSmallIntegerField()
+    description = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'item')
+

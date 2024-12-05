@@ -42,10 +42,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-<<<<<<< HEAD
   const [restaurantId, setRestaurantId] = useState(null);
-=======
->>>>>>> 4a6f706 (view profile button bug fixed)
   const navigate = useNavigate();
 
   const handleLoginClick = () => {
@@ -53,27 +50,16 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
     navigate("/restaurant/${restaurantId}/profile");
-=======
-    navigate("/restuarant-edit-profile");
->>>>>>> 796f094 (package bug fixes)
-=======
-    navigate("/restaurant-edit-profile");
->>>>>>> 4a6f706 (view profile button bug fixed)
   };
 
   const checkAuthentication = () => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
-<<<<<<< HEAD
     const id = localStorage.getItem("id");
     if(id){
       setRestaurantId(id);
     }
-=======
->>>>>>> 4a6f706 (view profile button bug fixed)
     const isAuthenticated = !!(accessToken && refreshToken); // وضعیت ورود را مشخص می‌کند
     setIsLoggedIn(isAuthenticated);
   };

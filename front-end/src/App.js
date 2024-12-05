@@ -51,9 +51,13 @@ function App() {function isAuthenticated() {
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
 <<<<<<< HEAD
+<<<<<<< HEAD
 							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 =======
 >>>>>>> 796f094 (package bug fixes)
+=======
+							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
 							<Route
 								path="/profile"
 								element={
@@ -73,11 +77,19 @@ function App() {function isAuthenticated() {
 								}
 							/>
 							<Route
+<<<<<<< HEAD
 								path="/restaurant-edit-profile"
 								element={
 									isAuthenticated() ? <RestaurantEditProfile /> : <Navigate to="/login" />
 >>>>>>> 796f094 (package bug fixes)
 								}
+=======
+  								path="/restaurant/:id/profile"
+  								element={
+    							isAuthenticated() ? (	<RestaurantEditProfile />
+    							) : (<Navigate to="/login" replace />)
+  							}
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
 							/>
 							<Route
   								path="/restaurant/:id/profile"

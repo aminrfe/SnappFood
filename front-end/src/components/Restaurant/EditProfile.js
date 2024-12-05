@@ -9,10 +9,14 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useParams } from "react-router-dom";
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 const EditProfile = () => {
 =======
 const EditProfile = ({ userId }) => {
 >>>>>>> 17cf3f2 (restuarant edit profile updated)
+=======
+const EditProfile = () => {
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
   const [name, setName] = useState("");
   const [address, setAddress] = useState("");
   const [deliveryCost, setDeliveryCost] = useState("");
@@ -37,6 +41,7 @@ const EditProfile = ({ userId }) => {
     }
   
     try {
+<<<<<<< HEAD
 <<<<<<< HEAD
       const response = await axiosInstance.get(`/restaurant/${id}/profile`);
       const data = response.data;
@@ -64,17 +69,21 @@ const EditProfile = ({ userId }) => {
         console.error("No data received from API");
 =======
       const response = await axiosInstance.get(`/restaurant/${userId}/profile`);
+=======
+      const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
       const data = response.data;
-      console.log(data);
   
-      setName(data.name || "");
-      setAddress(data.address || "");
-      setDeliveryCost(data.delivery_price || "");
-      setDescription(data.description || "");
-      setBusinessType(data.business_type || "");
-      setOpeningTime(data.open_hour || null);
-      setClosingTime(data.close_hour || null);
+      if (data) {
+        setName(data.name || "");
+        setAddress(data.address || "");
+        setDeliveryCost(data.delivery_price || "");
+        setDescription(data.description || "");
+        setBusinessType(data.business_type || "");
+        setOpeningTime(data.open_hour || null);
+        setClosingTime(data.close_hour || null);
   
+<<<<<<< HEAD
       if (data.coordinate) {
         setMapCenter({
           lat: data.coordinate.lat || 35.6892,
@@ -85,6 +94,20 @@ const EditProfile = ({ userId }) => {
           lng: data.coordinate.lng || 51.389,
         });
 >>>>>>> 4a6f706 (view profile button bug fixed)
+=======
+        if (data.coordinate) {
+          setMapCenter({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+          setMapMarker({
+            lat: data.coordinate.lat || 35.6892,
+            lng: data.coordinate.lng || 51.389,
+          });
+        }
+      } else {
+        console.error("No data received from API");
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
       }
     } catch (error) {
       console.error("Error fetching profile data:", error);
@@ -92,9 +115,13 @@ const EditProfile = ({ userId }) => {
   };
   
 <<<<<<< HEAD
+<<<<<<< HEAD
   
 =======
 >>>>>>> 4a6f706 (view profile button bug fixed)
+=======
+  
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
 
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);
@@ -114,10 +141,14 @@ const EditProfile = ({ userId }) => {
       };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       await axiosInstance.put(`/restaurant/${id}/profile`, payload);
 =======
       await axiosInstance.put(`/restaurant/${userId}/profile`, payload);
 >>>>>>> 17cf3f2 (restuarant edit profile updated)
+=======
+      await axiosInstance.put(`/restaurant/${id}/profile`, payload);
+>>>>>>> 1e98577 (restaurant profile edit page API connected)
 
       alert("اطلاعات با موفقیت ذخیره شد.");
     } catch (error) {

@@ -381,6 +381,7 @@ const EditProfile = () => {
           fullWidth
           style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
           onChange={handleFieldChange(setAddress)}
+          disabled
         />
 
         {/* Description */}

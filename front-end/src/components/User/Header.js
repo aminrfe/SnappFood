@@ -56,6 +56,8 @@ const Header = () => {
 
     // Update login status based on tokens presence
     setIsLoggedIn(!!(accessToken && refreshToken)); 
+    console.log("!!(accessToken && refreshToken): " ,!!(accessToken && refreshToken));
+    console.log("isloggedin ",isLoggedIn);
     if (id) {
       setRestaurantId(id); // Set restaurantId if present in localStorage
     }

@@ -87,6 +87,7 @@ function Login() {
 			// login(response.data.access);
 		  
 			navigate("/"); // هدایت به صفحه اصلی بعد از ورود موفقیت‌آمیز
+			window.location.reload();
 		  } catch (error) {
 			if (error.response?.status === 401) {
 			  setError("اطلاعات ورود صحیح نیست.");

@@ -82,17 +82,6 @@ class RestaurantSignUpSerializer(serializers.ModelSerializer):
         )
 
         return manager
-    
-class UserProfileUpdateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name']
-        
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['phone_number', 'first_name', 'last_name', 'is_active', 'is_staff']
-        read_only_fields = ['phone_number', 'role', 'is_active', 'is_staff']
         
 class PasswordChangeSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True, write_only=True)

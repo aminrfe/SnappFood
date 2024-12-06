@@ -4,8 +4,8 @@ from .models import CustomerProfile, User
 class NestedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['phone_number', 'first_name', 'last_name', 'role', 'is_active', 'is_staff']
-        read_only_fields = ['phone_number', 'role', 'is_active', 'is_staff']
+        fields = ['phone_number', 'first_name', 'last_name', 'role']
+        read_only_fields = ['phone_number', 'role']
 
 class CustomerProfileSerializer(serializers.ModelSerializer):
     user = NestedUserSerializer()

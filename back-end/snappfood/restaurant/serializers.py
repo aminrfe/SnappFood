@@ -6,7 +6,7 @@ class RestaurantProfileSerializer(serializers.ModelSerializer):
         model = RestaurantProfile
         fields = [
             'name', 'business_type', 'delivery_price', 'address',
-            'description', 'open_hour', 'close_hour', 'photo', 'latitude', 'longitude'
+            'description', 'open_hour', 'close_hour', 'latitude', 'longitude', 'photo'
         ]
 
     def validate_photo(self, value):

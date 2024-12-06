@@ -65,7 +65,7 @@ class Item(models.Model):
     ]
 
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     name = models.CharField(max_length=100)
     score = models.FloatField(default=0.0)

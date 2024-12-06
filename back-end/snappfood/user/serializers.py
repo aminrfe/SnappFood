@@ -82,3 +82,7 @@ class RestaurantSignUpSerializer(serializers.ModelSerializer):
         )
 
         return manager
+        
+class PasswordChangeSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True)

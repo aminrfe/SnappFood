@@ -9,6 +9,7 @@ import RestaurantEditProfile from "./components/Restaurant/EditProfile";
 import Header from "./components/User/Header";
 import UserSignUp from "./components/User/SignUp";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
+import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext"; 
 import FoodItemPage from "./components/User/MenuItem";
 import "./App.css";
@@ -68,9 +69,16 @@ function App() {function isAuthenticated() {
 								}
 							/>
 							<Route
-  								path="/restaurant/:id/profile"
+  								path="/restaurant/:id/profileEdit"
   								element={
     							isAuthenticated() ? (	<RestaurantEditProfile />
+    							) : (<Navigate to="/login" replace />)
+  							}
+							/>
+							<Route
+  								path="/restaurant/:id/profile"
+  								element={
+    							isAuthenticated() ? (	<RestaurantProfile />
     							) : (<Navigate to="/login" replace />)
   							}
 							/>

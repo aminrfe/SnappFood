@@ -1,7 +1,10 @@
+import os
+import uuid
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.db import models
 from user.models import User
+
 
 def validate_photo_size(value):
     max_size_mb = 2
@@ -9,7 +12,11 @@ def validate_photo_size(value):
         raise ValidationError(f"Photo size must not exceed {max_size_mb}MB.")
         
 class RestaurantProfile(models.Model):
-        
+    def unique_image_path(instance, filename):
+        ext = filename.split('.')[-1]
+        filename = f"{uuid.uuid4()}.{ext}"
+        return os.path.join('restaurant-ptofile-images/', filename)
+
     STATE_CHOICES = [
         ("pending", "PENDING "),
         ("approved", "APPROVED"),
@@ -33,7 +40,7 @@ class RestaurantProfile(models.Model):
     open_hour = models.TimeField(blank=True, default="9:00")
     close_hour = models.TimeField(blank=True, default="23:00")
     photo = models.ImageField(
-        upload_to='restaurant_profile_photos/',
+        upload_to=unique_image_path,
         blank=True,
         null=True,
         validators=[
@@ -45,25 +52,34 @@ class RestaurantProfile(models.Model):
         return f"Restaurant: {self.name} ({self.user.phone_number})"
     
 class Item(models.Model):
-    item_id = models.AutoField(primary_key=True)
+    def unique_item_image_path(instance, filename):
+        ext = filename.split('.')[-1]
+        filename = f"{uuid.uuid4()}.{ext}"
+        return os.path.join('item_images/', filename)
+
+    STATE_CHOICES = [
+    ('available', 'Available'),
+    ('unavailable', 'Unavailable'),
+    ]
+
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')
-    price_id = models.OneToOneField('ItemPrice', on_delete=models.CASCADE, related_name='item', null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     name = models.CharField(max_length=100)
     score = models.FloatField(default=0.0)
     description = models.TextField(null=True, blank=True)
-    state = models.CharField(max_length=50)
-    item_pic = models.ImageField(upload_to='item_images/', null=True, blank=True)
+    state = models.CharField(max_length=50, choices=STATE_CHOICES, default='available')
+    photo = models.ImageField(
+        upload_to=unique_item_image_path,
+        blank=True,
+        null=True,
+        validators=[
+        FileExtensionValidator(allowed_extensions=['jpg', 'jpeg', 'png']),
+        validate_photo_size]
+    )
 
     def __str__(self):
         return self.name
-
-
-class ItemPrice(models.Model):
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
-
-    def __str__(self):
-        return f"{self.item.name} - ${self.price} ({self.discount}% discount)"
 
 
 class Review(models.Model):

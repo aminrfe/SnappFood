@@ -18,10 +18,8 @@ const RestaurantProfile = () => {
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [restaurantId, setRestaurantId] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
-  // const { isLoggedIn, user, logout } = useUser();
 
   useEffect(() => {
     fetchProfileData();
@@ -36,14 +34,9 @@ const RestaurantProfile = () => {
   
     try {
       const response = await axiosInstance.get(`/restaurant/${id}/profile`);
-      // const response = await axiosInstance.get(`/auth/token`);
-      
-			
-			console.log("here  : ", response.data);
       const data = response.data;
   
       if (data) {
-        console.log(data);
         setName(data.name || "");
         const phone = localStorage.getItem("phone");
         setPhoneNumber(phone || "");
@@ -57,7 +50,7 @@ const RestaurantProfile = () => {
 
   const handleProfileEditClick = () => {
     if (id) {
-      navigate(`/restaurant/${id}/profileEdit`); // Navigate to restaurant profile if logged in
+      navigate(`/restaurant/${id}/profileEdit`);
     }
   };
 
@@ -67,9 +60,6 @@ const RestaurantProfile = () => {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        //bgcolor: "#f9f9f9",
-        //height: "100vh",
-        //padding: 2,
         maxWidth: 450, 
         width: "40%", 
         margin: "auto",
@@ -104,7 +94,7 @@ const RestaurantProfile = () => {
           </Box>
         </Box>
         <IconButton onClick={handleProfileEditClick}>
-          <EditIcon onClick={handleProfileEditClick} sx={{ color: "#ff7a59", fontSize: 25 }}/>
+          <EditIcon sx={{ color: "#ff7a59", fontSize: 25 }}/>
         </IconButton>
       </Box>
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Card,
@@ -10,8 +10,57 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import DescriptionIcon from "@mui/icons-material/Description";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const RestaurantProfile = () => {
+
+  const [name, setName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [restaurantId, setRestaurantId] = useState(null);
+  const navigate = useNavigate();
+  const { id } = useParams();
+  // const { isLoggedIn, user, logout } = useUser();
+
+  useEffect(() => {
+    fetchProfileData();
+  }, []);
+
+  const fetchProfileData = async () => {
+
+    if (!id) {
+      console.error("userId is undefined. Cannot fetch profile data.");
+      return;
+    }
+  
+    try {
+      const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+      // const response = await axiosInstance.get(`/auth/token`);
+      
+			
+			console.log("here  : ", response.data);
+      const data = response.data;
+  
+      if (data) {
+        console.log(data);
+        setName(data.name || "");
+        const phone = localStorage.getItem("phone");
+        setPhoneNumber(phone || "");
+      } else {
+        console.error("No data received from API");
+      }
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    }
+  };
+
+  const handleProfileEditClick = () => {
+    if (id) {
+      navigate(`/restaurant/${id}/profileEdit`); // Navigate to restaurant profile if logged in
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -48,14 +97,14 @@ const RestaurantProfile = () => {
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <Avatar sx={{ bgcolor: "#f28b82", marginRight: 1 }} />
           <Box>
-            <Typography variant="h6">نام فروشگاه</Typography>
+            <Typography variant="h6">{name}</Typography>
             <Typography variant="body2" color="textSecondary">
-              شماره تلفن
+              {phoneNumber}
             </Typography>
           </Box>
         </Box>
-        <IconButton>
-          <EditIcon sx={{ color: "#ff7a59", fontSize: 25 }}/>
+        <IconButton onClick={handleProfileEditClick}>
+          <EditIcon onClick={handleProfileEditClick} sx={{ color: "#ff7a59", fontSize: 25 }}/>
         </IconButton>
       </Box>
 

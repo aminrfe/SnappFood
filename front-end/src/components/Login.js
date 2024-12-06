@@ -83,6 +83,7 @@ function Login() {
 			localStorage.setItem("access", response.data.access);
 			localStorage.setItem("refresh", response.data.refresh);
 			localStorage.setItem("res_id", response.data.restaurant_id);
+			localStorage.setItem("phone", phoneNumber);
 
 			// login(response.data.access);
 		  

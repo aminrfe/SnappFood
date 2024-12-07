@@ -17,12 +17,16 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import LoginImg from "../assets/imgs/login.png";
 import axios from "../utills/axiosInstance.js";
+// import { useUser } from "../contexts/UserContext.js";
 
 function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
+	// const [loading, setLoading] = useState(false);
+
+	// const { fetchUser } = useUser();
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -40,6 +44,7 @@ function Login() {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+		// setLoading(true);
 		setError("");
 
 		if (!phoneNumber) {
@@ -86,8 +91,12 @@ function Login() {
 			localStorage.setItem("phone", phoneNumber);
 
 			// login(response.data.access);
+			// await fetchUser();
 		  
-			navigate("/"); // هدایت به صفحه اصلی بعد از ورود موفقیت‌آمیز
+			if(response.data.restaurant_id)
+				navigate(`/restaurant/${response.data.restaurant_id}/profile`);
+			else
+				navigate("/");
 			window.location.reload();
 		  } catch (error) {
 			if (error.response?.status === 401) {

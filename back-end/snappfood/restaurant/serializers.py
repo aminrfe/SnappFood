@@ -24,5 +24,5 @@ class ItemCreateUpdateSerializer(serializers.ModelSerializer):
 class ItemListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Item
-        fields = ['id', 'price', 'discount', 'name', 'score', 'description', 'state', 'photo']
+        fields = ['item_id', 'price', 'discount', 'name', 'score', 'description', 'state', 'photo']
 

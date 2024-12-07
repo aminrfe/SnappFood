@@ -1,22 +1,26 @@
-import React from "react";
-import { Box, Avatar, Typography, IconButton, List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Box, Typography, IconButton, List, ListItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "../../contexts/UserContext"; // گرفتن اطلاعات کاربر
+import { useUser } from "../../contexts/UserContext";
 
 const UserProfilePage = () => {
+  
   const navigate = useNavigate();
+  const { user } = useUser();
 
-  // انتقال به صفحه ویرایش اطلاعات
   const handleEditClick = () => {
-    navigate("/edit-profile");
+    navigate("/user-edit-profile");
   };
 
-  const { user } = useUser(); // استفاده از اطلاعات کاربر
+  const handleSignUpClick = () => {
+    navigate("/restuarant-signup");
+  };
+
 
   return (
     <Box
@@ -45,10 +49,10 @@ const UserProfilePage = () => {
       >
         <AccountCircleIcon sx={{ fontSize: 48, color: "#ff7a59" }} />
         <Box sx={{ marginLeft: "4px" }}>
-          <Typography variant="h6" fontWeight="bold" sx={{ fontSize: "1.2rem" }}>
-            {user?.name || "نام و نام خانوادگی"}
+          <Typography variant="h6" fontWeight="bold" sx={{ pointerEvents: 'none', userSelect: 'none' ,fontSize: "1.2rem"}} >
+            {user.user.first_name + " " + user.user.last_name || "نام و نام خانوادگی"}
           </Typography>
-          <Typography variant="body2">{user?.phone || "شماره تلفن"}</Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ pointerEvents: 'none', userSelect: 'none' }}> {user.user.phone_number || "شماره تلفن"}</Typography>
         </Box>
         <IconButton sx={{ ml: 2 }} onClick={handleEditClick}>
           <EditIcon sx={{ color: "#ff7a59", fontSize: 25 }} />
@@ -64,25 +68,27 @@ const UserProfilePage = () => {
           p: 1,
         }}
       >
-        <ListItem button sx={{ paddingRight: 2, paddingLeft: 2 }}>
+        <ListItem button style={{ cursor: 'pointer' }} sx={{ paddingRight: 2, paddingLeft: 2 }}>
           <ListItemIcon>
             <ShoppingBagIcon color="warning" />
           </ListItemIcon>
           <ListItemText primary="سفارش‌های من" />
         </ListItem>
         <Divider sx={{ borderColor: "#B0B0B0", width: "80%", mx: "auto", my: 1 }} />
-        <ListItem button sx={{ paddingRight: 2, paddingLeft: 2 }}>
+        <ListItem button style={{ cursor: 'pointer' }} sx={{ paddingRight: 2, paddingLeft: 2 }}>
           <ListItemIcon>
             <FavoriteIcon color="warning" />
           </ListItemIcon>
           <ListItemText primary="لیست علاقه‌مندی‌ها" />
         </ListItem>
         <Divider sx={{ borderColor: "#B0B0B0", width: "80%", mx: "auto", my: 1 }} />
-        <ListItem button sx={{ paddingRight: 2, paddingLeft: 2 }}>
+        <ListItem button style={{ cursor: 'pointer' }} sx={{ paddingRight: 2, paddingLeft: 2 }}>
           <ListItemIcon>
             <AssignmentIcon color="warning" />
           </ListItemIcon>
-          <ListItemText primary="ثبت نام فروشندگان" />
+          <ListItemText 
+          onClick={handleSignUpClick}
+          primary="ثبت نام فروشندگان" />
         </ListItem>
       </List>
     </Box>

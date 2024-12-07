@@ -8,7 +8,6 @@ import {
 	IconButton,
 	Button,
 } from "@mui/material";
-import Header from "./Header";
 import Footer from "./Footer";
 import Grid from "@mui/material/Grid2";
 import BigPizza from "../../assets/imgs/big-pizza.png";
@@ -224,12 +223,22 @@ const ProductSlider = () => {
 							alt={restaurant.name}
 						/>
 						<CardContent>
-							<Typography variant="h6">{restaurant.name}</Typography>
-							<Typography variant="body2" color="text.secondary">
+							<Typography variant="h6" sx={{ pointerEvents: "none" }}>
+								{restaurant.name}
+							</Typography>
+							<Typography
+								variant="body2"
+								color="text.secondary"
+								sx={{ pointerEvents: "none" }}
+							>
 								<Star sx={{ paddingTop: "12px" }} />
 								امتیاز: {restaurant.rating}
 							</Typography>
-							<Typography variant="body2" color="text.secondary">
+							<Typography
+								variant="body2"
+								color="text.secondary"
+								sx={{ pointerEvents: "none" }}
+							>
 								هزینه ارسال: {restaurant.cost}
 							</Typography>
 						</CardContent>

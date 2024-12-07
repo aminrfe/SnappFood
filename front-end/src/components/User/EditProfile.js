@@ -2,13 +2,20 @@ import React, { useState } from "react";
 import GoogleMapReact from "google-map-react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { useUser } from "../../contexts/UserContext";
+import { useNavigate } from "react-router-dom";
 
 const EditProfile = () => {
-  const [name, setName] = useState("نام فعلی کاربر");
-  const [familyName, setFamilyName] = useState("نام خانوادگی فعلی کاربر");
-  const [address, setAddress] = useState("آدرس فعلی کاربر");
+
+  const { user } = useUser();
+  const [name, setName] = useState("");
+  const [familyName, setFamilyName] = useState("");
+  const [address, setAddress] = useState("");
+  const [Department, setDepartment] = useState("");
   const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 }); // Tehran location
   const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
+  const navigate = useNavigate();
+  
 
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);
@@ -116,7 +123,7 @@ const EditProfile = () => {
       <Box style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {/* Name Field */}
         <TextField
-          value={name}
+          value={user.user.first_name}
           placeholder="نام"
           variant="outlined"
           fullWidth
@@ -126,7 +133,7 @@ const EditProfile = () => {
 
         {/* Family Name Field */}
         <TextField
-          value={familyName}
+          value={user.user.last_name}
           placeholder="نام خانوادگی"
           variant="outlined"
           fullWidth
@@ -193,6 +200,16 @@ const EditProfile = () => {
           fullWidth
           style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
           onChange={handleFieldChange(setAddress)}
+          disabled
+        />
+
+          <TextField
+          value={Department}
+          placeholder="پلاک و واحد"
+          variant="outlined"
+          fullWidth
+          style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
+          onChange={handleFieldChange(setDepartment)}
         />
 
         {/* Save Button */}

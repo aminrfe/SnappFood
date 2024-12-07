@@ -60,8 +60,8 @@ class Item(models.Model):
         return os.path.join('item_images/', filename)
 
     STATE_CHOICES = [
-    ('available', 'Available'),
-    ('unavailable', 'Unavailable'),
+        ('available', 'Available'),
+        ('unavailable', 'Unavailable'),
     ]
 
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')

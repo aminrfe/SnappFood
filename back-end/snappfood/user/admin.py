@@ -18,7 +18,7 @@ class UserAdmin(BaseUserAdmin):
         (None, {'fields': ('phone_number', 'password')}),
         (_('Personal info'), {'fields': ('first_name', 'last_name')}),
         (_('Permissions'), {
-            'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions'),
+            'fields': ('is_active', 'is_staff', 'groups', 'user_permissions'),
         }),
         (_('Important dates'), {'fields': ('last_login',)}),
         (_('Role'), {'fields': ('role',)}),
@@ -30,6 +30,7 @@ class UserAdmin(BaseUserAdmin):
             'fields': ('phone_number', 'password1', 'password2', 'first_name', 'last_name', 'role', 'is_staff', 'is_active'),
         }),
     )
+    
 
 admin.site.register(User, UserAdmin)
 

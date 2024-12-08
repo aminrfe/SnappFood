@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import CustomerProfile, User
+from .models import CustomerProfile, User, Favorite
 
 class NestedUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +27,24 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-            
+
         instance.save()
         return instance
+    
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favorite
+        fields = ['id', 'user', 'restaurant']
+        read_only_fields = ['user']
+    def validate(self, attrs):
+        user = self.context['request'].user
+        restaurant = attrs.get('restaurant')
+        
+        if Favorite.objects.filter(user=user, restaurant=restaurant).exists():
+            raise serializers.ValidationError("This restaurant is already in your favorites.")
+        
+        return attrs
+    def create(self, validated_data):
+        user = self.context['request'].user
+        validated_data['user'] = user
+        return super().create(validated_data)

@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings 
 from restaurant.models import RestaurantProfile, Item
-from customer.models import Delivery
 
 class Order(models.Model):
     DELIVERY_METHOD_CHOICES = [
@@ -26,7 +25,6 @@ class Order(models.Model):
     ]
 
     order_id = models.AutoField(primary_key=True)
-    delivery = models.ForeignKey(Delivery, on_delete=models.SET_NULL, null=True, blank=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)

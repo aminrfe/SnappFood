@@ -4,10 +4,15 @@ from restaurant.models import RestaurantProfile
 from django.conf import settings
 
 class CustomerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer_profile", primary_key=True)
-    state = models.CharField(max_length=30)
+    STATE_CHOICES = [
+        ("pending", "PENDING "),
+        ("approved", "APPROVED"),
+        ("rejected", "REJECTED"),
+    ]
 
-    
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="customer_profile", primary_key=True)
+    state = models.CharField(max_length=30, choices=STATE_CHOICES, default='approved')
+
     def __str__(self):
         return f"Customer: {self.user.phone_number}"
     

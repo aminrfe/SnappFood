@@ -13,7 +13,7 @@ class CustomerProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomerProfile
-        fields = ['user', 'state'] 
+        fields = ['user', 'state', 'address', 'longitude', 'latitude'] 
         read_only_fields = ['state']
 
     def update(self, instance, validated_data):

@@ -9,6 +9,7 @@ import RestaurantEditProfile from "./components/Restaurant/EditProfile";
 import Header from "./components/User/Header";
 import UserSignUp from "./components/User/SignUp";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
+import CustomerProfile from "./components/User/profile";
 import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext"; 
 import FoodItemPage from "./components/User/MenuItem";
@@ -38,20 +39,11 @@ function App() {function isAuthenticated() {
 								}
 							/>
 
-							{/* <Route
-              path="/profile"
-              element={isAuthenticated() ? <UserProfilePage /> : <Navigate to="/login" />}
-            />
-            <Route
-              path="/edit-profile"
-              element={isAuthenticated() ? <EditProfilePage /> : <Navigate to="/login" />}
-            /> */}
 
 							<Route path="/login" element={<LoginPage />} />
 							<Route path="/user-signup" element={<UserSignUp />} />
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
-							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 							<Route
 								path="/profile"
 								element={
@@ -79,6 +71,13 @@ function App() {function isAuthenticated() {
   								path="/restaurant/:id/profile"
   								element={
     							isAuthenticated() ? (	<RestaurantProfile />
+    							) : (<Navigate to="/login" replace />)
+  							}
+							/>
+							<Route
+  								path="/customer/profile"
+  								element={
+    							isAuthenticated() ? (	<CustomerProfile />
     							) : (<Navigate to="/login" replace />)
   							}
 							/>

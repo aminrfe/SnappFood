@@ -11,7 +11,7 @@ import { useUser } from "../../contexts/UserContext";
 const UserProfilePage = () => {
   
   const navigate = useNavigate();
-  const { user } = useUser();
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleEditClick = () => {
     navigate("/user-edit-profile");

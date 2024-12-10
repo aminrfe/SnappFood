@@ -4,16 +4,26 @@ import { Box, TextField, Button, Typography } from "@mui/material";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const EditProfile = () => {
 
-  const { user } = useUser();
-  const [name, setName] = useState("");
-  const [familyName, setFamilyName] = useState("");
-  const [address, setAddress] = useState("");
-  const [Department, setDepartment] = useState("");
-  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 }); // Tehran location
-  const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
+  // const [user, setUser] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const [name, setName] = useState(user?.user?.first_name);
+  const [familyName, setFamilyName] = useState(user?.user?.last_name);
+  const [address, setAddress] = useState(user?.address.split("@")[0] || "");
+  const [Department, setDepartment] = useState(user?.address.split("@")[1] || "");
+  const [mapCenter, setMapCenter] = useState({
+    lat: 35.6892,
+    lng: 51.389,
+  }); 
+  const [mapMarker, setMapMarker] = useState({
+    lat: user?.latitude,
+    lng: user?.longitude,
+  });
+  // const [mapMarker, setMapMarker] = useState({ lat: user?.user?.latitude, lng: user?.user?.longitude });
   const navigate = useNavigate();
   
 
@@ -21,8 +31,38 @@ const EditProfile = () => {
     setter(e.target.value);
   };
 
-  const handleSave = () => {
-    alert(`اطلاعات ذخیره شد:\nنام: ${name}\nنام خانوادگی: ${familyName}\nآدرس: ${address}`);
+  const handleSave = async () => {
+    try {
+
+    const formData = new FormData();
+    formData.append("first_name", name);
+    formData.append("last_name", familyName);
+    formData.append("address", address + "@" + Department);
+    const longitude = parseFloat(mapMarker.lng.toFixed(6));
+    const latitude = parseFloat(mapMarker.lat.toFixed(6));
+    console.log("Formatted Longitude:", longitude, "Formatted Latitude:", latitude);
+    formData.append("longitude", longitude);
+    formData.append("latitude", latitude);
+
+    await axiosInstance.patch(`/customer/profile`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    const response = await axiosInstance.get("/customer/profile");
+    localStorage.setItem("user", JSON.stringify(response.data));
+
+      alert("اطلاعات با موفقیت ذخیره شد.");
+      navigate("/customer/profile");
+    } catch (error) {
+      if (error.response) {
+        console.error("Server Response:", error.response.data);
+      } else {
+        console.error("Error saving profile data:", error);
+      }
+      alert("خطا در ذخیره اطلاعات.");
+    }
   };
 
   const handleGetCurrentLocation = () => {
@@ -68,7 +108,7 @@ const EditProfile = () => {
       }
     } catch (error) {
       console.error("Error fetching address:", error);
-      setAddress("خطا در دریافت آدرس.");
+      // setAddress("خطا در دریافت آدرس.");
     }
   };
 
@@ -155,7 +195,7 @@ const EditProfile = () => {
             bootstrapURLKeys={{
               key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", // Replace with your API key
             }}
-            center={mapCenter}
+            center={mapMarker}
             zoom={14}
             onClick={handleMapClick}
           >
@@ -204,7 +244,7 @@ const EditProfile = () => {
         />
 
           <TextField
-          value={Department}
+          value={Department || " "}
           placeholder="پلاک و واحد"
           variant="outlined"
           fullWidth

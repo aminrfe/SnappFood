@@ -17,7 +17,6 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import LoginImg from "../assets/imgs/login.png";
 import axios from "../utills/axiosInstance.js";
-// import { useUser } from "../contexts/UserContext.js";
 
 function Login() {
 	const [showPassword, setShowPassword] = useState(false);

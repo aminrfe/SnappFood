@@ -20,7 +20,7 @@ const UserProvider = ({ children }) => {
 
     try {
       const response = await axiosInstance.get("/customer/profile");
-      console.log("پروفایل کاربر:", response.data);
+      // console.log("پروفایل کاربر:", response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
       setUser(response.data);
     } catch (error) {

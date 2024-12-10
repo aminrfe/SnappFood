@@ -2,31 +2,27 @@ import React, { useState } from "react";
 import GoogleMapReact from "google-map-react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import { useUser } from "../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
 
 const EditProfile = () => {
 
-  // const [user, setUser] = useState(null);
   const user = JSON.parse(localStorage.getItem("user"));
-
+  const navigate = useNavigate();
   const [name, setName] = useState(user?.user?.first_name);
   const [familyName, setFamilyName] = useState(user?.user?.last_name);
   const [address, setAddress] = useState(user?.address.split("@")[0] || "");
   const [Department, setDepartment] = useState(user?.address.split("@")[1] || "");
   const [mapCenter, setMapCenter] = useState({
-    lat: 35.6892,
-    lng: 51.389,
-  }); 
-  const [mapMarker, setMapMarker] = useState({
-    lat: user?.latitude,
-    lng: user?.longitude,
+    lat: parseFloat(user?.latitude) || 35.6892,
+    lng: parseFloat(user?.longitude) || 51.389,
   });
-  // const [mapMarker, setMapMarker] = useState({ lat: user?.user?.latitude, lng: user?.user?.longitude });
-  const navigate = useNavigate();
   
-
+  const [mapMarker, setMapMarker] = useState({
+    lat: parseFloat(user?.latitude) || 35.6892,
+    lng: parseFloat(user?.longitude) || 51.389,
+  });
+  
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);
   };
@@ -34,19 +30,22 @@ const EditProfile = () => {
   const handleSave = async () => {
     try {
 
-    const formData = new FormData();
-    formData.append("first_name", name);
-    formData.append("last_name", familyName);
-    formData.append("address", address + "@" + Department);
-    const longitude = parseFloat(mapMarker.lng.toFixed(6));
-    const latitude = parseFloat(mapMarker.lat.toFixed(6));
-    console.log("Formatted Longitude:", longitude, "Formatted Latitude:", latitude);
-    formData.append("longitude", longitude);
-    formData.append("latitude", latitude);
+      const userObject = {
+        user: {
+          first_name: name,
+          last_name: familyName,
+        },
+        address: address + "@" + Department,
+        longitude: mapMarker.lng.toFixed(6).toString(),
+        latitude: mapMarker.lat.toFixed(6).toString(),
+      };
 
-    await axiosInstance.patch(`/customer/profile`, formData, {
+
+    await axiosInstance.patch('/customer/profile', userObject, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+        'X-CSRFTOKEN': 'ca1gSWQ79A4pj3yFh5XtKEkrGUElnnCzjiZyTaQBjAASmwImWmLtq1WCLzikxDX1', // اضافه کردن توکن CSRF
       },
     });
 
@@ -72,7 +71,7 @@ const EditProfile = () => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
           setMapMarker({ lat: latitude, lng: longitude });
-          fetchAddress(latitude, longitude); // Fetch address when current location is fetched
+          fetchAddress(latitude, longitude);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -98,17 +97,12 @@ const EditProfile = () => {
         const suburb = data.address.suburb || '';
         const city = data.address.city || '';
         const cityDistrict = data.address.city_district || '';
-        const state = data.address.state || ''; // برای منطقه یا استان
-
-        // ترکیب آدرس به صورت کامل
+        const state = data.address.state || ''; 
         const fullAddress = `${neighbourhood || suburb || ''} ${road || ''} ${cityDistrict || city || ''} ${state || ''}`;
         setAddress(fullAddress.trim());
-      } else {
-        // setAddress("آدرس پیدا نشد");
-      }
+      } 
     } catch (error) {
       console.error("Error fetching address:", error);
-      // setAddress("خطا در دریافت آدرس.");
     }
   };
 
@@ -124,7 +118,7 @@ const EditProfile = () => {
         width: "70%",
         height: "100vh",
         margin: "0 auto",
-        paddingTop: "80px", // Offset for the fixed header
+        paddingTop: "80px", 
         paddingRight: "15px",
         paddingLeft: "15px",
         backgroundColor: "#fff",
@@ -163,7 +157,7 @@ const EditProfile = () => {
       <Box style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
         {/* Name Field */}
         <TextField
-          value={user.user.first_name}
+          value={name}
           placeholder="نام"
           variant="outlined"
           fullWidth
@@ -173,7 +167,7 @@ const EditProfile = () => {
 
         {/* Family Name Field */}
         <TextField
-          value={user.user.last_name}
+          value={familyName}
           placeholder="نام خانوادگی"
           variant="outlined"
           fullWidth
@@ -195,7 +189,7 @@ const EditProfile = () => {
             bootstrapURLKeys={{
               key: "AIzaSyD5AZ9092BIIq6gW9SWqdRJ9MBRgTLHLPY", // Replace with your API key
             }}
-            center={mapMarker}
+            center={mapCenter}
             zoom={14}
             onClick={handleMapClick}
           >

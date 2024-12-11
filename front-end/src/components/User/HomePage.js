@@ -75,12 +75,12 @@ const HeroSection = () => {
 };
 
 const categories = [
-	{ title: "برگر", icon: "🍔" },
-	{ title: "پیتزا", icon: "🍕" },
-	{ title: "سوخاری", icon: "🍗" },
-	{ title: "نوشیدنی", icon: "🍹" },
+	{ title: "رستوران", icon: "🍔" },
+	{ title: "کافه", icon: "☕️" },
+	{ title: "شیرینی", icon: "🍩" },
+	{ title: "آبمیوه بستنی", icon: "🍹" },
 	{ title: "ایرانی", icon: "🍽️" },
-	{ title: "نان و شیرینی", icon: "🍞" },
+	{ title: "نانوایی", icon: "🍞" },
 ];
 
 const CategoryCards = () => {
@@ -202,7 +202,7 @@ const ProductSlider = () => {
 				{restaurants.map((restaurant) => (
 					<Card
 						key={restaurant.id}
-						onClick={() => navigate("/menu-item")}
+						onClick={() => navigate("/restaurant")}
 						sx={{
 							cursor: "pointer",
 							padding: 2,

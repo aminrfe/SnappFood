@@ -14,6 +14,7 @@ import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext"; 
 import FoodItemPage from "./components/User/MenuItem";
 import "./App.css";
+import RestaurantPage from "./components/User/RestaurantPage";
 
 
 function App() {function isAuthenticated() {
@@ -44,6 +45,8 @@ function App() {function isAuthenticated() {
 							<Route path="/user-signup" element={<UserSignUp />} />
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
+							<Route path="/restaurant" element={<RestaurantPage />} />
+							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 							<Route
 								path="/profile"
 								element={
@@ -57,22 +60,32 @@ function App() {function isAuthenticated() {
 							<Route
 								path="/user-edit-profile"
 								element={
-									isAuthenticated() ? <UserEditProfile /> : <Navigate to="/login" />
+									isAuthenticated() ? (
+										<UserEditProfile />
+									) : (
+										<Navigate to="/login" />
+									)
 								}
 							/>
 							<Route
-  								path="/restaurant/:id/profileEdit"
-  								element={
-    							isAuthenticated() ? (	<RestaurantEditProfile />
-    							) : (<Navigate to="/login" replace />)
-  							}
+								path="/restaurant/:id/profileEdit"
+								element={
+									isAuthenticated() ? (
+										<RestaurantEditProfile />
+									) : (
+										<Navigate to="/login" replace />
+									)
+								}
 							/>
 							<Route
-  								path="/restaurant/:id/profile"
-  								element={
-    							isAuthenticated() ? (	<RestaurantProfile />
-    							) : (<Navigate to="/login" replace />)
-  							}
+								path="/restaurant/:id/profile"
+								element={
+									isAuthenticated() ? (
+										<RestaurantProfile />
+									) : (
+										<Navigate to="/login" replace />
+									)
+								}
 							/>
 							<Route
   								path="/customer/profile"

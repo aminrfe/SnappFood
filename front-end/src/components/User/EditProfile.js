@@ -10,9 +10,9 @@ const EditProfile = () => {
 	const navigate = useNavigate();
 	const [name, setName] = useState(user?.user?.first_name);
 	const [familyName, setFamilyName] = useState(user?.user?.last_name);
-	const [address, setAddress] = useState(user?.address.split("@")[0] || "");
+	const [address, setAddress] = useState(user?.address?.split("@")[0] || "آدرس");
 	const [Department, setDepartment] = useState(
-		user?.address.split("@")[1] || "",
+		user?.address?.split("@")[1] || "",
 	);
 	const [mapCenter, setMapCenter] = useState({
 		lat: parseFloat(user?.latitude) || 35.6892,

@@ -120,6 +120,7 @@ const EditProfile = () => {
 			});
 
 			alert("اطلاعات با موفقیت ذخیره شد.");
+			navigate(`/restaurant/${id}/profile`);
 		} catch (error) {
 			if (error.response) {
 				console.error("Server Response:", error.response.data);

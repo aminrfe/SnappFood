@@ -6,7 +6,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { data, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { format, parse } from 'date-fns';
 
 const EditProfile = () => {
@@ -38,7 +38,7 @@ const EditProfile = () => {
       const data = response.data;
   
       if (data) {
-        console.log(data);
+        // console.log(data);
         setName(data.name || "");
         setAddress(data.address || "");
         setDeliveryCost(data.delivery_price || "");
@@ -50,14 +50,14 @@ const EditProfile = () => {
         setClosingTime(closing);
 
   
-        if (data.coordinate) {
+        if (data.latitude && data.longitude) {
           setMapCenter({
-            lat: data.coordinate.lat || 35.6892,
-            lng: data.coordinate.lng || 51.389,
+            lat: parseFloat(data.latitude) || 35.6892,
+            lng: parseFloat(data.longitude) || 51.389,
           });
           setMapMarker({
-            lat: data.coordinate.lat || 35.6892,
-            lng: data.coordinate.lng || 51.389,
+            lat: parseFloat(data.latitude) || 35.6892,
+            lng: parseFloat(data.longitude) || 51.389,
           });
         }
 
@@ -98,16 +98,15 @@ const EditProfile = () => {
     formData.append("business_type", businessType);
     formData.append("open_hour", formattedOpeningTime);
     formData.append("close_hour", formattedClosingTime);
-    formData.append("coordinate", JSON.stringify(mapMarker)); 
+    formData.append("latitude", mapMarker.lat.toFixed(6).toString()); 
+    formData.append("longtitude", mapMarker.lng.toFixed(6).toString()); 
 
     if (logo instanceof File) {
       formData.append("photo", logo); 
     } else {
       console.warn("No valid file selected for photo.");
     }
-
-    console.log([...formData]); 
-
+    // console.log([...formData]); 
     await axiosInstance.put(`/restaurant/${id}/profile`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",

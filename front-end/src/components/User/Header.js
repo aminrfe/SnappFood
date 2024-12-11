@@ -81,8 +81,8 @@ const Header = () => {
 
     // Update login status based on tokens presence
     setIsLoggedIn(!!(accessToken && refreshToken)); 
-    console.log("!!(accessToken && refreshToken): " ,!!(accessToken && refreshToken));
-    console.log("isloggedin ",isLoggedIn);
+    // console.log("!!(accessToken && refreshToken): " ,!!(accessToken && refreshToken));
+    // console.log("isloggedin ",isLoggedIn);
     if (id) {
       setRestaurantId(id); // Set restaurantId if present in localStorage
     }
@@ -111,9 +111,7 @@ const Header = () => {
   };
 
   const handleProfileClick = () => {
-    if (restaurantId) {
-      navigate(`/restaurant/${restaurantId}/profile`); // Navigate to restaurant profile if logged in
-    }
+      navigate(`/customer/profile`);
   };
 
   // const handleLogoutClick = () => {

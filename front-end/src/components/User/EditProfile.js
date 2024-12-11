@@ -2,20 +2,66 @@ import React, { useState } from "react";
 import GoogleMapReact from "google-map-react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { FaMapMarkerAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const EditProfile = () => {
-  const [name, setName] = useState("نام فعلی کاربر");
-  const [familyName, setFamilyName] = useState("نام خانوادگی فعلی کاربر");
-  const [address, setAddress] = useState("آدرس فعلی کاربر");
-  const [mapCenter, setMapCenter] = useState({ lat: 35.6892, lng: 51.389 }); // Tehran location
-  const [mapMarker, setMapMarker] = useState({ lat: 35.6892, lng: 51.389 });
 
+  const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+  const [name, setName] = useState(user?.user?.first_name);
+  const [familyName, setFamilyName] = useState(user?.user?.last_name);
+  const [address, setAddress] = useState(user?.address.split("@")[0] || "");
+  const [Department, setDepartment] = useState(user?.address.split("@")[1] || "");
+  const [mapCenter, setMapCenter] = useState({
+    lat: parseFloat(user?.latitude) || 35.6892,
+    lng: parseFloat(user?.longitude) || 51.389,
+  });
+  
+  const [mapMarker, setMapMarker] = useState({
+    lat: parseFloat(user?.latitude) || 35.6892,
+    lng: parseFloat(user?.longitude) || 51.389,
+  });
+  
   const handleFieldChange = (setter) => (e) => {
     setter(e.target.value);
   };
 
-  const handleSave = () => {
-    alert(`اطلاعات ذخیره شد:\nنام: ${name}\nنام خانوادگی: ${familyName}\nآدرس: ${address}`);
+  const handleSave = async () => {
+    try {
+
+      const userObject = {
+        user: {
+          first_name: name,
+          last_name: familyName,
+        },
+        address: address + "@" + Department,
+        longitude: mapMarker.lng.toFixed(6).toString(),
+        latitude: mapMarker.lat.toFixed(6).toString(),
+      };
+
+
+    await axiosInstance.patch('/customer/profile', userObject, {
+      headers: {
+        'Content-Type': 'application/json',
+        'accept': 'application/json',
+        'X-CSRFTOKEN': 'ca1gSWQ79A4pj3yFh5XtKEkrGUElnnCzjiZyTaQBjAASmwImWmLtq1WCLzikxDX1', // اضافه کردن توکن CSRF
+      },
+    });
+
+    const response = await axiosInstance.get("/customer/profile");
+    localStorage.setItem("user", JSON.stringify(response.data));
+
+      alert("اطلاعات با موفقیت ذخیره شد.");
+      navigate("/customer/profile");
+    } catch (error) {
+      if (error.response) {
+        console.error("Server Response:", error.response.data);
+      } else {
+        console.error("Error saving profile data:", error);
+      }
+      alert("خطا در ذخیره اطلاعات.");
+    }
   };
 
   const handleGetCurrentLocation = () => {
@@ -25,7 +71,7 @@ const EditProfile = () => {
           const { latitude, longitude } = position.coords;
           setMapCenter({ lat: latitude, lng: longitude });
           setMapMarker({ lat: latitude, lng: longitude });
-          fetchAddress(latitude, longitude); // Fetch address when current location is fetched
+          fetchAddress(latitude, longitude);
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -51,17 +97,12 @@ const EditProfile = () => {
         const suburb = data.address.suburb || '';
         const city = data.address.city || '';
         const cityDistrict = data.address.city_district || '';
-        const state = data.address.state || ''; // برای منطقه یا استان
-
-        // ترکیب آدرس به صورت کامل
+        const state = data.address.state || ''; 
         const fullAddress = `${neighbourhood || suburb || ''} ${road || ''} ${cityDistrict || city || ''} ${state || ''}`;
         setAddress(fullAddress.trim());
-      } else {
-        // setAddress("آدرس پیدا نشد");
-      }
+      } 
     } catch (error) {
       console.error("Error fetching address:", error);
-      setAddress("خطا در دریافت آدرس.");
     }
   };
 
@@ -77,7 +118,7 @@ const EditProfile = () => {
         width: "70%",
         height: "100vh",
         margin: "0 auto",
-        paddingTop: "80px", // Offset for the fixed header
+        paddingTop: "80px", 
         paddingRight: "15px",
         paddingLeft: "15px",
         backgroundColor: "#fff",
@@ -193,6 +234,16 @@ const EditProfile = () => {
           fullWidth
           style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
           onChange={handleFieldChange(setAddress)}
+          disabled
+        />
+
+          <TextField
+          value={Department || " "}
+          placeholder="پلاک و واحد"
+          variant="outlined"
+          fullWidth
+          style={{ backgroundColor: "#fceee3", borderRadius: "8px" }}
+          onChange={handleFieldChange(setDepartment)}
         />
 
         {/* Save Button */}

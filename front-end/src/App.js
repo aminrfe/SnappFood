@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import RTLProvider from "./ThemeProvider";
 import HomePage from "./components/User/HomePage";
@@ -9,6 +9,7 @@ import RestaurantEditProfile from "./components/Restaurant/EditProfile";
 import Header from "./components/User/Header";
 import UserSignUp from "./components/User/SignUp";
 import RestaurantSignUp from "./components/Restaurant/SignUp";
+import CustomerProfile from "./components/User/profile";
 import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext"; 
 import FoodItemPage from "./components/User/MenuItem";
@@ -39,14 +40,6 @@ function App() {function isAuthenticated() {
 								}
 							/>
 
-							{/* <Route
-              path="/profile"
-              element={isAuthenticated() ? <UserProfilePage /> : <Navigate to="/login" />}
-            />
-            <Route
-              path="/edit-profile"
-              element={isAuthenticated() ? <EditProfilePage /> : <Navigate to="/login" />}
-            /> */}
 
 							<Route path="/login" element={<LoginPage />} />
 							<Route path="/user-signup" element={<UserSignUp />} />
@@ -93,6 +86,13 @@ function App() {function isAuthenticated() {
 										<Navigate to="/login" replace />
 									)
 								}
+							/>
+							<Route
+  								path="/customer/profile"
+  								element={
+    							isAuthenticated() ? (	<CustomerProfile />
+    							) : (<Navigate to="/login" replace />)
+  							}
 							/>
 						</Routes>
 					</Router>

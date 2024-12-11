@@ -29,7 +29,12 @@ jobs:
         python -m pip install --upgrade pip 
         pip install -r requirements.txt
 
+    - name: Run Migrations
+      run: |
+        cd back-end/snappfood
+        python manage.py makemigrations
+        
     - name: Run Tests
       run: |
         cd back-end/snappfood
-        python manage.py test  # Run Django tests
+        python manage.py test 

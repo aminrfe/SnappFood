@@ -3,10 +3,14 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
+from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from .models import RestaurantProfile, Item
 from .serializers import RestaurantProfileSerializer, ItemCreateUpdateSerializer, ItemListSerializer
 from .permissions import IsRestaurantManager
+from django.utils import timezone
+import pytz
+
 
 
 class RestaurantProfileView(generics.RetrieveUpdateAPIView):
@@ -139,3 +143,63 @@ class ItemRetrieveUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class RestaurantListView(APIView):
+
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of restaurants filtered by name, business type, and open/closed status.",
+        manual_parameters=[
+            openapi.Parameter(
+                'name',
+                openapi.IN_QUERY,
+                description="Filter by restaurant name (case-insensitive partial match).",
+                type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'business_type',
+                openapi.IN_QUERY,
+                description="Filter by business type (case-insensitive partial match).",
+                type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'is_open',
+                openapi.IN_QUERY,
+                description='Filter by open/closed status ("true" for open, "false" for closed).',
+                type=openapi.TYPE_STRING,
+                enum=["true", "false"]
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                description="List of restaurants matching the filters.",
+                schema=RestaurantProfileSerializer(many=True)
+            ),
+            400: "Invalid request parameters."
+        }
+    )
+    def get(self, request):
+        name = request.query_params.get('name', None)
+        business_type = request.query_params.get('business_type', None)
+        is_open = request.query_params.get('is_open', None)
+        
+        desired_timezone = pytz.timezone('Asia/Tehran')
+
+        current_time = timezone.now()
+        localized_time = current_time.astimezone(desired_timezone)
+
+        queryset = RestaurantProfile.objects.all()
+
+        if name:
+            queryset = queryset.filter(name__icontains=name)
+        
+        if business_type:
+            queryset = queryset.filter(business_type__icontains=business_type)
+        
+        if is_open is not None:
+            if is_open.lower() == 'true':
+                queryset = queryset.filter(open_hour__lte=localized_time, close_hour__gte=localized_time)
+            elif is_open.lower() == 'false':
+                queryset = queryset.exclude(open_hour__lte=localized_time, close_hour__gte=localized_time)
+
+        serializer = RestaurantProfileSerializer(queryset, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

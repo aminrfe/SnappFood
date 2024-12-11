@@ -13,14 +13,11 @@ import {
 	Tab,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
-import { FavoriteBorder, Star } from "@mui/icons-material";
 
 const RestaurantPage = () => {
 	const navigate = useNavigate();
@@ -95,7 +92,7 @@ const RestaurantPage = () => {
 					sx={{
 						position: "relative",
 						width: "fit-content",
-						mx: "auto"
+						mx: "auto",
 					}}
 				>
 					<img

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
 	Box,
@@ -32,9 +32,9 @@ function SignUp() {
 
 	const navigate = useNavigate(); // Initialize navigate
 
- 	const handleLoginClick = () => {
-    navigate("/login"); 
-  	};
+	const handleLoginClick = () => {
+		navigate("/login");
+	};
 
 	const handleClickShowPassword = () => {
 		setShowPassword((show) => !show);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
 	Box,
@@ -32,11 +32,11 @@ function SignUp({ onUserSignUp }) {
 	const [error, setErrors] = useState();
 	const [showPassword, setShowPassword] = useState(false);
 
-	const navigate = useNavigate(); // Initialize navigate
+	const navigate = useNavigate();
 
- 	const handleLoginClick = () => {
-    navigate("/login"); 
-  	};
+	const handleLoginClick = () => {
+		navigate("/login");
+	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();

@@ -15,6 +15,7 @@ import UserProvider from "./contexts/UserContext";
 import FoodItemPage from "./components/User/MenuItem";
 import "./App.css";
 import RestaurantPage from "./components/User/RestaurantPage";
+import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
 
 
@@ -47,6 +48,7 @@ function App() {function isAuthenticated() {
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
 							<Route path="/restaurant" element={<RestaurantPage />} />
+							<Route path="/restaurant/menu" element={<EditMenu />} />
 							<Route path="/favorites" element={<FavoritesPage />} />
 							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 							<Route

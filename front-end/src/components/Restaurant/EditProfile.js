@@ -16,7 +16,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { format, parse } from "date-fns";
 
 const EditProfile = () => {
@@ -190,6 +190,8 @@ const EditProfile = () => {
 		fetchAddress(lat, lng);
 	};
 
+	const navigate = useNavigate();
+
 	return (
 		<Box
 			style={{
@@ -272,7 +274,7 @@ const EditProfile = () => {
 							variant="contained"
 							component="span"
 							fullWidth
-							style={{ backgroundColor: "#f0871f" }}
+							style={{ backgroundColor: "primary" }}
 						>
 							بارگذاری لوگو
 						</Button>
@@ -303,6 +305,18 @@ const EditProfile = () => {
 							/>
 						)
 					)}
+				</Box>
+
+				<Box>
+					<Button
+						variant="contained"
+						component="span"
+						fullWidth
+						style={{ backgroundColor: "primary" }}
+						onClick={() => navigate("/restaurant/menu")}
+					>
+						ویرایش منو
+					</Button>
 				</Box>
 
 				<Grid container spacing={2}>
@@ -431,7 +445,7 @@ const EditProfile = () => {
 					variant="contained"
 					color="primary"
 					style={{
-						backgroundColor: "#f0871f",
+						backgroundColor: "primary",
 						color: "white",
 						fontWeight: "bold",
 						padding: "10px",

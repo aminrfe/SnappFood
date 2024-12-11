@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
 import axiosInstance from "../utills/axiosInstance";
 
 // ایجاد کانتکست
@@ -21,7 +20,8 @@ const UserProvider = ({ children }) => {
 
     try {
       const response = await axiosInstance.get("/customer/profile");
-      console.log("پروفایل کاربر:", response.data);
+      // console.log("پروفایل کاربر:", response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
       setUser(response.data);
     } catch (error) {
       console.error("خطا در دریافت پروفایل:", error);

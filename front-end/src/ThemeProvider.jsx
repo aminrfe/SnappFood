@@ -5,6 +5,15 @@ import createCache from "@emotion/cache";
 import rtlPlugin from "stylis-plugin-rtl";
 
 const theme = createTheme({
+	palette: {
+		primary: {
+			main: "#D68240", // Your custom primary color
+			contrastText: "#fff", // Optional: text color for better contrast
+		},
+		secondary: {
+			main: "#F4DCC9", // Example secondary color
+		},
+	},
 	typography: {
 		fontFamily: "Vazir, sans-serif",
 	},

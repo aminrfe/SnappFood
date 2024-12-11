@@ -200,7 +200,7 @@ const FoodItemPage = () => {
 				</Box>
 
 				{/* Add to Cart */}
-				<Button variant="contained" color="success" fullWidth >
+				<Button variant="contained" color="success" fullWidth>
 					مشاهده سبد خرید
 				</Button>
 			</Grid>

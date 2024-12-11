@@ -9,9 +9,9 @@ const Footer = () => {
 		<Box
 			component="footer"
 			sx={{
-				backgroundColor: "#F4DCC9", 
+				backgroundColor: "#F4DCC9",
 				padding: "20px",
-				marginTop: "auto", 
+				marginTop: "auto",
 				width: "100vw",
 			}}
 		>

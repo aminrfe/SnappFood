@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import {
 	Box,
 	TextField,
@@ -34,13 +34,13 @@ function Login() {
 
 	const navigate = useNavigate(); // Initialize navigate
 
- 	const handleSignUpClick = () => {
-    navigate("/user-signup"); // Navigate to sign up page
-  	};
+	const handleSignUpClick = () => {
+		navigate("/user-signup"); // Navigate to sign up page
+	};
 
-  	const handleStoreSignUpClick = () => {
-    navigate("/restuarant-signup"); // Navigate to store sign up page
-  	};
+	const handleStoreSignUpClick = () => {
+		navigate("/restuarant-signup"); // Navigate to store sign up page
+	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -76,13 +76,13 @@ function Login() {
 
 		try {
 			const response = await axios.post(
-			  "http://127.0.0.1:8000/api/auth/token",
-			  {
-				phone_number: `98${phoneNumber.slice(1)}`,
-				password: password,
-			  }
+				"http://127.0.0.1:8000/api/auth/token",
+				{
+					phone_number: `98${phoneNumber.slice(1)}`,
+					password: password,
+				},
 			);
-			
+
 			console.log(response.data);
 			// ذخیره توکن‌ها در localStorage
 			localStorage.setItem("access", response.data.access);
@@ -92,20 +92,18 @@ function Login() {
 
 			// login(response.data.access);
 			// await fetchUser();
-		  
-			if(response.data.restaurant_id)
+
+			if (response.data.restaurant_id)
 				navigate(`/restaurant/${response.data.restaurant_id}/profile`);
-			else
-				navigate("/");
+			else navigate("/");
 			window.location.reload();
-		  } catch (error) {
+		} catch (error) {
 			if (error.response?.status === 401) {
-			  setError("اطلاعات ورود صحیح نیست.");
+				setError("اطلاعات ورود صحیح نیست.");
 			} else {
-			  setError("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
+				setError("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
 			}
-		  }
-		  
+		}
 	};
 
 	return (

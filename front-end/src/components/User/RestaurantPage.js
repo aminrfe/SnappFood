@@ -1,6 +1,5 @@
 import React, { useState, useEffect  } from "react";
 import { useNavigate, useParams  } from "react-router-dom";
-import { parse, format } from 'date-fns';
 import {
 	Box,
 	Typography,
@@ -20,11 +19,13 @@ import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
+import axios from "axios";
 
 const RestaurantPage = () => {
 	const [name, setName] = useState("");
 	const [address, setAddress] = useState("");
 	const [deliveryCost, setDeliveryCost] = useState("");
+	const [cityName, setCityName] = useState("");
 	const [description, setDescription] = useState("");
 	const [openingTime, setOpeningTime] = useState(null);
 	const [closingTime, setClosingTime] = useState(null);
@@ -43,6 +44,7 @@ const RestaurantPage = () => {
 		}
 	  }, [restaurantId]);
 
+
 	const fetchProfileData = async () => {
 		if (!id) {
 			console.error("userId is undefined. Cannot fetch profile data.");
@@ -56,11 +58,14 @@ const RestaurantPage = () => {
 			if (data) {
 				console.log(data);
 				setName(data.name || "");
+				// const translatedAddress = await translateText(data.address || "");
 				setAddress(data.address || "");
+				// console.log(address);
 				setDeliveryCost(data.delivery_price || "");
 				setDescription(data.description || "");
 				setOpeningTime(data.open_hour.slice(0,5));
 				setClosingTime(data.close_hour.slice(0,5));
+				setCityName(data.city_name || "");
 				if (data.photo) {
 					setLogo(data.photo);
 				}
@@ -175,7 +180,7 @@ const RestaurantPage = () => {
 					py={2}
 				>
 					<Chip label="۴.۷" />
-					<Chip label="۲۰ دقیقه" />
+					<Chip label={cityName} />
 					<Chip label={deliveryCost === 0 ? "رایگان" : `${Math.floor(parseFloat(deliveryCost))} تومان`} />
 				</Box>
 				<Box display="flex" justifyContent="center" alignItems="center">

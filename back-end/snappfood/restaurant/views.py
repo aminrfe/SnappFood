@@ -124,7 +124,7 @@ class ItemRetrieveUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_summary="Partially update an existing item for a specific restaurant.",
+        operation_summary="Partially update an existing item for a specific restaurant",
         request_body=ItemCreateUpdateSerializer,
         responses={
             200: ItemCreateUpdateSerializer,

@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings 
-from restaurant.models import RestaurantProfile, Item
 
 class Order(models.Model):
     DELIVERY_METHOD_CHOICES = [
@@ -26,7 +25,7 @@ class Order(models.Model):
 
     order_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey('restaurant.RestaurantProfile', on_delete=models.CASCADE)
     order_date = models.DateTimeField(auto_now_add=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     state = models.CharField(max_length=20, choices=STATE_CHOICES, default='shopping_cart')
@@ -39,6 +38,6 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='order_items')
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='order_items')
+    item = models.ForeignKey('restaurant.Item', on_delete=models.CASCADE, related_name='order_items')
     count = models.PositiveIntegerField() 
     price = models.DecimalField(max_digits=10, decimal_places=2)

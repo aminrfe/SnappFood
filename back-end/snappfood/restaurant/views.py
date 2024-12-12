@@ -21,7 +21,7 @@ class RestaurantProfileView(generics.RetrieveUpdateAPIView):
 
 
     @swagger_auto_schema(
-        operation_description="Retrieve a restaurant's profile details.",
+        operation_summary="Retrieve a restaurant's profile details.",
         responses={
             200: RestaurantProfileSerializer,
             404: 'Restaurant profile not found'
@@ -31,7 +31,7 @@ class RestaurantProfileView(generics.RetrieveUpdateAPIView):
         return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
-        operation_description="Update the restaurant's profile details.",
+        operation_summary="Update the restaurant's profile details",
         responses={
             200: RestaurantProfileSerializer,
             404: 'Restaurant profile not found'
@@ -52,7 +52,7 @@ class ItemListCreateView(APIView):
         return ItemListSerializer
 
     @swagger_auto_schema(
-        operation_description="Retrieve a list of items for a specific restaurant.",
+        operation_summary="Retrieve a list of items for a specific restaurant",
         responses={
             200: ItemListSerializer(many=True),
             404: "Restaurant not found",
@@ -66,7 +66,7 @@ class ItemListCreateView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        operation_description="Create a new item for a specific restaurant.",
+        operation_summary="Create a new item for a specific restaurant",
         request_body=ItemCreateUpdateSerializer,
         responses={
             201: ItemCreateUpdateSerializer,
@@ -91,7 +91,7 @@ class ItemRetrieveUpdateView(APIView):
         return ItemListSerializer
 
     @swagger_auto_schema(
-        operation_description="Retrieve a specific item for a specific restaurant.",
+        operation_summary="Retrieve a specific item for a specific restaurant",
         responses={
             200: ItemListSerializer,
             404: "Item not found",
@@ -105,7 +105,7 @@ class ItemRetrieveUpdateView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        operation_description="Update an existing item for a specific restaurant.",
+        operation_summary="Update an existing item for a specific restaurant",
         request_body=ItemCreateUpdateSerializer,
         responses={
             200: ItemCreateUpdateSerializer,
@@ -124,7 +124,7 @@ class ItemRetrieveUpdateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_description="Partially update an existing item for a specific restaurant.",
+        operation_summary="Partially update an existing item for a specific restaurant.",
         request_body=ItemCreateUpdateSerializer,
         responses={
             200: ItemCreateUpdateSerializer,
@@ -146,7 +146,7 @@ class ItemRetrieveUpdateView(APIView):
 class RestaurantListView(APIView):
 
     @swagger_auto_schema(
-        operation_description="Retrieve a list of restaurants filtered by name, business type, and open/closed status.",
+        operation_summary="Retrieve a list of restaurants filtered by name, business type, and open/closed status.",
         manual_parameters=[
             openapi.Parameter(
                 'name',

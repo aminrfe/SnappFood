@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Card,
@@ -17,6 +17,7 @@ import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
+import axiosInstance from "../../utills/publicAxiosInstance";
 
 const HeroSection = () => {
 	return (
@@ -147,36 +148,52 @@ const CategoryCards = () => {
 
 const ProductSlider = () => {
 	const navigate = useNavigate();
-	const restaurants = [
-		{
-			id: 1,
-			name: "رستوران نمونه یک",
-			image: Food1,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 2,
-			name: "رستوران نمونه دو",
-			image: Food2,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 3,
-			name: "رستوران نمونه سه",
-			image: Food3,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 4,
-			name: "رستوران نمونه چهار",
-			image: Food4,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-	];
+	const [restaurants, setRestaurants] = useState([]);
+	// const restaurants = [
+	// 	{
+	// 		id: 1,
+	// 		name: "رستوران نمونه یک",
+	// 		image: Food1,
+	// 		cost: "15 هزار تومان",
+	// 		rating: 4.3,
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		name: "رستوران نمونه دو",
+	// 		image: Food2,
+	// 		cost: "15 هزار تومان",
+	// 		rating: 4.3,
+	// 	},
+	// 	{
+	// 		id: 3,
+	// 		name: "رستوران نمونه سه",
+	// 		image: Food3,
+	// 		cost: "15 هزار تومان",
+	// 		rating: 4.3,
+	// 	},
+	// 	{
+	// 		id: 4,
+	// 		name: "رستوران نمونه چهار",
+	// 		image: Food4,
+	// 		cost: "15 هزار تومان",
+	// 		rating: 4.3,
+	// 	},
+	// ];
+
+	useEffect(() => {
+		const fetchRestaurants = async () => {
+			try {
+				const response = await axiosInstance.get("/restaurant/list/");
+				setRestaurants(response.data); // ذخیره داده‌های دریافت‌شده
+				console.log(response.data);
+			} catch (error) {
+				console.error("خطا در دریافت اطلاعات رستوران‌ها:", error);
+			} 
+		};
+
+		fetchRestaurants();
+	}, []);
+
 
 	return (
 		<Box sx={{ width: "100%" }}>

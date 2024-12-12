@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "../utills/axiosInstance";
+import { Navigate } from "react-router-dom";
 
 // ایجاد کانتکست
 const UserContext = createContext();
@@ -9,22 +10,29 @@ export const useUser = () => useContext(UserContext);
 const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  // گرفتن اطلاعات کاربر از سرور
   const fetchUser = async () => {
     const accessToken = localStorage.getItem("access");
     const refreshToken = localStorage.getItem("refresh");
+  
     if (!accessToken || !refreshToken) {
-      console.error("Access or Refresh token is missing");
-      return;
+      console.warn("Access or Refresh token is missing");
+      setUser(null); 
+      return; 
     }
-
+  
     try {
       const response = await axiosInstance.get("/customer/profile");
-      // console.log("پروفایل کاربر:", response.data);
       localStorage.setItem("user", JSON.stringify(response.data));
       setUser(response.data);
     } catch (error) {
       console.error("خطا در دریافت پروفایل:", error);
+  
+      if (error.response && error.response.status === 401) {
+        console.warn("توکن منقضی شده است. کاربر باید دوباره وارد شود.");
+        localStorage.clear(); 
+        setUser(null);
+        Navigate("/login");
+      }
     }
   };
 

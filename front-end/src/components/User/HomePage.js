@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Card,
@@ -13,10 +13,7 @@ import Grid from "@mui/material/Grid2";
 import BigPizza from "../../assets/imgs/big-pizza.png";
 import { FavoriteBorder, Star } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import Food1 from "../../assets/imgs/food1.png";
-import Food2 from "../../assets/imgs/food2.png";
-import Food3 from "../../assets/imgs/food3.png";
-import Food4 from "../../assets/imgs/food4.png";
+import axiosInstance from "../../utills/publicAxiosInstance";
 
 const HeroSection = () => {
 	return (
@@ -147,36 +144,22 @@ const CategoryCards = () => {
 
 const ProductSlider = () => {
 	const navigate = useNavigate();
-	const restaurants = [
-		{
-			id: 1,
-			name: "رستوران نمونه یک",
-			image: Food1,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 2,
-			name: "رستوران نمونه دو",
-			image: Food2,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 3,
-			name: "رستوران نمونه سه",
-			image: Food3,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-		{
-			id: 4,
-			name: "رستوران نمونه چهار",
-			image: Food4,
-			cost: "15 هزار تومان",
-			rating: 4.3,
-		},
-	];
+	const [restaurants, setRestaurants] = useState([]);
+
+	useEffect(() => {
+		const fetchRestaurants = async () => {
+			try {
+				const response = await axiosInstance.get("/restaurant/list/");
+				setRestaurants(response.data); // ذخیره داده‌های دریافت‌شده
+				// console.log(response.data);
+			} catch (error) {
+				console.error("خطا در دریافت اطلاعات رستوران‌ها:", error);
+			} 
+		};
+
+		fetchRestaurants();
+	}, []);
+
 
 	return (
 		<Box sx={{ width: "100%" }}>
@@ -202,7 +185,7 @@ const ProductSlider = () => {
 				{restaurants.map((restaurant) => (
 					<Card
 						key={restaurant.id}
-						onClick={() => navigate("/restaurant")}
+						onClick={() => navigate(`restaurant/${restaurant.id}`)}
 						sx={{
 							cursor: "pointer",
 							padding: 2,
@@ -219,7 +202,7 @@ const ProductSlider = () => {
 						<CardMedia
 							component="img"
 							height="140"
-							image={restaurant.image}
+							image={`http://127.0.0.1:8000${restaurant.photo}`}
 							alt={restaurant.name}
 						/>
 						<CardContent>
@@ -232,14 +215,14 @@ const ProductSlider = () => {
 								sx={{ pointerEvents: "none" }}
 							>
 								<Star sx={{ paddingTop: "12px" }} />
-								امتیاز: {restaurant.rating}
+								امتیاز: {restaurant.score}
 							</Typography>
 							<Typography
 								variant="body2"
 								color="text.secondary"
 								sx={{ pointerEvents: "none" }}
 							>
-								هزینه ارسال: {restaurant.cost}
+								هزینه ارسال: {Math.floor(parseFloat(restaurant.delivery_price))} تومان
 							</Typography>
 						</CardContent>
 						<IconButton sx={{ position: "absolute", top: 8, right: 8 }}>

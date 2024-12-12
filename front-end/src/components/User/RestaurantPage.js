@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect  } from "react";
+import { useNavigate, useParams  } from "react-router-dom";
 import {
 	Box,
 	Typography,
@@ -14,13 +14,69 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import axiosInstance from "../../utills/publicAxiosInstance";
 import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
+import axios from "axios";
 
 const RestaurantPage = () => {
-	const navigate = useNavigate();
+	const [name, setName] = useState("");
+	const [address, setAddress] = useState("");
+	const [deliveryCost, setDeliveryCost] = useState("");
+	const [cityName, setCityName] = useState("");
+	const [description, setDescription] = useState("");
+	const [openingTime, setOpeningTime] = useState(null);
+	const [closingTime, setClosingTime] = useState(null);
+	const [logo, setLogo] = useState(null);
+	const { id } = useParams(); 
+  	const navigate = useNavigate();
+  	const [restaurantId, setRestaurantId] = useState(null);
+
+  	useEffect(() => {
+    	setRestaurantId(id); 
+ 	}, [id]);
+
+	 useEffect(() => {
+		if (restaurantId) {
+		  fetchProfileData();
+		}
+	  }, [restaurantId]);
+
+
+	const fetchProfileData = async () => {
+		if (!id) {
+			console.error("userId is undefined. Cannot fetch profile data.");
+			return;
+		}
+
+		try {
+			const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+			const data = response.data;
+
+			if (data) {
+				console.log(data);
+				setName(data.name || "");
+				// const translatedAddress = await translateText(data.address || "");
+				setAddress(data.address || "");
+				// console.log(address);
+				setDeliveryCost(data.delivery_price || "");
+				setDescription(data.description || "");
+				setOpeningTime(data.open_hour.slice(0,5));
+				setClosingTime(data.close_hour.slice(0,5));
+				setCityName(data.city_name || "");
+				if (data.photo) {
+					setLogo(data.photo);
+				}
+			} else {
+				console.error("No data received from API");
+			}
+		} catch (error) {
+			console.error("Error fetching profile data:", error);
+		}
+	};
+
 	const categories = [
 		{ id: 1, name: "غذای ۱" },
 		{ id: 2, name: "غذای ۲" },
@@ -96,7 +152,7 @@ const RestaurantPage = () => {
 					}}
 				>
 					<img
-						src={Food1}
+						src={`${logo}`}
 						alt="Food"
 						style={{
 							height: "300px",
@@ -124,25 +180,25 @@ const RestaurantPage = () => {
 					py={2}
 				>
 					<Chip label="۴.۷" />
-					<Chip label="۲۰ دقیقه" />
-					<Chip label="رایگان" />
+					<Chip label={cityName} />
+					<Chip label={deliveryCost === 0 ? "رایگان" : `${Math.floor(parseFloat(deliveryCost))} تومان`} />
 				</Box>
 				<Box display="flex" justifyContent="center" alignItems="center">
 					<Typography variant="h6" sx={{ pointerEvents: "none", py: 1 }}>
-						اسم رستوران نمونه
+						{name}
 					</Typography>
 				</Box>
 				<Typography
 					variant="body2"
 					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
 				>
-					لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده
-					از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و
-					سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
-					متنوع با هدف بهبود ابزارهای کاربردی می باشد کتابهای زیادی در شصت و سه
-					درصد گذشته حال و آینده شناخت فراوان جامعه و متخصصان را می طلبد تا با
-					نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان
-					خلاقی
+					ساعت کاری: {openingTime} تا {closingTime}
+				</Typography>
+				<Typography
+					variant="body2"
+					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
+				>
+					{description}
 				</Typography>
 				<Button variant="contained" color="success" fullWidth>
 					مشاهده سبد خرید

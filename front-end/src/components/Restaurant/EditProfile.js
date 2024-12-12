@@ -105,7 +105,7 @@ const EditProfile = () => {
 			formData.append("open_hour", formattedOpeningTime);
 			formData.append("close_hour", formattedClosingTime);
 			formData.append("latitude", mapMarker.lat.toFixed(6).toString());
-			formData.append("longtitude", mapMarker.lng.toFixed(6).toString());
+			formData.append("longitude", mapMarker.lng.toFixed(6).toString());
 
 			if (logo instanceof File) {
 				formData.append("photo", logo);
@@ -177,11 +177,11 @@ const EditProfile = () => {
 				} ${state || ""}`;
 				setAddress(fullAddress.trim());
 			} else {
-				setAddress("آدرس پیدا نشد");
+				console.warn("آدرس پیدا نشد");
 			}
 		} catch (error) {
 			console.error("Error fetching address:", error);
-			setAddress("خطا در دریافت آدرس.");
+			console.warn("خطا در دریافت آدرس.");
 		}
 	};
 

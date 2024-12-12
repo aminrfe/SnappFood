@@ -177,11 +177,11 @@ const EditProfile = () => {
 				} ${state || ""}`;
 				setAddress(fullAddress.trim());
 			} else {
-				setAddress("آدرس پیدا نشد");
+				console.warn("آدرس پیدا نشد");
 			}
 		} catch (error) {
 			console.error("Error fetching address:", error);
-			setAddress("خطا در دریافت آدرس.");
+			console.warn("خطا در دریافت آدرس.");
 		}
 	};
 

@@ -3,7 +3,9 @@ import uuid
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Avg
 from user.models import User
+from order.models import Order, OrderItem
 
 
 def validate_photo_size(value):
@@ -50,6 +52,15 @@ class RestaurantProfile(models.Model):
             validate_photo_size]
     )
 
+    def calculate_score(self):
+        reviews = Review.objects.filter(order__restaurant=self)
+        avg_score = reviews.aggregate(average=Avg('score'))['average']
+        return round(avg_score, 2) if avg_score else 0.0
+    
+    @property
+    def score(self):
+        return self.calculate_score()
+
     def __str__(self):
         return f"Restaurant: {self.name} ({self.manager.phone_number})"
     
@@ -81,16 +92,26 @@ class Item(models.Model):
         validate_photo_size]
     )
 
+    def calculate_score(self):
+        order_items = OrderItem.objects.filter(item=self)
+        orders = Order.objects.filter(id__in=order_items.values_list('order_id', flat=True))
+        avg_score = Review.objects.filter(order__in=orders).aggregate(average=Avg('score'))['average']
+        return round(avg_score, 2) if avg_score else 0.0
+
+    @property
+    def score(self):
+        return self.calculate_score()
+
     def __str__(self):
         return self.name
 
 
 class Review(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='reviews')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='reviews')
     score = models.PositiveSmallIntegerField()
     description = models.TextField(null=True, blank=True)
 
     class Meta:
-        unique_together = ('user', 'item')
+        unique_together = ('user', 'order')
 

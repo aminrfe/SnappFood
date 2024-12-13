@@ -4,8 +4,6 @@ import {
 	Typography,
 	Button,
 	IconButton,
-	Tabs,
-	Tab,
 	TextField,
 	Card,
 	CardMedia,
@@ -14,91 +12,138 @@ import {
 import Grid from "@mui/material/Grid2";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddIcon from "@mui/icons-material/Add";
 import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
+import axiosInstance from "../../utills/axiosInstance";
+import { useParams } from "react-router-dom";
 
 const EditMenu = () => {
-	const categories = [
-		{ id: 1, name: "غذای ۱" },
-		{ id: 2, name: "غذای ۲" },
-		{ id: 3, name: "غذای ۳" },
-		{ id: 4, name: "غذای ۴" },
+	const { res_id } = useParams(); 
+	console.log("res_id:", res_id);
+
+	const initialFoodData = [
+		{
+			id: 1,
+			name: "اسم غذای نمونه ۱",
+			description: "توضیحات نمونه ۱",
+			price: "۳۴۰۰۰۰",
+			image: Food1,
+			discount: "0",
+		},
+		{
+			id: 2,
+			name: "اسم غذای نمونه ۲",
+			description: "توضیحات نمونه ۲",
+			price: "۴۵۰۰۰۰",
+			image: Food2,
+			discount: "0",
+		},
+		{
+			id: 3,
+			name: "اسم غذای نمونه ۳",
+			description: "توضیحات نمونه ۳",
+			price: "۲۱۰۰۰۰",
+			image: Food3,
+			discount: "0",
+		},
+		{
+			id: 4,
+			name: "اسم غذای نمونه ۴",
+			description: "توضیحات نمونه ۴",
+			price: "۱۸۰۰۰۰",
+			image: Food4,
+			discount: "0",
+		},
 	];
 
-	const initialFoodData = {
-		1: [
-			{
-				id: 1,
-				name: "اسم غذای نمونه ۱",
-				description: "توضیحات نمونه ۱",
-				price: "۳۴۰۰۰۰",
-				image: Food1,
-			},
-			{
-				id: 2,
-				name: "اسم غذای نمونه ۲",
-				description: "توضیحات نمونه ۲",
-				price: "۴۵۰۰۰۰",
-				image: Food2,
-			},
-		],
-		2: [
-			{
-				id: 3,
-				name: "اسم غذای نمونه ۳",
-				description: "توضیحات نمونه ۳",
-				price: "۲۱۰۰۰۰",
-				image: Food3,
-			},
-		],
-		3: [],
-		4: [
-			{
-				id: 4,
-				name: "اسم غذای نمونه ۴",
-				description: "توضیحات نمونه ۴",
-				price: "۱۸۰۰۰۰",
-				image: Food4,
-			},
-		],
-	};
-
 	const [foodData, setFoodData] = useState(initialFoodData);
-	const [selectedCategory, setSelectedCategory] = useState(1);
 	const [editingFood, setEditingFood] = useState(null);
+	const [isAddingNew, setIsAddingNew] = useState(false);
 
-	const handleChange = (event, newValue) => {
-		setSelectedCategory(newValue);
-		setEditingFood(null);
-	};
-
-	const handleDelete = (foodId) => {
-		setFoodData((prevData) => {
-			const updatedCategory = prevData[selectedCategory].filter(
-				(food) => food.id !== foodId,
-			);
-			return { ...prevData, [selectedCategory]: updatedCategory };
-		});
-	};
-
-	const handleEditClick = (food) => {
-		setEditingFood(food);
-	};
-
+	// افزودن فایل تصویر واقعی
 	const handleEditChange = (field, value) => {
 		setEditingFood((prev) => ({ ...prev, [field]: value }));
 	};
 
-	const handleSave = () => {
-		setFoodData((prevData) => {
-			const updatedCategory = prevData[selectedCategory].map((food) =>
-				food.id === editingFood.id ? editingFood : food,
-			);
-			return { ...prevData, [selectedCategory]: updatedCategory };
+	
+	const handleDelete = (foodId) => {
+		setFoodData((prevData) => prevData.filter((food) => food.id !== foodId));
+	};
+
+	const handleEditClick = (food) => {
+		setEditingFood(food);
+		setIsAddingNew(false); // بستن حالت افزودن
+	};
+
+	const handleAddClick = () => {
+		setEditingFood({
+			id: null,
+			name: "",
+			description: "",
+			price: "",
+			image: "",
+			discount: ""
+			// score: 0
 		});
-		setEditingFood(null);
+		setIsAddingNew(true); // حالت افزودن
+	};
+
+	const handleFileUpload = (e) => {
+		const file = e.target.files[0];
+		if (file) {
+			const imageUrl = URL.createObjectURL(file); // پیش‌نمایش تصویر
+			handleEditChange("image", imageUrl); // نمایش پیش‌نمایش
+			handleEditChange("imageFile", file); // ذخیره فایل واقعی
+		}
+	};
+
+	const handleSave = async () => {
+		if (!editingFood.name || !editingFood.price || !editingFood.description) {
+			alert("لطفاً همه فیلدهای ضروری را پر کنید.");
+			return;
+		}
+
+		// const score = editingFood.score !== undefined ? editingFood.score : "0";
+		const formData = new FormData();
+
+		formData.append("price", parseFloat(editingFood.price)); // تبدیل به عدد
+		formData.append("name", editingFood.name);
+		formData.append("description", editingFood.description);
+		formData.append("discount", parseFloat(editingFood.discount) || 0); // مقدار پیش‌فرض 0
+		formData.append("state", "available");
+		// formData.append("score", "0");
+
+		// اضافه کردن فایل تصویر در صورت انتخاب
+		if (editingFood.imageFile) {
+			formData.append("photo", editingFood.imageFile); // فایل تصویر واقعی
+		}
+
+		try {
+			const response = await axiosInstance.post(
+				`/restaurant/${res_id}/items`,
+				formData,
+				{
+					headers: {
+						"Content-Type": "multipart/form-data", // تنظیم Content-Type
+					},
+				}
+			);
+
+			setFoodData((prevData) => [
+				...prevData,
+				{ ...editingFood, id: response.data.id },
+			]);
+
+			alert("آیتم جدید با موفقیت اضافه شد.");
+			setEditingFood(null); // بازنشانی فرم
+			setIsAddingNew(false); // خروج از حالت افزودن
+		} catch (error) {
+			console.error("خطا در افزودن آیتم:", error.response?.data || error.message);
+			alert("افزودن آیتم با خطا مواجه شد.");
+		}
 	};
 
 	return (
@@ -117,7 +162,7 @@ const EditMenu = () => {
 				justifyContent: "center",
 			}}
 		>
-			{/* Edit Food Form */}
+			{/* Edit/Add Food Form */}
 			{editingFood && (
 				<Grid>
 					<Box
@@ -129,34 +174,25 @@ const EditMenu = () => {
 						}}
 					>
 						<Typography variant="h6" sx={{ mb: 2, pointerEvents: "none" }}>
-							ویرایش غذا
+							{isAddingNew ? "اضافه کردن غذای جدید" : "ویرایش غذا"}
 						</Typography>
 						<Box sx={{ mb: 2 }}>
 							<Typography variant="body2" sx={{ mb: 1 }}>
-								تصویر فعلی:
+								تصویر:
 							</Typography>
-							<CardMedia
-								component="img"
-								image={editingFood.image}
-								alt="current food image"
-								sx={{ width: "100%", borderRadius: 3 }}
-							/>
-						</Box>
-						<Box sx={{ mb: 2 }}>
-							<Typography variant="body2" sx={{ mb: 1 }}>
-								آپلود تصویر جدید:
-							</Typography>
+							{editingFood.image && (
+								<CardMedia
+									component="img"
+									image={editingFood.image}
+									alt="food image"
+									sx={{ width: "100%", borderRadius: 3, mb: 2 }}
+								/>
+							)}
 							<input
 								type="file"
 								dir="ltr"
 								accept="image/*"
-								onChange={(e) => {
-									const file = e.target.files[0];
-									if (file) {
-										const imageUrl = URL.createObjectURL(file);
-										handleEditChange("image", imageUrl);
-									}
-								}}
+								onChange={handleFileUpload}
 							/>
 						</Box>
 						<TextField
@@ -170,47 +206,51 @@ const EditMenu = () => {
 							fullWidth
 							label="توضیحات"
 							value={editingFood.description}
-							onChange={(e) => handleEditChange("description", e.target.value)}
+							onChange={(e) =>
+								handleEditChange("description", e.target.value)
+							}
 							sx={{ mb: 2 }}
 						/>
 						<TextField
 							fullWidth
 							label="قیمت"
 							value={editingFood.price}
+							type="number" // فقط ورودی عدد مجاز باشد
 							onChange={(e) => handleEditChange("price", e.target.value)}
 							sx={{ mb: 2 }}
 						/>
+						<TextField
+							fullWidth
+							label="درصد تخفیف"
+							value={editingFood.discount}
+							type="number" // فقط ورودی عدد مجاز باشد
+							onChange={(e) => handleEditChange("discount", e.target.value)}
+							sx={{ mb: 2 }}
+						/>
+
 						<Button fullWidth variant="contained" onClick={handleSave}>
-							ذخیره
+							{isAddingNew ? "اضافه کردن" : "ذخیره"}
 						</Button>
 					</Box>
 				</Grid>
 			)}
+
 			{/* Food List */}
 			<Grid>
 				<Box sx={{ width: { lg: "700px" } }}>
-					{/* Category Tabs */}
-					<Tabs
-						value={selectedCategory}
-						onChange={handleChange}
-						variant="scrollable"
-						textColor="primary"
-						indicatorColor="primary"
-						aria-label="food categories"
-						sx={{ mb: 2 }}
+					{/* Add Button */}
+					<Box
+						sx={{
+							display: "flex",
+							justifyContent: "flex-end",
+							mb: 2,
+						}}
 					>
-						{categories.map((category) => (
-							<Tab
-								key={category.id}
-								label={category.name}
-								value={category.id}
-							/>
-						))}
-					</Tabs>
-
+					</Box>
+					{/* Food Items */}
 					<Box sx={{ cursor: "pointer" }}>
-						{foodData[selectedCategory].length > 0 ? (
-							foodData[selectedCategory].map((food) => (
+						{foodData.length > 0 ? (
+							foodData.map((food) => (
 								<Card
 									key={food.id}
 									sx={{
@@ -263,10 +303,19 @@ const EditMenu = () => {
 								color="text.secondary"
 								sx={{ textAlign: "center", pointerEvents: "none" }}
 							>
-								هیچ غذایی در این دسته وجود ندارد.
+								هیچ غذایی وجود ندارد.
 							</Typography>
 						)}
 					</Box>
+					<Button
+							variant="contained"
+							color="primary"
+							startIcon={<AddIcon />}
+							onClick={handleAddClick}
+							style={{padding:"10px"}}
+						>
+							اضافه کردن غذا
+					</Button>
 				</Box>
 			</Grid>
 		</Grid>

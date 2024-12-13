@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from user.models import User
 from restaurant.models import RestaurantProfile
 from django.conf import settings
@@ -27,3 +29,30 @@ class Favorite(models.Model):
     class Meta:
         unique_together = ('user', 'restaurant')
 
+
+class Cart(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="carts")
+    restaurant = models.ForeignKey('restaurant.RestaurantProfile', on_delete=models.CASCADE)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+
+    class Meta:
+        unique_together = ('user', 'restaurant')
+
+    def __str__(self):
+        return f"Cart for {self.user}"
+
+
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart_items")
+    item = models.ForeignKey('restaurant.Item', on_delete=models.CASCADE, related_name="cart_items")
+    count = models.PositiveIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.count} x {self.item.name} in cart for {self.cart.user}"
+
+# @receiver(pre_delete, sender=CartItem)
+# def delete_cart_when_empty(sender, instance, **kwargs):
+#     cart = instance.cart
+#     if not cart.cart_items.exists():
+#         cart.delete()

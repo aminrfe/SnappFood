@@ -15,14 +15,11 @@ class RestaurantProfileSerializer(serializers.ModelSerializer):
         return value
     
 
-class ItemCreateUpdateSerializer(serializers.ModelSerializer):
+class ItemSerializer(serializers.ModelSerializer):
+    restaurant = serializers.PrimaryKeyRelatedField(read_only=True)
+    score = serializers.FloatField(read_only=True) 
+
     class Meta:
         model = Item
-        fields = ['price', 'discount', 'name', 'description', 'state', 'photo']
-
-
-class ItemListSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Item
-        fields = ['item_id', 'price', 'discount', 'name', 'score', 'description', 'state', 'photo']
+        fields = ['item_id', 'restaurant', 'price', 'discount', 'name', 'description', 'state', 'photo', 'score']
 

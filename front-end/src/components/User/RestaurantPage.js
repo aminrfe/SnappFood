@@ -21,7 +21,6 @@ import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
-import { grey } from "@mui/material/colors";
 
 const RestaurantPage = () => {
 	const [name, setName] = useState("");

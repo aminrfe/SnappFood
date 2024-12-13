@@ -29,7 +29,7 @@ button.MuiButton-root {
 	color: white;
 	font-size: 16px !important;
 	font-weight: bold;
-	padding: 10px 0 !important;
+	padding: 10px 0;
 	border-radius: 8px;
 	margin-top: 20px;
 	margin-bottom: 10px;

@@ -54,7 +54,7 @@ const RestaurantProfile = () => {
 
 	const handleMenuClick = () => {
 		if (id) {
-			navigate("/restaurant/menu");
+			navigate(`/restaurant/${id}/menu`);
 		}
 	};
 

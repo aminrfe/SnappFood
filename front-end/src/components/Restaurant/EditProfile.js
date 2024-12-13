@@ -312,7 +312,7 @@ const EditProfile = () => {
 						component="span"
 						fullWidth
 						style={{ backgroundColor: "primary" }}
-						onClick={() => navigate("/restaurant/menu")}
+						onClick={() => navigate(`/restaurant/${id}/menu`)}
 					>
 						ویرایش منو
 					</Button>

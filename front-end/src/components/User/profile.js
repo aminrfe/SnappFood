@@ -28,6 +28,10 @@ const UserProfilePage = () => {
 		navigate("/restuarant-signup");
 	};
 
+	const handleFavorites= () => {
+		navigate("/favorites");
+	};
+
 	return (
 		<Box
 			sx={{
@@ -105,6 +109,7 @@ const UserProfilePage = () => {
 				/>
 				<ListItem
 					button
+					onClick={handleFavorites}
 					style={{ cursor: "pointer" }}
 					sx={{ paddingRight: 2, paddingLeft: 2 }}
 				>

@@ -52,6 +52,12 @@ const RestaurantProfile = () => {
 		}
 	};
 
+	const handleMenuClick = () => {
+		if (id) {
+			navigate("/restaurant/menu");
+		}
+	};
+
 	return (
 		<Box
 			sx={{
@@ -84,8 +90,13 @@ const RestaurantProfile = () => {
 				<Box sx={{ display: "flex", alignItems: "center" }}>
 					<Avatar sx={{ bgcolor: "#f28b82", marginRight: 1 }} />
 					<Box>
-						<Typography variant="h6">{name}</Typography>
-						<Typography variant="body2" color="textSecondary">
+						<Typography 
+						variant="h6"
+						sx={{ pointerEvents: "none", userSelect: "none" }}>
+							{name}</Typography>
+						<Typography 
+						variant="body2" color="textSecondary"
+						sx={{ pointerEvents: "none", userSelect: "none" }}>
 							{phoneNumber}
 						</Typography>
 					</Box>
@@ -112,7 +123,11 @@ const RestaurantProfile = () => {
 						bgcolor: "#f5d5c0",
 					}}
 				>
-					<CardContent sx={{ display: "flex", alignItems: "center" }}>
+					<CardContent 
+					style={{ cursor: "pointer" }}
+					sx={{ display: "flex", alignItems: "center" }}
+					onClick={handleMenuClick}
+					>
 						<RestaurantMenuIcon sx={{ marginRight: 2, color: "#f28b82" }} />
 						<Typography>منوی فروشگاه</Typography>
 					</CardContent>
@@ -120,7 +135,9 @@ const RestaurantProfile = () => {
 
 				{/* Financial Report  */}
 				<Card sx={{ bgcolor: "#f5d5c0" }}>
-					<CardContent sx={{ display: "flex", alignItems: "center" }}>
+					<CardContent 
+					style={{ cursor: "pointer" }}
+					sx={{ display: "flex", alignItems: "center" }}>
 						<DescriptionIcon sx={{ marginRight: 2, color: "#f28b82" }} />
 						<Typography>گزارش مالی فروشگاه</Typography>
 					</CardContent>

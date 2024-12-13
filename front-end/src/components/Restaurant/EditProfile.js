@@ -113,7 +113,7 @@ const EditProfile = () => {
 				console.warn("No valid file selected for photo.");
 			}
 			// console.log([...formData]);
-			await axiosInstance.put(`/restaurant/${id}/profile`, formData, {
+			await axiosInstance.patch(`/restaurant/${id}/profile`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},
@@ -172,9 +172,7 @@ const EditProfile = () => {
 				const cityDistrict = data.address.city_district || "";
 				const state = data.address.state || "";
 
-				const fullAddress = `${neighbourhood || suburb || ""} ${road || ""} ${
-					cityDistrict || city || ""
-				} ${state || ""}`;
+				const fullAddress = `${cityDistrict || city || ""} ${neighbourhood || suburb || ""} ${road || ""} ${state || ""}`;
 				setAddress(fullAddress.trim());
 			} else {
 				console.warn("آدرس پیدا نشد");

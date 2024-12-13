@@ -14,12 +14,12 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import axiosInstance from "../../utills/publicAxiosInstance";
+import publicAxiosInstance from "../../utills/publicAxiosInstance";
+import axiosInstance from "../../utills/axiosInstance";
 import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
-import axios from "axios";
 
 const RestaurantPage = () => {
 	const [name, setName] = useState("");
@@ -33,16 +33,83 @@ const RestaurantPage = () => {
 	const { id } = useParams(); 
   	const navigate = useNavigate();
   	const [restaurantId, setRestaurantId] = useState(null);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isFavorite, setIsFavorite] = useState(false);
 
   	useEffect(() => {
     	setRestaurantId(id); 
  	}, [id]);
 
-	 useEffect(() => {
+	useEffect(() => {
 		if (restaurantId) {
 		  fetchProfileData();
 		}
-	  }, [restaurantId]);
+	}, [restaurantId]);
+
+	useEffect(() => {
+		const token = localStorage.getItem("access");
+		if (token) {
+		  setIsAuthenticated(true);
+		} else {
+		  setIsAuthenticated(false);
+		}
+	  }, []);
+
+	useEffect(() => {
+		const checkIfFavorite = async () => {
+		  if (!isAuthenticated) return;
+	  
+		  try {
+			const response = await axiosInstance.get("/customer/favorites");
+			console.log(response.data);
+			const isFav = response.data.some((fav) => fav.id === parseInt(restaurantId));
+			setIsFavorite(isFav);
+			console.log("isfave ", isFav);
+			console.log(isFavorite);
+		  } catch (error) {
+			console.error("Error checking favorites:", error);
+		  }
+		};
+	  
+		if (restaurantId) {
+		  checkIfFavorite();
+		}
+	  }, [restaurantId, isAuthenticated]);
+	  
+	  const toggleFavorite = async () => {
+		if (!isAuthenticated) {
+		  alert("لطفا ابتدا وارد حساب کاربری خود شوید!");
+		  return;
+		}
+	  
+		try {
+		  if (isFavorite) {
+			const response = await axiosInstance.delete(`/customer/favorites`, 
+				{restaurant_id: parseInt(restaurantId) }
+			);
+	  
+			if (response.status === 204) {
+			  alert("رستوران از علاقه‌مندی‌ها حذف شد.");
+			  setIsFavorite(false);
+			}
+		  }
+		  else {
+			const response = await axiosInstance.post("/customer/favorites",
+			  { restaurant_id: parseInt(restaurantId) },
+			);
+	  
+			if (response.status === 201) {
+			  alert("رستوران به علاقه‌مندی‌ها اضافه شد.");
+			  setIsFavorite(true);
+			}
+		  }
+		} catch (error) {
+		  console.error("Error toggling favorite:", error);
+		  if (error.response) {
+			console.error("Error response data:", error.response.data);
+		  }
+		}
+	  };
 
 
 	const fetchProfileData = async () => {
@@ -52,11 +119,14 @@ const RestaurantPage = () => {
 		}
 
 		try {
-			const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+			const response = await publicAxiosInstance.get(`/restaurant/${id}/profile`);
 			const data = response.data;
 
 			if (data) {
 				console.log(data);
+				console.log("id:  ", typeof(id));
+				console.log("resid:  ", restaurantId);
+				console.log("parse resid:  ", typeof(parseInt(restaurantId, 10)));
 				setName(data.name || "");
 				// const translatedAddress = await translateText(data.address || "");
 				setAddress(data.address || "");
@@ -161,14 +231,15 @@ const RestaurantPage = () => {
 						}}
 					/>
 					<IconButton
-						sx={{
-							position: "absolute",
-							bottom: 8,
-							left: 8,
-							color: "white",
-						}}
+  						sx={{
+   						position: "absolute",
+    					bottom: 8,
+    					left: 8,
+    					color: isFavorite ? "red" : "white",
+  						}}
+  						onClick={toggleFavorite}
 					>
-						<FavoriteBorderIcon />
+  						<FavoriteBorderIcon />
 					</IconButton>
 				</Box>
 				<Box

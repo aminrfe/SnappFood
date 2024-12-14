@@ -165,48 +165,59 @@ const RestaurantPage = () => {
 		{ id: 4, name: "غذای ۴" },
 	];
 
-	const foodData = {
-		1: [
-			{
-				id: 1,
-				name: "اسم غذای نمونه ۱",
-				description: "توضیحات نمونه ۱",
-				price: "۳۴۰۰۰۰",
-				image: Food1,
-			},
-			{
-				id: 2,
-				name: "اسم غذای نمونه ۲",
-				description: "توضیحات نمونه ۲",
-				price: "۴۵۰۰۰۰",
-				image: Food2,
-			},
-		],
-		2: [
-			{
-				id: 3,
-				name: "اسم غذای نمونه ۳",
-				description: "توضیحات نمونه ۳",
-				price: "۲۱۰۰۰۰",
-				image: Food3,
-			},
-		],
-		3: [],
-		4: [
-			{
-				id: 4,
-				name: "اسم غذای نمونه ۴",
-				description: "توضیحات نمونه ۴",
-				price: "۱۸۰۰۰۰",
-				image: Food4,
-			},
-		],
-	};
-	const [selectedCategory, setSelectedCategory] = useState(1);
+	
+	const foodData = [
+		{
+			id: 1,
+			name: "اسم غذای نمونه ۱",
+			description: "توضیحات نمونه ۱",
+			price: "۳۴۰۰۰۰",
+			image: Food1,
+		},
+		{
+			id: 2,
+			name: "اسم غذای نمونه ۲",
+			description: "توضیحات نمونه ۲",
+			price: "۴۵۰۰۰۰",
+			image: Food2,
+		},
+		{
+			id: 3,
+			name: "اسم غذای نمونه ۳",
+			description: "توضیحات نمونه ۳",
+			price: "۲۱۰۰۰۰",
+			image: Food3,
+		},
+		{
+			id: 4,
+			name: "اسم غذای نمونه ۴",
+			description: "توضیحات نمونه ۴",
+			price: "۱۸۰۰۰۰",
+			image: Food4,
+		},
 
-	const handleChange = (event, newValue) => {
-		setSelectedCategory(newValue);
-	};
+		{
+			id: 5,
+			name: "اسم غذای نمونه ۲",
+			description: "توضیحات نمونه ۲",
+			price: "۴۵۰۰۰۰",
+			image: Food2,
+		},
+		{
+			id: 6,
+			name: "اسم غذای نمونه ۳",
+			description: "توضیحات نمونه ۳",
+			price: "۲۱۰۰۰۰",
+			image: Food3,
+		},
+		{
+			id: 7,
+			name: "اسم غذای نمونه ۴",
+			description: "توضیحات نمونه ۴",
+			price: "۱۸۰۰۰۰",
+			image: Food4,
+		},
+	];
 
 	return (
 		<Grid
@@ -220,7 +231,6 @@ const RestaurantPage = () => {
 					md: 4,
 				},
 				display: "flex",
-				alignItems: "center",
 				justifyContent: "center",
 			}}
 		>
@@ -297,28 +307,12 @@ const RestaurantPage = () => {
 			<Grid>
 				<Box sx={{ width: { lg: "700px" } }}>
 					{/* Category Tabs */}
-					<Tabs
-						value={selectedCategory}
-						onChange={handleChange}
-						variant="scrollable"
-						textColor="primary"
-						indicatorColor="primary"
-						aria-label="food categories"
-						sx={{ mb: 2 }}
-					>
-						{categories.map((category) => (
-							<Tab
-								key={category.id}
-								label={category.name}
-								value={category.id}
-							/>
-						))}
-					</Tabs>
+					
 
 					{/* Food List */}
 					<Box sx={{ cursor: "pointer" }}>
-						{foodData[selectedCategory].length > 0 ? (
-							foodData[selectedCategory].map((food) => (
+						{foodData.length > 0 ? (
+							foodData.map((food) => (
 								<Card
 									key={food.id}
 									onClick={() => navigate("/menu-item")}

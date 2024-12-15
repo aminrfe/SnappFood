@@ -125,7 +125,7 @@ class FavoriteView(APIView):
         manual_parameters=[
             openapi.Parameter(
                 'restaurant_id',
-                openapi.IN_PATH,
+                openapi.IN_QUERY,
                 description="ID of the restaurant to remove from favorites.",
                 type=openapi.TYPE_INTEGER,
             ),
@@ -135,7 +135,11 @@ class FavoriteView(APIView):
             404: openapi.Response(description="Favorite not found."),
         },
     )
-    def delete(self, request, restaurant_id):
+    def delete(self, request):
+        restaurant_id = request.query_params.get('restaurant_id')
+        if not restaurant_id:
+            return Response({'error': 'Restaurant ID is required as a query parameter.'}, status=status.HTTP_400_BAD_REQUEST)
+
         try:
             favorite = Favorite.objects.get(user=request.user, restaurant_id=restaurant_id)
             favorite.delete()

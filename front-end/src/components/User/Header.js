@@ -43,6 +43,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Header = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [restaurantId, setRestaurantId] = useState(null);
+	const [searchTerm, setSearchTerm] = useState("");
 	const navigate = useNavigate();
 	// const { isLoggedIn, user, logout } = useUser();
 
@@ -87,10 +88,11 @@ const Header = () => {
 		navigate(`/customer/profile`);
 	};
 
-	// const handleLogoutClick = () => {
-	//   logout(); // Call logout from context to clear session
-	//   navigate("/"); // Redirect to home after logout
-	// };
+	const handleSearchKeyDown = (e) => {
+		if (e.key === "Enter" && searchTerm.trim() !== "") {
+			navigate(`/search?name=${searchTerm}`); // هدایت به صفحه جستجو
+		}
+	};
 
 	return (
 		<AppBar
@@ -113,6 +115,9 @@ const Header = () => {
 					<StyledInputBase
 						placeholder="جستجو در فودی"
 						inputProps={{ "aria-label": "search" }}
+						value={searchTerm} // مقدار ورودی
+						onChange={(e) => setSearchTerm(e.target.value)} // ذخیره مقدار ورودی
+						onKeyDown={handleSearchKeyDown} // هندل کردن فشار Enter
 					/>
 				</Search>
 				{!isLoggedIn ? (

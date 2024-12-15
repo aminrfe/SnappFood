@@ -8,8 +8,8 @@ const RestaurantListPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [restaurants, setRestaurants] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [businessType, setBusinessType] = useState(searchParams.get("business_type") || "all"); 
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("name") || ""); // دریافت مقدار جستجو از URL
+  const [businessType, setBusinessType] = useState(searchParams.get("business_type") || "all");
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [favorites, setFavorites] = useState({});
@@ -33,8 +33,19 @@ const RestaurantListPage = () => {
   };
 
   useEffect(() => {
-    const filters = { name: searchTerm, ...(businessType !== "all" && { business_type: businessType }) };
+    const filters = {};
+    if (searchTerm.trim()) {
+      filters.name = searchTerm.trim();
+    }
+    if (businessType !== "all") {
+      filters.business_type = businessType;
+    }
+
     fetchRestaurants(filters);
+
+    // به‌روزرسانی URL با پارامترهای جستجو
+    const params = new URLSearchParams(filters);
+    navigate(`/search?${params.toString()}`);
   }, [searchTerm, businessType]);
 
   useEffect(() => {
@@ -98,7 +109,6 @@ const RestaurantListPage = () => {
 
   const handleCategoryClick = (type) => {
     setBusinessType(type);
-    navigate(`/search?business_type=${type}`); // تغییر URL هنگام تغییر دسته‌بندی
   };
 
   return (

@@ -71,16 +71,21 @@ const HeroSection = () => {
 	);
 };
 
-const categories = [
-	{ title: "رستوران", icon: "🍔" },
-	{ title: "کافه", icon: "☕️" },
-	{ title: "شیرینی", icon: "🍩" },
-	{ title: "آبمیوه بستنی", icon: "🍹" },
-	{ title: "ایرانی", icon: "🍽️" },
-	{ title: "نانوایی", icon: "🍞" },
-];
+const CategoryCards = () => {	
+	const navigate = useNavigate();
 
-const CategoryCards = () => {
+	const handleCategoryClick = (businessType) => {
+		navigate(`/search?business_type=${businessType}`);
+	};
+
+	const categories = [
+		{ title: "رستوران", icon: "🍔", type: "restaurant" },
+		{ title: "کافه", icon: "☕️", type: "cafe" },
+		{ title: "شیرینی", icon: "🍩", type: "sweets" },
+		{ title: "آبمیوه و بستنی", icon: "🍹", type: "icecream" },
+		{ title: "نانوایی", icon: "🍞", type: "bakery" },
+	];
+
 	return (
 		<Box sx={{ width: "100%" }}>
 			<Typography
@@ -109,6 +114,7 @@ const CategoryCards = () => {
 				{categories.map((category, index) => (
 					<Grid xs={6} sm={4} md={2.4} key={index}>
 						<Card
+							onClick={() => handleCategoryClick(category.type)}
 							sx={{
 								cursor: "pointer",
 								textAlign: "center",

@@ -1,0 +1,230 @@
+import React, { useState, useEffect } from "react";
+import { Box, TextField, Typography, Card, CardMedia, CardContent, Grid, IconButton } from "@mui/material";
+import { FavoriteBorder, Favorite, Star } from "@mui/icons-material";
+import axiosInstance from "../../utills/publicAxiosInstance";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+const RestaurantListPage = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [restaurants, setRestaurants] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [businessType, setBusinessType] = useState(searchParams.get("business_type") || "all"); 
+  const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [favorites, setFavorites] = useState({});
+
+  const categories = {
+    all: "همه",
+    restaurant: "رستوران",
+    cafe: "کافه",
+    bakery: "نانوایی",
+    sweets: "شیرینی",
+    icecream: "بستنی",
+  };
+
+  const fetchRestaurants = async (filters = {}) => {
+    try {
+      const response = await axiosInstance.get("/restaurant/list/", { params: filters });
+      setRestaurants(response.data);
+    } catch (err) {
+      setError("خطا در دریافت اطلاعات رستوران‌ها");
+    }
+  };
+
+  useEffect(() => {
+    const filters = { name: searchTerm, ...(businessType !== "all" && { business_type: businessType }) };
+    fetchRestaurants(filters);
+  }, [searchTerm, businessType]);
+
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    setIsAuthenticated(!!token);
+  }, []);
+
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        if (localStorage.getItem("access")) {
+          const response = await axiosInstance.get("/customer/favorites");
+          const favoritesMap = {};
+          response.data.forEach((fav) => {
+            favoritesMap[fav.restaurant] = true;
+          });
+          setFavorites(favoritesMap);
+        }
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+      }
+    };
+
+    fetchFavorites();
+  }, [isAuthenticated]);
+
+  const toggleFavorite = async (restaurantId) => {
+    if (!isAuthenticated) {
+      alert("لطفا ابتدا وارد حساب کاربری خود شوید!");
+      return;
+    }
+
+    try {
+      if (favorites[restaurantId]) {
+        const response = await axiosInstance.delete(`/customer/favorites`, {
+          params: { restaurant_id: restaurantId },
+        });
+
+        if (response.status === 204) {
+          setFavorites((prevFavorites) => ({
+            ...prevFavorites,
+            [restaurantId]: false,
+          }));
+        }
+      } else {
+        const response = await axiosInstance.post("/customer/favorites", {
+          restaurant_id: restaurantId,
+        });
+
+        if (response.status === 201) {
+          setFavorites((prevFavorites) => ({
+            ...prevFavorites,
+            [restaurantId]: true,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
+
+  const handleCategoryClick = (type) => {
+    setBusinessType(type);
+    navigate(`/search?business_type=${type}`); // تغییر URL هنگام تغییر دسته‌بندی
+  };
+
+  return (
+    <Box sx={{ padding: 3, height: "100vh", width: "100%", backgroundColor: "#fceddc" }}>
+      <Typography variant="h5" sx={{ textAlign: "center", marginBottom: 3, color: "#D68240" }}>
+        لیست رستوران‌ها
+      </Typography>
+
+      {/* جستجوی نام رستوران */}
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
+        <TextField
+          variant="outlined"
+          placeholder="جستجوی نام رستوران..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{
+            marginBottom: 3,
+            width: "80%",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+              "& fieldset": {
+                borderColor: "#9c9c9c",
+              },
+              "&:hover fieldset": {
+                borderColor: "#a8a8a8",
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: "#888888",
+              },
+            },
+          }}
+        />
+      </Box>
+
+      <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
+        {Object.entries(categories).map(([key, label]) => (
+          <Typography
+            key={key}
+            onClick={() => handleCategoryClick(key)}
+            sx={{
+              cursor: "pointer",
+              padding: 1,
+              margin: 1,
+              border: key === businessType ? "2px solid #D68240" : "1px solid #ccc",
+              borderRadius: "8px",
+              backgroundColor: key === businessType ? "#fceddc" : "transparent",
+            }}
+          >
+            {label}
+          </Typography>
+        ))}
+      </Box>
+
+      {/* نمایش رستوران‌ها */}
+      {error && <Typography color="error">{error}</Typography>}
+      <Grid container spacing={3} justifyContent="center">
+        {restaurants.map((restaurant) => (
+          <Grid item xs={12} sm={6} md={2} key={restaurant.id}>
+            <Card
+              sx={{
+                cursor: "pointer",
+                padding: 1,
+                borderRadius: "20px",
+                boxShadow: 2,
+                height: "100%",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.05)",
+                  boxShadow: 5,
+                  border: "2px solid #D68240",
+                },
+              }}
+              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+            >
+              <CardMedia
+                component="img"
+                height="160"
+                image={`http://127.0.0.1:8000${restaurant.photo}`}
+                alt={restaurant.name}
+                sx={{ borderRadius: "12px", objectFit: "cover" }}
+              />
+              <CardContent>
+                <Typography variant="h6" sx={{ fontWeight: "bold", textAlign: "center", marginBottom: 1 }}>
+                  {restaurant.name} ({restaurant.city_name})
+                </Typography>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center" }}
+                >
+                  <Star sx={{ color: "#FFD700", marginLeft: 0.5, fontSize: "0.9rem" }} />
+                  امتیاز: {restaurant.score}
+                </Typography>
+                <Typography variant="body2" sx={{ textAlign: "center", marginTop: 1, fontSize: "0.9rem" }}>
+                  هزینه ارسال: {Math.floor(parseFloat(restaurant.delivery_price))} تومان
+                </Typography>
+              </CardContent>
+
+              <IconButton
+                sx={{
+                  position: "absolute",
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(restaurant.id);
+                }}
+              >
+                {favorites[restaurant.id] ? (
+                  <Favorite sx={{ color: "#FF1493" }} />
+                ) : (
+                  <FavoriteBorder sx={{ color: "#FF1493" }} />
+                )}
+              </IconButton>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+
+      {restaurants.length === 0 && !error && (
+        <Typography sx={{ textAlign: "center", marginTop: 3 }}>هیچ رستورانی یافت نشد.</Typography>
+      )}
+    </Box>
+  );
+};
+
+export default RestaurantListPage;

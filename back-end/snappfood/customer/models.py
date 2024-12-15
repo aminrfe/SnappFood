@@ -47,6 +47,7 @@ class CartItem(models.Model):
     item = models.ForeignKey('restaurant.Item', on_delete=models.CASCADE, related_name="cart_items")
     count = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"{self.count} x {self.item.name} in cart for {self.cart.user}"

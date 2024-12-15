@@ -54,18 +54,16 @@ class AddToCartSerializer(serializers.Serializer):
     count = serializers.IntegerField()
 
 class CartItemSerializer(serializers.ModelSerializer):
-    item_name = serializers.SerializerMethodField()
-
+    name = serializers.CharField(source="item.name", read_only=True)
+    
     class Meta:
         model = CartItem
-        fields = ['id', 'item', 'item_name', 'count', 'price']
-    
-    def get_item_name(self, obj):
-        return obj.item.name
+        fields = ['id', 'item', 'name', 'discount','count', 'price']
     
 class CartSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
 
     class Meta:
         model = Cart
-        fields = ['restaurant' ,'total_price', 'cart_items']
+        fields = ['id', 'restaurant', 'restaurant_name','total_price', 'cart_items']

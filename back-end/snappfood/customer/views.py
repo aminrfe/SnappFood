@@ -152,6 +152,30 @@ class FavoriteView(APIView):
             return Response({'error': 'Favorite not found.'}, status=status.HTTP_404_NOT_FOUND)
 
 
+class CartListView(APIView):
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve all carts of the current user",
+        responses={
+            200: openapi.Response(
+                description="List of the user's carts",
+                schema=CartSerializer(many=True)
+            ),
+            401: openapi.Response(
+                description="Unauthorized"
+            ),
+            403: openapi.Response(
+                description="Forbidden"
+            ),
+        },
+    )
+    def get(self, request):
+        carts = Cart.objects.filter(user=request.user)
+        serializer = CartSerializer(carts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+ 
+    
 class CartView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
@@ -163,7 +187,7 @@ class CartView(APIView):
         return cart
 
     @swagger_auto_schema(
-        operation_summary="Retrieve the current user's cart",
+        operation_summary="Retrieve the current user's cart for a restaurant",
         responses={
             200: openapi.Response(
                 description="Current user's cart details",
@@ -206,7 +230,7 @@ class CartView(APIView):
     )
     def post(self, request, restaurant_id):
         restaurant = get_object_or_404(RestaurantProfile, id=restaurant_id)
-        cart = Cart.objects.get_or_create(user=request.user, restaurant=restaurant)
+        cart, created = Cart.objects.get_or_create(user=request.user, restaurant=restaurant)
         serializer = AddToCartSerializer(data=request.data)
         if serializer.is_valid():
             item = get_object_or_404(Item, item_id=serializer.validated_data['item_id'])
@@ -216,11 +240,11 @@ class CartView(APIView):
             if cart_item:
                 cart_item.count += count
             else:
-                cart_item = CartItem(cart=cart, item=item, count=count, price=item.price)
+                cart_item = CartItem(cart=cart, item=item, count=count, price=item.price, discount=item.discount)
 
             cart_item.save()
 
-            cart.total_price = sum(item.price * item.count for item in cart.cart_items.all())
+            cart.total_price = sum((item.price - item.discount) * item.count for item in cart.cart_items.all())
             cart.save()
 
             return Response({"message": "Item added to cart."}, status=status.HTTP_201_CREATED)
@@ -261,7 +285,7 @@ class CartView(APIView):
         cart_item.count = data.get('count', cart_item.count)
         cart_item.save()
 
-        cart.total_price = sum(item.price * item.count for item in cart.cart_items.all())
+        cart.total_price = sum((item.price - item.discount) * item.count for item in cart.cart_items.all())
         cart.save()
 
         return Response({"message": "Cart updated."}, status=status.HTTP_200_OK)
@@ -299,7 +323,7 @@ class CartView(APIView):
         cart_item = get_object_or_404(CartItem, id=data.get('cart_item_id'), cart=cart)
         cart_item.delete()
 
-        cart.total_price = sum(item.price * item.count for item in cart.cart_items.all())
+        cart.total_price = sum((item.price - item.discount) * item.count for item in cart.cart_items.all())
         cart.save()
 
         return Response({"message": "Item removed from cart."}, status=status.HTTP_200_OK)

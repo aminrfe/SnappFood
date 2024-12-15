@@ -48,7 +48,7 @@ function App() {function isAuthenticated() {
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
 							<Route path="/restaurant/:id" element={<RestaurantPage />} />
-							<Route path="/restaurant/menu" element={<EditMenu />} />
+							<Route path="/restaurant/:res_id/menu" element={<EditMenu />} />
 							<Route path="/favorites" element={<FavoritesPage />} />
 							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
 							<Route

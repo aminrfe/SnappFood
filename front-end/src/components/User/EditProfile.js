@@ -44,8 +44,6 @@ const EditProfile = () => {
 				headers: {
 					"Content-Type": "application/json",
 					accept: "application/json",
-					"X-CSRFTOKEN":
-						"ca1gSWQ79A4pj3yFh5XtKEkrGUElnnCzjiZyTaQBjAASmwImWmLtq1WCLzikxDX1", // اضافه کردن توکن CSRF
 				},
 			});
 

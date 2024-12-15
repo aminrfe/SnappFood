@@ -14,12 +14,13 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import axiosInstance from "../../utills/publicAxiosInstance";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import publicAxiosInstance from "../../utills/publicAxiosInstance";
+import axiosInstance from "../../utills/axiosInstance";
 import Food1 from "../../assets/imgs/food1.png";
 import Food2 from "../../assets/imgs/food2.png";
 import Food3 from "../../assets/imgs/food3.png";
 import Food4 from "../../assets/imgs/food4.png";
-import axios from "axios";
 
 const RestaurantPage = () => {
 	const [name, setName] = useState("");
@@ -33,16 +34,98 @@ const RestaurantPage = () => {
 	const { id } = useParams(); 
   	const navigate = useNavigate();
   	const [restaurantId, setRestaurantId] = useState(null);
+	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [favorites, setFavorites] = useState({});
 
   	useEffect(() => {
     	setRestaurantId(id); 
  	}, [id]);
 
-	 useEffect(() => {
+	useEffect(() => {
 		if (restaurantId) {
 		  fetchProfileData();
 		}
-	  }, [restaurantId]);
+	}, [restaurantId]);
+
+	useEffect(() => {
+		const token = localStorage.getItem("access");
+		if (token) {
+		  setIsAuthenticated(true);
+		} else {
+		  setIsAuthenticated(false);
+		}
+	  }, []);
+
+	useEffect(() => {
+		const checkIfFavorite = async () => {
+			if (!isAuthenticated || !restaurantId) return;
+		
+			try {
+				const response = await axiosInstance.get("/customer/favorites");
+				console.log("Favorites data:", response.data);
+		
+				// ایجاد یک آبجکت جدید که وضعیت علاقه‌مندی تمام رستوران‌ها را نگه می‌دارد
+				const updatedFavorites = {};
+				response.data.forEach((fav) => {
+					updatedFavorites[fav.restaurant] = true; // اگر رستورانی در لیست علاقه‌مندی‌ها است، مقدارش true می‌شود
+				});
+		
+				setFavorites(updatedFavorites); // به‌روزرسانی state
+			} catch (error) {
+				console.error("Error checking favorites:", error);
+			}
+		};
+	  
+		if (restaurantId) {
+		  checkIfFavorite();
+		}
+	  }, [restaurantId, isAuthenticated]);
+	  
+	  const toggleFavorite = async () => {
+		if (!isAuthenticated) {
+			alert("لطفا ابتدا وارد حساب کاربری خود شوید!");
+			return;
+		}
+	
+		try {
+			if (favorites[restaurantId]) {
+				// حذف رستوران از علاقه‌مندی‌ها
+				const response = await axiosInstance.delete(`/customer/favorites`, {
+					data: { restaurant_id: parseInt(restaurantId) },
+				});
+	
+				if (response.status === 204) {
+					alert("رستوران از علاقه‌مندی‌ها حذف شد.");
+	
+					// حذف رستوران از state
+					setFavorites((prevFavorites) => ({
+						...prevFavorites,
+						[restaurantId]: false, // مقدار این رستوران به false تغییر می‌کند
+					}));
+				}
+			} else {
+				// اضافه کردن رستوران به علاقه‌مندی‌ها
+				const response = await axiosInstance.post("/customer/favorites", {
+					restaurant_id: parseInt(restaurantId),
+				});
+	
+				if (response.status === 201) {
+					alert("رستوران به علاقه‌مندی‌ها اضافه شد.");
+	
+					// اضافه کردن رستوران به state
+					setFavorites((prevFavorites) => ({
+						...prevFavorites,
+						[restaurantId]: true, // مقدار این رستوران به true تغییر می‌کند
+					}));
+				}
+			}
+		} catch (error) {
+			console.error("Error toggling favorite:", error);
+			if (error.response) {
+				console.error("Error response data:", error.response.data);
+			}
+		}
+	};
 
 
 	const fetchProfileData = async () => {
@@ -52,15 +135,13 @@ const RestaurantPage = () => {
 		}
 
 		try {
-			const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+			const response = await publicAxiosInstance.get(`/restaurant/${id}/profile`);
 			const data = response.data;
 
 			if (data) {
 				console.log(data);
 				setName(data.name || "");
-				// const translatedAddress = await translateText(data.address || "");
 				setAddress(data.address || "");
-				// console.log(address);
 				setDeliveryCost(data.delivery_price || "");
 				setDescription(data.description || "");
 				setOpeningTime(data.open_hour.slice(0,5));
@@ -84,48 +165,59 @@ const RestaurantPage = () => {
 		{ id: 4, name: "غذای ۴" },
 	];
 
-	const foodData = {
-		1: [
-			{
-				id: 1,
-				name: "اسم غذای نمونه ۱",
-				description: "توضیحات نمونه ۱",
-				price: "۳۴۰۰۰۰",
-				image: Food1,
-			},
-			{
-				id: 2,
-				name: "اسم غذای نمونه ۲",
-				description: "توضیحات نمونه ۲",
-				price: "۴۵۰۰۰۰",
-				image: Food2,
-			},
-		],
-		2: [
-			{
-				id: 3,
-				name: "اسم غذای نمونه ۳",
-				description: "توضیحات نمونه ۳",
-				price: "۲۱۰۰۰۰",
-				image: Food3,
-			},
-		],
-		3: [],
-		4: [
-			{
-				id: 4,
-				name: "اسم غذای نمونه ۴",
-				description: "توضیحات نمونه ۴",
-				price: "۱۸۰۰۰۰",
-				image: Food4,
-			},
-		],
-	};
-	const [selectedCategory, setSelectedCategory] = useState(1);
+	
+	const foodData = [
+		{
+			id: 1,
+			name: "اسم غذای نمونه ۱",
+			description: "توضیحات نمونه ۱",
+			price: "۳۴۰۰۰۰",
+			image: Food1,
+		},
+		{
+			id: 2,
+			name: "اسم غذای نمونه ۲",
+			description: "توضیحات نمونه ۲",
+			price: "۴۵۰۰۰۰",
+			image: Food2,
+		},
+		{
+			id: 3,
+			name: "اسم غذای نمونه ۳",
+			description: "توضیحات نمونه ۳",
+			price: "۲۱۰۰۰۰",
+			image: Food3,
+		},
+		{
+			id: 4,
+			name: "اسم غذای نمونه ۴",
+			description: "توضیحات نمونه ۴",
+			price: "۱۸۰۰۰۰",
+			image: Food4,
+		},
 
-	const handleChange = (event, newValue) => {
-		setSelectedCategory(newValue);
-	};
+		{
+			id: 5,
+			name: "اسم غذای نمونه ۲",
+			description: "توضیحات نمونه ۲",
+			price: "۴۵۰۰۰۰",
+			image: Food2,
+		},
+		{
+			id: 6,
+			name: "اسم غذای نمونه ۳",
+			description: "توضیحات نمونه ۳",
+			price: "۲۱۰۰۰۰",
+			image: Food3,
+		},
+		{
+			id: 7,
+			name: "اسم غذای نمونه ۴",
+			description: "توضیحات نمونه ۴",
+			price: "۱۸۰۰۰۰",
+			image: Food4,
+		},
+	];
 
 	return (
 		<Grid
@@ -139,7 +231,6 @@ const RestaurantPage = () => {
 					md: 4,
 				},
 				display: "flex",
-				alignItems: "center",
 				justifyContent: "center",
 			}}
 		>
@@ -161,14 +252,15 @@ const RestaurantPage = () => {
 						}}
 					/>
 					<IconButton
-						sx={{
-							position: "absolute",
-							bottom: 8,
-							left: 8,
-							color: "white",
-						}}
+  						sx={{
+   						position: "absolute",
+    					bottom: 8,
+    					left: 8,
+    					color: favorites[restaurantId] ? "red" : "white",
+  						}}
+  						onClick={toggleFavorite}
 					>
-						<FavoriteBorderIcon />
+  						{favorites[restaurantId] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
 					</IconButton>
 				</Box>
 				<Box
@@ -196,6 +288,13 @@ const RestaurantPage = () => {
 				</Typography>
 				<Typography
 					variant="body2"
+					color="grey"
+					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" }}}
+				>
+					آدرس: {address}
+				</Typography>
+				<Typography
+					variant="body2"
 					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
 				>
 					{description}
@@ -208,28 +307,12 @@ const RestaurantPage = () => {
 			<Grid>
 				<Box sx={{ width: { lg: "700px" } }}>
 					{/* Category Tabs */}
-					<Tabs
-						value={selectedCategory}
-						onChange={handleChange}
-						variant="scrollable"
-						textColor="primary"
-						indicatorColor="primary"
-						aria-label="food categories"
-						sx={{ mb: 2 }}
-					>
-						{categories.map((category) => (
-							<Tab
-								key={category.id}
-								label={category.name}
-								value={category.id}
-							/>
-						))}
-					</Tabs>
+					
 
 					{/* Food List */}
 					<Box sx={{ cursor: "pointer" }}>
-						{foodData[selectedCategory].length > 0 ? (
-							foodData[selectedCategory].map((food) => (
+						{foodData.length > 0 ? (
+							foodData.map((food) => (
 								<Card
 									key={food.id}
 									onClick={() => navigate("/menu-item")}

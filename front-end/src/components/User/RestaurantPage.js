@@ -89,22 +89,19 @@ const RestaurantPage = () => {
 	
 		try {
 			if (favorites[restaurantId]) {
-				// حذف رستوران از علاقه‌مندی‌ها
 				const response = await axiosInstance.delete(`/customer/favorites`, {
-					data: { restaurant_id: parseInt(restaurantId) },
+					params: { restaurant_id: restaurantId },
 				});
 	
 				if (response.status === 204) {
 					alert("رستوران از علاقه‌مندی‌ها حذف شد.");
 	
-					// حذف رستوران از state
 					setFavorites((prevFavorites) => ({
 						...prevFavorites,
-						[restaurantId]: false, // مقدار این رستوران به false تغییر می‌کند
+						[restaurantId]: false, 
 					}));
 				}
 			} else {
-				// اضافه کردن رستوران به علاقه‌مندی‌ها
 				const response = await axiosInstance.post("/customer/favorites", {
 					restaurant_id: parseInt(restaurantId),
 				});
@@ -112,10 +109,9 @@ const RestaurantPage = () => {
 				if (response.status === 201) {
 					alert("رستوران به علاقه‌مندی‌ها اضافه شد.");
 	
-					// اضافه کردن رستوران به state
 					setFavorites((prevFavorites) => ({
 						...prevFavorites,
-						[restaurantId]: true, // مقدار این رستوران به true تغییر می‌کند
+						[restaurantId]: true,
 					}));
 				}
 			}

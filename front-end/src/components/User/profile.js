@@ -8,16 +8,24 @@ import {
 	ListItemIcon,
 	ListItemText,
 	Divider,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Button
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import LogoutIcon from "@mui/icons-material/Logout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 
 const UserProfilePage = () => {
 	const navigate = useNavigate();
+	const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 	const user = JSON.parse(localStorage.getItem("user"));
 
 	const handleEditClick = () => {
@@ -30,6 +38,19 @@ const UserProfilePage = () => {
 
 	const handleFavorites= () => {
 		navigate("/favorites");
+	};
+
+	const handleOpenLogoutDialog = () => {
+		setOpenLogoutDialog(true);
+	};
+
+	const handleCloseLogoutDialog = () => {
+		setOpenLogoutDialog(false);
+	};
+
+	const handleLogOutClick = () => {
+		localStorage.clear();
+		navigate("/");
 	};
 
 	return (
@@ -134,7 +155,99 @@ const UserProfilePage = () => {
 						primary="ثبت نام فروشندگان"
 					/>
 				</ListItem>
+				<Divider
+					sx={{ borderColor: "#B0B0B0", width: "80%", mx: "auto", my: 1 }}
+				/>
+				<ListItem
+					button
+					style={{ cursor: "pointer" }}
+					sx={{ paddingRight: 2, paddingLeft: 2 }}
+				>
+					<ListItemIcon>
+						<LogoutIcon color="warning" />
+					</ListItemIcon>
+					<ListItemText
+						onClick={handleOpenLogoutDialog}
+						primary="خروج از حساب کاربری"
+					/>
+				</ListItem>
 			</List>
+
+			<Dialog
+				open={openLogoutDialog}
+				onClose={handleCloseLogoutDialog}
+				aria-labelledby="logout-dialog-title"
+				aria-describedby="logout-dialog-description"
+				sx={{
+				  "& .MuiDialog-paper": {
+					padding: "15px 16px", 
+					borderRadius: "12px", 
+				  },
+				}}
+			>
+			<DialogTitle
+			  id="logout-dialog-title"
+			  sx={{
+				  padding: "10px 8px", 
+				fontSize: "18px",
+				pointerEvents: "none", 
+				userSelect: "none"
+			  }}
+			>
+			تأیید خروج
+			</DialogTitle>
+			<DialogContent
+			  sx={{
+				padding: "8px 8px", 
+				pointerEvents: "none", 
+				userSelect: "none"
+			  }}
+			>
+			  <DialogContentText id="logout-dialog-description">
+				آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
+			  </DialogContentText>
+			</DialogContent>
+			<DialogActions
+				sx={{
+				  padding: "8px 8px", 
+				  display: "flex",
+				  justifyContent: "center",
+				  gap: "12px",
+				}}
+			>
+			<Button
+			  onClick={handleCloseLogoutDialog}
+			  sx={{
+				bgcolor: "#e4a073",
+				color: "white",
+				fontSize: "16px",
+				fontWeight: "bold",
+				borderRadius: "8px",
+				"&:hover": {
+				  bgcolor: "#d48b6c",
+				},
+			  }}
+			>
+			خیر
+			</Button>
+			<Button
+			  onClick={handleLogOutClick}
+			  variant="contained"
+			  sx={{
+				bgcolor: "#f57c00",
+				color: "white",
+				fontSize: "16px",
+				fontWeight: "bold",
+				borderRadius: "8px",
+				"&:hover": {
+				  bgcolor: "#e56c00",
+				},
+			  }}
+			>
+			  بله
+			</Button>
+			</DialogActions>
+		</Dialog>
 		</Box>
 	);
 };

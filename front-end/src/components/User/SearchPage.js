@@ -202,7 +202,7 @@ const RestaurantListPage = () => {
   };
 
   return (
-    <Box sx={{ padding: 3, height: "100vh", width: "100%", backgroundColor: "#fceddc" }}>
+    <Box sx={{ padding: 3, height: "100vh", width: "100%", backgroundColor: "#fffbf7" }}>
         <Header />
 
       <Box sx={{ display: "flex", justifyContent: "center",  marginTop:"60px" }}>

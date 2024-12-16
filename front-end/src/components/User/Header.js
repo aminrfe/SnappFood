@@ -193,26 +193,37 @@ const Header = () => {
             </div>
           )}
         </Search>
-        <div>
-          <Button
-            variant="contained"
-            color="primary"
-            sx={{ marginTop: "10px !important", width: "130px", height: "45px", borderRadius: "50px !important", fontWeight: "400 !important" }}
-            onClick={handleLoginClick}
-          >
-            ورود یا عضویت
-          </Button>
-          {isLoggedIn && (
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ marginTop: "10px !important", width: "130px", height: "45px", borderRadius: "50px !important", fontWeight: "400 !important" }}
-              onClick={handleProfileClick}
-            >
-              پروفایل
-            </Button>
-          )}
-        </div>
+        {!isLoggedIn ? (
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={handleLoginClick}
+						sx={{
+							marginTop: "10px !important",
+							width: "130px",
+							height: "45px",
+							borderRadius: "50px !important",
+							fontWeight: "400 !important",
+						}}
+					>
+						ورود یا عضویت
+					</Button>
+				) : (
+					<Button
+						variant="contained"
+						color="primary"
+						onClick={handleProfileClick}
+						sx={{
+							marginTop: "10px !important",
+							width: "130px",
+							height: "45px",
+							borderRadius: "50px !important",
+							fontWeight: "400 !important",
+						}}
+					>
+						پروفایل
+					</Button>
+				)}
       </Toolbar>
     </AppBar>
   );

@@ -1,8 +1,98 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Typography, Card, CardMedia, CardContent, Grid, IconButton } from "@mui/material";
+import { Box, TextField ,InputAdornment ,Typography, Card, CardMedia, CardContent, Grid, IconButton } from "@mui/material";
 import { FavoriteBorder, Favorite, Star } from "@mui/icons-material";
 import axiosInstance from "../../utills/publicAxiosInstance";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { AppBar, Toolbar, Button } from "@mui/material";
+import FoodiImg from "../../assets/imgs/foodiIcon.png"; 
+import SearchIcon from "@mui/icons-material/Search";
+
+const Header = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+
+  const checkAuthentication = () => {
+    const accessToken = localStorage.getItem("access");
+    const refreshToken = localStorage.getItem("refresh");
+    setIsLoggedIn(!!(accessToken && refreshToken));
+  };
+
+  useEffect(() => {
+    checkAuthentication();
+    const handleStorageChange = () => {
+      checkAuthentication();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
+  const handleLoginClick = () => {
+    navigate("/login");
+  };
+
+  const handleProfileClick = () => {
+    navigate(`/customer/profile`);
+  };
+
+  return (
+    <AppBar
+      elevation={1}
+      sx={{
+        backgroundColor: "#F4DCC9",
+        boxShadow: "0px 1px 3px rgba(0, 0, 0, 0.2)",
+      }}
+    >
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between"}}>
+        <img
+        
+          onClick={() => navigate("/")}
+          src={FoodiImg}
+          alt="Foodi Logo"
+          style={{ width: "100px", cursor:"pointer" }}
+        />
+        <Typography variant="h5" sx={{ textAlign: "center", color: "#D68240", pointerEvents: "none", userSelect: "none" }}>
+        لیست رستوران‌ها
+        </Typography>
+        <div>
+          {!isLoggedIn ? (
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                marginTop: "10px !important",
+                width: "130px",
+                height: "45px",
+                borderRadius: "50px !important",
+                fontWeight: "400 !important",
+              }}
+              onClick={handleLoginClick}
+            >
+              ورود یا عضویت
+            </Button>
+          ) : (
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{
+                marginTop: "10px !important",
+                width: "130px",
+                height: "45px",
+                borderRadius: "50px !important",
+                fontWeight: "400 !important",
+              }}
+              onClick={handleProfileClick}
+            >
+              پروفایل
+            </Button>
+          )}
+        </div>
+      </Toolbar>
+    </AppBar>
+  );
+};
 
 const RestaurantListPage = () => {
   const navigate = useNavigate();
@@ -113,37 +203,41 @@ const RestaurantListPage = () => {
 
   return (
     <Box sx={{ padding: 3, height: "100vh", width: "100%", backgroundColor: "#fceddc" }}>
-      <Typography variant="h5" sx={{ textAlign: "center", marginBottom: 3, color: "#D68240" }}>
-        لیست رستوران‌ها
-      </Typography>
+        <Header />
 
-      {/* جستجوی نام رستوران */}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <TextField
-          variant="outlined"
-          placeholder="جستجوی نام رستوران..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          sx={{
-            marginBottom: 3,
-            width: "80%",
-            "& .MuiOutlinedInput-root": {
-              borderRadius: "8px",
-              "& fieldset": {
-                borderColor: "#9c9c9c",
-              },
-              "&:hover fieldset": {
-                borderColor: "#a8a8a8",
-              },
-              "&.Mui-focused fieldset": {
-                borderColor: "#888888",
-              },
+      <Box sx={{ display: "flex", justifyContent: "center",  marginTop:"60px" }}>
+      <TextField
+        variant="outlined"
+        placeholder="جستجوی نام فروشگاه..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        sx={{
+          marginBottom: 3,
+          width: "80%",
+          "& .MuiOutlinedInput-root": {
+            borderRadius: "8px",
+            "& fieldset": {
+              borderColor: "#9c9c9c",
             },
-          }}
-        />
-      </Box>
+            "&:hover fieldset": {
+              borderColor: "#a8a8a8",
+            },
+            "&.Mui-focused fieldset": {
+              borderColor: "#888888",
+            },
+          },
+        }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon sx={{ color: "#D68240" }} />
+            </InputAdornment>
+          ),
+        }}
+      />
+    </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", marginBottom: 2}}>
         {Object.entries(categories).map(([key, label]) => (
           <Typography
             key={key}
@@ -231,7 +325,7 @@ const RestaurantListPage = () => {
       </Grid>
 
       {restaurants.length === 0 && !error && (
-        <Typography sx={{ textAlign: "center", marginTop: 3 }}>هیچ رستورانی یافت نشد.</Typography>
+        <Typography sx={{ textAlign: "center", marginTop: 3 }}>هیچ موردی یافت نشد.</Typography>
       )}
     </Box>
   );

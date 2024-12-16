@@ -17,6 +17,7 @@ import "./App.css";
 import RestaurantPage from "./components/User/RestaurantPage";
 import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
+import SearchPage from "./components/User/SearchPage.js";
 
 
 function App() {function isAuthenticated() {
@@ -48,9 +49,30 @@ function App() {function isAuthenticated() {
 							<Route path="/menu-item" element={<FoodItemPage />} />
 							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
 							<Route path="/restaurant/:id" element={<RestaurantPage />} />
-							<Route path="/restaurant/:res_id/menu" element={<EditMenu />} />
-							<Route path="/favorites" element={<FavoritesPage />} />
+							<Route path="/search" element={<SearchPage />} />
+							{/* <Route path="/restaurant/:res_id/menu" element={<EditMenu />} /> */}
+							{/* <Route path="/favorites" element={<FavoritesPage />} /> */}
 							{/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
+							<Route
+								path="/favorites"
+								element={
+									isAuthenticated() ? (
+										<FavoritesPage />
+									) : (
+										<Navigate to="/login" />
+									)
+								}
+							/>
+							<Route
+								path="/restaurant/:res_id/menu"
+								element={
+									isAuthenticated() ? (
+										<EditMenu />
+									) : (
+										<Navigate to="/login" />
+									)
+								}
+							/>
 							<Route
 								path="/profile"
 								element={

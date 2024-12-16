@@ -51,7 +51,7 @@ button.MuiButton-root:hover {
 }
 
 .MuiOutlinedInput-notchedOutline {
-	border-color: #ddd !important;
+	border-color: #ddd 
 }
 
 .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {

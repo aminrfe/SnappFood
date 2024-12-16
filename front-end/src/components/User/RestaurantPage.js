@@ -63,14 +63,11 @@ const RestaurantPage = () => {
 			try {
 				const response = await axiosInstance.get("/customer/favorites");
 				console.log("Favorites data:", response.data);
-		
-				// ایجاد یک آبجکت جدید که وضعیت علاقه‌مندی تمام رستوران‌ها را نگه می‌دارد
-				const updatedFavorites = {};
+						const updatedFavorites = {};
 				response.data.forEach((fav) => {
-					updatedFavorites[fav.restaurant] = true; // اگر رستورانی در لیست علاقه‌مندی‌ها است، مقدارش true می‌شود
+					updatedFavorites[fav.restaurant] = true; 
 				});
-		
-				setFavorites(updatedFavorites); // به‌روزرسانی state
+				setFavorites(updatedFavorites); 
 			} catch (error) {
 				console.error("Error checking favorites:", error);
 			}

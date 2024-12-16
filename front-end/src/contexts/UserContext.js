@@ -2,7 +2,6 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "../utills/axiosInstance";
 import { Navigate } from "react-router-dom";
 
-// ایجاد کانتکست
 const UserContext = createContext();
 
 export const useUser = () => useContext(UserContext);
@@ -21,9 +20,13 @@ const UserProvider = ({ children }) => {
     }
   
     try {
-      const response = await axiosInstance.get("/customer/profile");
-      localStorage.setItem("user", JSON.stringify(response.data));
-      setUser(response.data);
+      const resID = localStorage.getItem("res_id");
+      if(!resID || resID === "undefined"){
+        const response = await axiosInstance.get("/customer/profile");
+        localStorage.setItem("user", JSON.stringify(response.data));
+        setUser(response.data);
+      }
+      
     } catch (error) {
       console.error("خطا در دریافت پروفایل:", error);
   

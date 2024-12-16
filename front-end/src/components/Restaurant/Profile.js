@@ -6,10 +6,17 @@ import {
 	Typography,
 	Avatar,
 	IconButton,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogContentText,
+	DialogTitle,
+	Button
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import DescriptionIcon from "@mui/icons-material/Description";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
@@ -17,8 +24,10 @@ import axiosInstance from "../../utills/axiosInstance";
 const RestaurantProfile = () => {
 	const [name, setName] = useState("");
 	const [phoneNumber, setPhoneNumber] = useState("");
+	const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 	const navigate = useNavigate();
 	const { id } = useParams();
+	
 
 	useEffect(() => {
 		fetchProfileData();
@@ -56,6 +65,19 @@ const RestaurantProfile = () => {
 		if (id) {
 			navigate(`/restaurant/${id}/menu`);
 		}
+	};
+
+	const handleOpenLogoutDialog = () => {
+		setOpenLogoutDialog(true);
+	};
+
+	const handleCloseLogoutDialog = () => {
+		setOpenLogoutDialog(false);
+	};
+
+	const handleLogOutClick = () => {
+		localStorage.clear();
+		navigate("/");
 	};
 
 	return (
@@ -116,7 +138,6 @@ const RestaurantProfile = () => {
 					marginTop: 3,
 				}}
 			>
-				{/* Menu  */}
 				<Card
 					sx={{
 						marginBottom: 2,
@@ -133,8 +154,12 @@ const RestaurantProfile = () => {
 					</CardContent>
 				</Card>
 
-				{/* Financial Report  */}
-				<Card sx={{ bgcolor: "#f5d5c0" }}>
+				<Card 
+					sx={{
+						marginBottom: 2,
+						bgcolor: "#f5d5c0",
+					}}
+				>
 					<CardContent 
 					style={{ cursor: "pointer" }}
 					sx={{ display: "flex", alignItems: "center" }}>
@@ -142,7 +167,93 @@ const RestaurantProfile = () => {
 						<Typography>گزارش مالی فروشگاه</Typography>
 					</CardContent>
 				</Card>
+
+				<Card sx={{ bgcolor: "#f5d5c0" }}>
+					<CardContent 
+					style={{ cursor: "pointer" }}
+					onClick={handleOpenLogoutDialog}
+					sx={{ display: "flex", alignItems: "center" }}>
+						<LogoutIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+						<Typography>خروج از حساب کاربری</Typography>
+					</CardContent>
+				</Card>
 			</Box>
+
+			<Dialog
+  				open={openLogoutDialog}
+  				onClose={handleCloseLogoutDialog}
+  				aria-labelledby="logout-dialog-title"
+  				aria-describedby="logout-dialog-description"
+  				sx={{
+  				  "& .MuiDialog-paper": {
+  				    padding: "15px 16px", 
+  				    borderRadius: "12px",
+  				  },
+  				}}
+			>
+			<DialogTitle
+			  id="logout-dialog-title"
+			  sx={{
+				  padding: "10px 8px", 
+			    fontSize: "18px", 
+				pointerEvents: "none", 
+				userSelect: "none"
+			  }}
+			>
+    		تأیید خروج
+  			</DialogTitle>
+  			<DialogContent
+  			  sx={{
+  			    padding: "8px 8px",
+				pointerEvents: "none", 
+				userSelect: "none"
+  			  }}
+  			>
+  			  <DialogContentText id="logout-dialog-description">
+  			    آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
+  			  </DialogContentText>
+  			</DialogContent>
+  			<DialogActions
+    			sx={{
+    			  padding: "8px 8px", 
+    			  display: "flex",
+    			  justifyContent: "center",
+    			  gap: "12px",
+    			}}
+  			>
+    		<Button
+    		  onClick={handleCloseLogoutDialog}
+    		  sx={{
+    		    bgcolor: "#e4a073",
+    		    color: "white",
+    		    fontSize: "16px",
+    		    fontWeight: "bold",
+    		    borderRadius: "8px",
+    		    "&:hover": {
+    		      bgcolor: "#d48b6c",
+    		    },
+    		  }}
+    		>
+      		خیر
+    		</Button>
+    		<Button
+    		  onClick={handleLogOutClick}
+    		  variant="contained"
+    		  sx={{
+    		    bgcolor: "#f57c00",
+    		    color: "white",
+    		    fontSize: "16px",
+    		    fontWeight: "bold",
+    		    borderRadius: "8px",
+    		    "&:hover": {
+    		      bgcolor: "#e56c00",
+    		    },
+    		  }}
+    		>
+    		  بله
+    		</Button>
+  			</DialogActions>
+		</Dialog>
 		</Box>
 	);
 };

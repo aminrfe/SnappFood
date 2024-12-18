@@ -42,6 +42,7 @@ function App() {
                 path="/"
                 element={
                   <>
+                    {/* <OrderList /> */}
                     <Header isAuthenticated={isAuthenticated} />
                     <HomePage isAuthenticated={isAuthenticated} />
                   </>
@@ -54,7 +55,6 @@ function App() {
               <Route path="/restuarant-signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
-
               {/* <Route path="/orders" element={<OrderList />} /> */}
               {/* <Route path="/restaurant/:res_id/menu" element={<EditMenu />} /> */}
               {/* <Route path="/favorites" element={<FavoritesPage />} /> */}

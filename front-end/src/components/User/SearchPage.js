@@ -243,6 +243,7 @@ const RestaurantListPage = () => {
             key={key}
             onClick={() => handleCategoryClick(key)}
             sx={{
+              pointerEvents: "auto",
               cursor: "pointer",
               padding: 1,
               margin: 1,

@@ -83,7 +83,7 @@ const OrderList = () => {
               {/* Image Section */}
               <CardMedia
                 component="img"
-                sx={{ width: 100, height: 100 }}
+                sx={{ width: 100, height: 100, marginLeft: 3 }}
                 image={order.image}
                 alt={order.name}
               />
@@ -117,8 +117,6 @@ const OrderList = () => {
                 <Button
                   variant="contained"
                   sx={{
-                    backgroundColor: "#F79367",
-                    color: "white",
                     "&:hover": { backgroundColor: "primary" },
                     fontWeight: "normal !important",
                   }}
@@ -126,8 +124,8 @@ const OrderList = () => {
                   وارد کردن وضعیت سفارش
                 </Button>
               </Box>
-              <Divider  />
             </Card>
+            <Divider sx={{ backgroundColor: "lightGrey"}} />
           </Grid>
         ))}
       </Grid>

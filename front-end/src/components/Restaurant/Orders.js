@@ -117,7 +117,7 @@ const OrderList = () => {
                 <Button
                   variant="contained"
                   sx={{
-                    "&:hover": { color: "#d68240 !important" },
+                    "&:hover": { backgroundColor: "primary" },
                     fontWeight: "normal !important",
                   }}
                 >

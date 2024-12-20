@@ -50,7 +50,12 @@ class FavoriteSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class AddToCartSerializer(serializers.Serializer):
+    restaurant_id = serializers.IntegerField()
     item_id = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+class UpdateCartItemSerializer(serializers.Serializer):
+    cart_item_id = serializers.IntegerField()
     count = serializers.IntegerField()
 
 class CartItemSerializer(serializers.ModelSerializer):

@@ -51,10 +51,10 @@ class UpdateOrderStatusView(APIView):
         request_body=OrderStatusUpdateSerializer,
         responses={
             200: openapi.Response('Order status updated successfully', OrderStatusUpdateSerializer),
+            400: openapi.Response('Invalid input'),
             401: "Unauthorized",
             403: "Forbidden",
             404: openapi.Response('Order not found'),
-            400: openapi.Response('Invalid input'),
         },
     )
     def patch(self, request, *args, **kwargs):

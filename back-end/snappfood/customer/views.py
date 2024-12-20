@@ -180,6 +180,7 @@ class CartListCreateView(generics.ListCreateAPIView):
                 schema=CartSerializer(many=True)
             ),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
         },
     )
     def get(self, request, *args, **kwargs):
@@ -195,6 +196,7 @@ class CartListCreateView(generics.ListCreateAPIView):
             ),
             400: openapi.Response(description="Invalid input"),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Item or Restaurant not found"),
         },
     )
@@ -249,6 +251,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
                 schema=CartSerializer()
             ),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart not found"),
         }
     )
@@ -272,6 +275,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             ),
             400: openapi.Response(description="Invalid input"),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart or Cart item not found"),
         },
     )
@@ -300,6 +304,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
         responses={
             200: openapi.Response(description="Cart successfully deleted"),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart not found"),
         },
     )
@@ -319,6 +324,7 @@ class CartItemDeleteView(APIView):
         responses={
             200: openapi.Response(description="Cart item successfully deleted"),
             401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart or Cart item not found"),
         },
     )

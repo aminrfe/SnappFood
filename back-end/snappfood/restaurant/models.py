@@ -78,7 +78,7 @@ class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    discount = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
+    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     name = models.CharField(max_length=100)
     score = models.FloatField(default=0.0)
     description = models.TextField(null=True, blank=True)
@@ -94,7 +94,7 @@ class Item(models.Model):
 
     def calculate_score(self):
         order_items = OrderItem.objects.filter(item=self)
-        orders = Order.objects.filter(id__in=order_items.values_list('order_id', flat=True))
+        orders = Order.objects.filter(order_id__in=order_items.values_list('order_id', flat=True))
         avg_score = Review.objects.filter(order__in=orders).aggregate(average=Avg('score'))['average']
         return round(avg_score, 2) if avg_score else 0.0
 
@@ -107,11 +107,11 @@ class Item(models.Model):
 
 
 class Review(models.Model):
-    customer = models.ForeignKey('customer.CustomerProfile', on_delete=models.CASCADE, related_name='reviews')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='reviews')
     score = models.PositiveSmallIntegerField()
     description = models.TextField(null=True, blank=True)
 
     class Meta:
-        unique_together = ('customer', 'order')
+        unique_together = ('user', 'order')
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import CustomerProfile, User
-from .models import CustomerProfile, User, Favorite
+from .models import CustomerProfile, User, Favorite, Cart, CartItem
 
 class NestedUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,3 +48,27 @@ class FavoriteSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         validated_data['user'] = user
         return super().create(validated_data)
+
+class AddToCartSerializer(serializers.Serializer):
+    restaurant_id = serializers.IntegerField()
+    item_id = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+class UpdateCartItemSerializer(serializers.Serializer):
+    cart_item_id = serializers.IntegerField()
+    count = serializers.IntegerField()
+
+class CartItemSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="item.name", read_only=True)
+    
+    class Meta:
+        model = CartItem
+        fields = ['id', 'item', 'name', 'discount','count', 'price']
+    
+class CartSerializer(serializers.ModelSerializer):
+    cart_items = CartItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'restaurant', 'restaurant_name','total_price', 'cart_items']

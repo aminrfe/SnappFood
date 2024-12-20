@@ -2,16 +2,18 @@ from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from restaurant.models import RestaurantProfile
+from restaurant.permissions import IsRestaurantManager
 from .models import Order
 from .serializers import OrderListSerializer, OrderStatusUpdateSerializer
 
 class RestaurantOrderListView(generics.ListAPIView):
     serializer_class = OrderListSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsRestaurantManager]
 
     @swagger_auto_schema(
         operation_summary="Get all orders for a restaurant",
@@ -20,42 +22,47 @@ class RestaurantOrderListView(generics.ListAPIView):
                 description="List of orders",
                 schema=OrderListSerializer(many=True)
             ),
+            401: "Unauthorized",
+            403: "Forbidden",
             404: openapi.Response(
                 description="Restaurant not found"
             )
         }    
     )
-    def get(self, request, restaurant_id, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         try:
-            restaurant = RestaurantProfile.objects.get(id=restaurant_id)
+            restaurant = request.user.restaurant_profile
         except RestaurantProfile.DoesNotExist:
             raise NotFound(detail="Restaurant not found.")
 
-        queryset = Order.objects.filter(
-            restaurant_id=restaurant_id
-        ).exclude(state='shopping_cart')
+        queryset = Order.objects.filter(restaurant=restaurant)
 
         if not queryset.exists():
             return Response([], status=status.HTTP_200_OK)
         
         serializer = OrderListSerializer(queryset, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 class UpdateOrderStatusView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsRestaurantManager]
 
     @swagger_auto_schema(
         operation_summary="Update the status of a specific order",
         request_body=OrderStatusUpdateSerializer,
         responses={
             200: openapi.Response('Order status updated successfully', OrderStatusUpdateSerializer),
-            404: openapi.Response('Order not found'),
             400: openapi.Response('Invalid input'),
+            401: "Unauthorized",
+            403: "Forbidden",
+            404: openapi.Response('Order not found'),
         },
     )
-    def patch(self, request, restaurant_id, id,*args, **kwargs):
+    def patch(self, request, *args, **kwargs):
         try:
-            order = Order.objects.get(restaurant_id=restaurant_id, order_id=id)
+            restaurant = request.user.restaurant_profile
+            order = Order.objects.get(restaurant=restaurant, order_id=kwargs['id'])
+        except RestaurantProfile.DoesNotExist:
+            raise NotFound(detail="Restaurant not found.")
         except Order.DoesNotExist:
             return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
 

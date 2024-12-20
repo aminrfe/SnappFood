@@ -51,9 +51,3 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.count} x {self.item.name} in cart for {self.cart.user}"
-
-# @receiver(pre_delete, sender=CartItem)
-# def delete_cart_when_empty(sender, instance, **kwargs):
-#     cart = instance.cart
-#     if not cart.cart_items.exists():
-#         cart.delete()

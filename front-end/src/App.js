@@ -24,6 +24,7 @@ import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
 import SearchPage from "./components/User/SearchPage.js";
 import OrderList from "./components/Restaurant/Orders.js";
+import RestaurantReportPage from "./components/Restaurant/ReportPage.js"; 
 
 function App() {
   function isAuthenticated() {
@@ -125,6 +126,18 @@ function App() {
                   )
                 }
               />
+              {/*<Route
+                path="/restaurant-report"
+                element={
+                  isAuthenticated() ? (
+                    <RestaurantReportPage />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
+                }
+              />*/}
+              <Route path="/restaurant-report" element={<RestaurantReportPage />} />
+
             </Routes>
           </Router>
         </UserProvider>

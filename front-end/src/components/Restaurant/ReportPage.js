@@ -14,7 +14,7 @@ const totalRevenue = 900000;
 
 const RestaurantReportPage = () => {
   return (
-    <Container sx={{ marginTop: 4, width: "60%" }}> 
+    <Container sx={{ marginTop: 4, width: "70%" }}> 
       {/* Header */}
       <Box
         sx={{

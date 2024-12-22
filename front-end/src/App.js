@@ -25,6 +25,7 @@ import FavoritesPage from "./components/User/FavoritesPage.js";
 import SearchPage from "./components/User/SearchPage.js";
 import OrderList from "./components/Restaurant/Orders.js";
 import RestaurantReportPage from "./components/Restaurant/ReportPage.js"; 
+import CartPage from "./components/User/CartPage.js";
 
 function App() {
   function isAuthenticated() {
@@ -56,10 +57,9 @@ function App() {
               <Route path="/restuarant-signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
-              {/* <Route path="/orders" element={<OrderList />} /> */}
-              {/* <Route path="/restaurant/:res_id/menu" element={<EditMenu />} /> */}
-              {/* <Route path="/favorites" element={<FavoritesPage />} /> */}
-              {/* <Route path="/restaurant/:id/profile" element={<RestaurantEditProfile />} /> */}
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/orders" element={<OrderList />} />
+
               <Route
                 path="/favorites"
                 element={
@@ -126,7 +126,7 @@ function App() {
                   )
                 }
               />
-              {/*<Route
+              <Route
                 path="/restaurant-report"
                 element={
                   isAuthenticated() ? (
@@ -135,8 +135,8 @@ function App() {
                     <Navigate to="/login" replace />
                   )
                 }
-              />*/}
-              <Route path="/restaurant-report" element={<RestaurantReportPage />} />
+              />
+              {/* <Route path="/restaurant-report" element={<RestaurantReportPage />} /> */}
 
             </Routes>
           </Router>

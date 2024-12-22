@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Box,
 	Typography,
@@ -13,90 +13,96 @@ import Grid from "@mui/material/Grid2";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
-import Food1 from "../../assets/imgs/food1.png";
-import Food2 from "../../assets/imgs/food2.png";
-import Food3 from "../../assets/imgs/food3.png";
-import Food4 from "../../assets/imgs/food4.png";
 import axiosInstance from "../../utills/axiosInstance";
 import { useParams } from "react-router-dom";
 
 const EditMenu = () => {
 	const { res_id } = useParams(); 
-	console.log("res_id:", res_id);
-
-	const initialFoodData = [
-		{
-			id: 1,
-			name: "اسم غذای نمونه ۱",
-			description: "توضیحات نمونه ۱",
-			price: "۳۴۰۰۰۰",
-			image: Food1,
-			discount: "0",
-		},
-		{
-			id: 2,
-			name: "اسم غذای نمونه ۲",
-			description: "توضیحات نمونه ۲",
-			price: "۴۵۰۰۰۰",
-			image: Food2,
-			discount: "0",
-		},
-		{
-			id: 3,
-			name: "اسم غذای نمونه ۳",
-			description: "توضیحات نمونه ۳",
-			price: "۲۱۰۰۰۰",
-			image: Food3,
-			discount: "0",
-		},
-		{
-			id: 4,
-			name: "اسم غذای نمونه ۴",
-			description: "توضیحات نمونه ۴",
-			price: "۱۸۰۰۰۰",
-			image: Food4,
-			discount: "0",
-		},
-	];
-
-	const [foodData, setFoodData] = useState(initialFoodData);
+	const restaurantId = parseInt(res_id);
+	const [foodData, setFoodData] = useState([]);
 	const [editingFood, setEditingFood] = useState(null);
 	const [isAddingNew, setIsAddingNew] = useState(false);
 
-	// افزودن فایل تصویر واقعی
+
+	useEffect(() => {
+		const fetchFoodData = async () => {
+			try {
+				const response = await axiosInstance.get(`/restaurant/items`);
+				const allData = response.data;
+				console.log(allData);
+
+            	const filteredData = allData.filter((item) => item.restaurant === parseInt(res_id));
+            	setFoodData(filteredData);
+			} catch (error) {
+				console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
+				alert("خطا در دریافت داده‌ها.");
+			}
+		};
+
+		fetchFoodData();
+	}, [res_id]);
+
 	const handleEditChange = (field, value) => {
 		setEditingFood((prev) => ({ ...prev, [field]: value }));
 	};
 
 	
-	const handleDelete = (foodId) => {
-		setFoodData((prevData) => prevData.filter((food) => food.id !== foodId));
+	const handleDelete = async (foodId) => {
+		try {
+			await axiosInstance.delete(`/restaurant/items/${foodId}`);
+	
+			setFoodData((prevData) => prevData.filter((food) => food.item_id !== foodId))
+			alert("آیتم با موفقیت حذف شد.");
+			setEditingFood(null); 
+			setIsAddingNew(false);
+			
+		} catch (error) {
+			console.error("خطا در حذف آیتم:", error.response?.data || error.message);
+			alert("حذف آیتم با خطا مواجه شد.");
+		}
 	};
 
-	const handleEditClick = (food) => {
-		setEditingFood(food);
-		setIsAddingNew(false); // بستن حالت افزودن
+	const handleEditClick = async (foodId) => {
+		try {
+			// console.log("B",foodData);
+			const response = await axiosInstance.get(`/restaurant/items/${foodId}`);
+			setEditingFood({
+				item_id: response.data.item_id,
+				name: response.data.name,
+				description: response.data.description,
+				price: response.data.price,
+				photo: response.data.photo,
+				discount: response.data.discount,
+				score: response.data.score,
+				state: response.data.state,
+			});
+			setIsAddingNew(false);
+		} catch (error) {
+			console.error("خطا در دریافت جزئیات آیتم:", error.response?.data || error.message);
+			alert("خطا در دریافت جزئیات آیتم.");
+		}
 	};
 
 	const handleAddClick = () => {
 		setEditingFood({
-			id: null,
+			item_id: "",
 			name: "",
 			description: "",
 			price: "",
-			image: "",
-			discount: ""
-			// score: 0
+			photo: "",
+			discount: "",
+			score: 0,
+			state: ""
 		});
-		setIsAddingNew(true); // حالت افزودن
+		setIsAddingNew(true); 
 	};
 
 	const handleFileUpload = (e) => {
 		const file = e.target.files[0];
 		if (file) {
-			const imageUrl = URL.createObjectURL(file); // پیش‌نمایش تصویر
-			handleEditChange("image", imageUrl); // نمایش پیش‌نمایش
-			handleEditChange("imageFile", file); // ذخیره فایل واقعی
+			const imageUrl = URL.createObjectURL(file);
+			handleEditChange("photo", imageUrl); 
+			handleEditChange("imageFile", file); 
 		}
 	};
 
@@ -106,43 +112,61 @@ const EditMenu = () => {
 			return;
 		}
 
-		// const score = editingFood.score !== undefined ? editingFood.score : "0";
 		const formData = new FormData();
 
-		formData.append("price", parseFloat(editingFood.price)); // تبدیل به عدد
+		formData.append("price", editingFood.price);
 		formData.append("name", editingFood.name);
 		formData.append("description", editingFood.description);
-		formData.append("discount", parseFloat(editingFood.discount) || 0); // مقدار پیش‌فرض 0
+		formData.append("discount", (editingFood.discount).toString() || "0"); 
 		formData.append("state", "available");
-		// formData.append("score", "0");
+		formData.append("score", 0);
 
-		// اضافه کردن فایل تصویر در صورت انتخاب
 		if (editingFood.imageFile) {
-			formData.append("photo", editingFood.imageFile); // فایل تصویر واقعی
+			formData.append("photo", editingFood.imageFile);
 		}
 
 		try {
-			const response = await axiosInstance.post(
-				`/restaurant/${res_id}/items`,
-				formData,
-				{
-					headers: {
-						"Content-Type": "multipart/form-data", // تنظیم Content-Type
-					},
+			if (isAddingNew) {
+				const response = await axiosInstance.post(
+					"/restaurant/items",
+					formData,
+					{
+						headers: { "Content-Type": "multipart/form-data" },
+					}
+				);
+			
+				const newItem = {
+					...editingFood,
+					item_id: response.data.item_id, // مقدار id به‌درستی تنظیم می‌شود
+				};
+			
+				setFoodData((prevData) => [...prevData, newItem]);
+				alert("آیتم جدید با موفقیت اضافه شد.");
+				setEditingFood(newItem); // تنظیم دوباره editingFood با id صحیح
+			}
+			else {
+				if (!editingFood.item_id) {
+					alert("آیتم نامعتبر است، دوباره امتحان کنید.");
+					return;
 				}
-			);
-
-			setFoodData((prevData) => [
-				...prevData,
-				{ ...editingFood, id: response.data.id },
-			]);
-
-			alert("آیتم جدید با موفقیت اضافه شد.");
-			setEditingFood(null); // بازنشانی فرم
-			setIsAddingNew(false); // خروج از حالت افزودن
+		
+				await axiosInstance.put(
+					`/restaurant/items/${editingFood.item_id}`,
+					formData,
+					{
+						headers: { "Content-Type": "multipart/form-data" },
+					}
+				);
+		
+				const response = await axiosInstance.get("/restaurant/items");
+				setFoodData(response.data);
+				setEditingFood(null);
+		
+				alert("آیتم با موفقیت ویرایش شد.");
+			}
 		} catch (error) {
-			console.error("خطا در افزودن آیتم:", error.response?.data || error.message);
-			alert("افزودن آیتم با خطا مواجه شد.");
+			console.error("خطا در ذخیره آیتم:", error.response?.data || error.message);
+			alert("ذخیره آیتم با خطا مواجه شد.");
 		}
 	};
 
@@ -180,10 +204,10 @@ const EditMenu = () => {
 							<Typography variant="body2" sx={{ mb: 1 }}>
 								تصویر:
 							</Typography>
-							{editingFood.image && (
+							{editingFood.photo && (
 								<CardMedia
 									component="img"
-									image={editingFood.image}
+									image={editingFood.photo}
 									alt="food image"
 									sx={{ width: "100%", borderRadius: 3, mb: 2 }}
 								/>
@@ -213,9 +237,9 @@ const EditMenu = () => {
 						/>
 						<TextField
 							fullWidth
-							label="قیمت"
-							value={editingFood.price}
-							type="number" // فقط ورودی عدد مجاز باشد
+							label="قیمت (به تومان)"
+							value={parseInt(editingFood.price)}
+							type="number" 
 							onChange={(e) => handleEditChange("price", e.target.value)}
 							sx={{ mb: 2 }}
 						/>
@@ -223,7 +247,7 @@ const EditMenu = () => {
 							fullWidth
 							label="درصد تخفیف"
 							value={editingFood.discount}
-							type="number" // فقط ورودی عدد مجاز باشد
+							type="number" 
 							onChange={(e) => handleEditChange("discount", e.target.value)}
 							sx={{ mb: 2 }}
 						/>
@@ -252,7 +276,7 @@ const EditMenu = () => {
 						{foodData.length > 0 ? (
 							foodData.map((food) => (
 								<Card
-									key={food.id}
+									key={food.item_id}
 									sx={{
 										display: "flex",
 										alignItems: "center",
@@ -265,7 +289,7 @@ const EditMenu = () => {
 								>
 									<CardMedia
 										component="img"
-										image={food.image}
+										image={food.photo}
 										alt={food.name}
 										sx={{ width: 120, borderRadius: 3 }}
 									/>
@@ -284,16 +308,16 @@ const EditMenu = () => {
 											variant="body1"
 											sx={{ paddingTop: 2, pointerEvents: "none" }}
 										>
-											{food.price} تومان
+											{parseInt(food.price)} تومان
 										</Typography>
 									</CardContent>
 									<Box>
-										<IconButton onClick={() => handleEditClick(food)}>
-											<EditIcon color="primary" />
-										</IconButton>
-										<IconButton onClick={() => handleDelete(food.id)}>
-											<DeleteIcon color="error" />
-										</IconButton>
+									<IconButton onClick={() => handleEditClick(food.item_id)}>
+										<EditIcon color="primary" />
+	    							</IconButton>
+	    							<IconButton onClick={() => handleDelete(food.item_id)}>
+	    								<DeleteIcon color="error" />
+	    							</IconButton>
 									</Box>
 								</Card>
 							))

@@ -1,3 +1,5 @@
+from django.utils import timezone
+from django.http import Http404
 from rest_framework import permissions
 from rest_framework.views import APIView
 from rest_framework import generics
@@ -9,7 +11,6 @@ from drf_yasg.utils import swagger_auto_schema
 from .models import RestaurantProfile, Item
 from .serializers import RestaurantProfileSerializer, ItemSerializer
 from .permissions import IsRestaurantManager
-from django.utils import timezone
 import pytz
 
 
@@ -86,7 +87,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         responses={
             200: ItemSerializer,
             401: "Unauthorized",
-            403: "Forbidden"
+            403: "Forbidden",
+            404: "Item not found"
         }
     )
     def get(self, request, *args, **kwargs):
@@ -97,7 +99,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         responses={
             200: ItemSerializer,
             401: "Unauthorized",
-            403: "Forbidden"
+            403: "Forbidden",
+            404: "Item not found"
         },
         request_body=ItemSerializer
     )
@@ -109,7 +112,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
         responses={
             204: "No Content",
             401: "Unauthorized",
-            403: "Forbidden"
+            403: "Forbidden",
+            404: "Item not found"
         }
     )
     def delete(self, request, *args, **kwargs):
@@ -118,6 +122,14 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         restaurant = self.request.user.restaurant_profile  
         return Item.objects.filter(restaurant=restaurant)
+    
+    def get_object(self):
+        queryset = self.get_queryset()
+        pk = self.kwargs.get('pk')
+        try:
+            return queryset.get(pk=pk)
+        except Item.DoesNotExist:
+            raise Http404("Item not found.")
 
 
 class RestaurantListView(APIView):

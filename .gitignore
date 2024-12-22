@@ -6,4 +6,3 @@ env
 back-end/snappfood/db.sqlite3
 !**/migrations/__init__.py
 .scannerwork/*
-sonar-project.properties

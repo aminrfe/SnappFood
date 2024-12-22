@@ -26,6 +26,8 @@ import SearchPage from "./components/User/SearchPage.js";
 import OrderList from "./components/Restaurant/Orders.js";
 import RestaurantReportPage from "./components/Restaurant/ReportPage.js"; 
 import CartPage from "./components/User/CartPage.js";
+import CartCompletion from "./components/User/CartCompletion.js";
+
 
 function App() {
   function isAuthenticated() {
@@ -58,6 +60,7 @@ function App() {
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/cart-completion" element={<CartCompletion />} />
               <Route path="/orders" element={<OrderList />} />
 
               <Route

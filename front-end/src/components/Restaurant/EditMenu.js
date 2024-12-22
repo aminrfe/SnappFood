@@ -18,7 +18,7 @@ import { useParams } from "react-router-dom";
 
 const EditMenu = () => {
 	const { res_id } = useParams(); 
-	const res_id_number = parseInt(res_id);
+	const restaurantId = parseInt(res_id);
 	const [foodData, setFoodData] = useState([]);
 	const [editingFood, setEditingFood] = useState(null);
 	const [isAddingNew, setIsAddingNew] = useState(false);
@@ -28,9 +28,11 @@ const EditMenu = () => {
 		const fetchFoodData = async () => {
 			try {
 				const response = await axiosInstance.get(`/restaurant/items`);
-				const data = response.data; 
-				console.log(data);
-				setFoodData(data);
+				const allData = response.data;
+				console.log(allData);
+
+            	const filteredData = allData.filter((item) => item.restaurant === parseInt(res_id));
+            	setFoodData(filteredData);
 			} catch (error) {
 				console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
 				alert("خطا در دریافت داده‌ها.");
@@ -38,7 +40,7 @@ const EditMenu = () => {
 		};
 
 		fetchFoodData();
-	}, []);
+	}, [res_id]);
 
 	const handleEditChange = (field, value) => {
 		setEditingFood((prev) => ({ ...prev, [field]: value }));
@@ -60,14 +62,30 @@ const EditMenu = () => {
 		}
 	};
 
-	const handleEditClick = (food) => {
-		setEditingFood(food);
-		setIsAddingNew(false);
+	const handleEditClick = async (foodId) => {
+		try {
+			// console.log("B",foodData);
+			const response = await axiosInstance.get(`/restaurant/items/${foodId}`);
+			setEditingFood({
+				item_id: response.data.item_id,
+				name: response.data.name,
+				description: response.data.description,
+				price: response.data.price,
+				photo: response.data.photo,
+				discount: response.data.discount,
+				score: response.data.score,
+				state: response.data.state,
+			});
+			setIsAddingNew(false);
+		} catch (error) {
+			console.error("خطا در دریافت جزئیات آیتم:", error.response?.data || error.message);
+			alert("خطا در دریافت جزئیات آیتم.");
+		}
 	};
 
 	const handleAddClick = () => {
 		setEditingFood({
-			id: res_id_number,
+			item_id: "",
 			name: "",
 			description: "",
 			price: "",
@@ -116,14 +134,22 @@ const EditMenu = () => {
 						headers: { "Content-Type": "multipart/form-data" },
 					}
 				);
-	
-				setFoodData((prevData) => [
-					...prevData,
-					{ ...editingFood, id: response.data.item_id },
-				]);
-	
+			
+				const newItem = {
+					...editingFood,
+					item_id: response.data.item_id, // مقدار id به‌درستی تنظیم می‌شود
+				};
+			
+				setFoodData((prevData) => [...prevData, newItem]);
 				alert("آیتم جدید با موفقیت اضافه شد.");
-			} else {
+				setEditingFood(newItem); // تنظیم دوباره editingFood با id صحیح
+			}
+			else {
+				if (!editingFood.item_id) {
+					alert("آیتم نامعتبر است، دوباره امتحان کنید.");
+					return;
+				}
+		
 				await axiosInstance.put(
 					`/restaurant/items/${editingFood.item_id}`,
 					formData,
@@ -131,15 +157,13 @@ const EditMenu = () => {
 						headers: { "Content-Type": "multipart/form-data" },
 					}
 				);
-	
+		
 				const response = await axiosInstance.get("/restaurant/items");
 				setFoodData(response.data);
-	
+				setEditingFood(null);
+		
 				alert("آیتم با موفقیت ویرایش شد.");
 			}
-	
-			setEditingFood(null);
-			setIsAddingNew(false);
 		} catch (error) {
 			console.error("خطا در ذخیره آیتم:", error.response?.data || error.message);
 			alert("ذخیره آیتم با خطا مواجه شد.");
@@ -252,7 +276,7 @@ const EditMenu = () => {
 						{foodData.length > 0 ? (
 							foodData.map((food) => (
 								<Card
-									key={food.id}
+									key={food.item_id}
 									sx={{
 										display: "flex",
 										alignItems: "center",
@@ -288,12 +312,12 @@ const EditMenu = () => {
 										</Typography>
 									</CardContent>
 									<Box>
-										<IconButton onClick={() => handleEditClick(food)}>
-											<EditIcon color="primary" />
-										</IconButton>
-										<IconButton onClick={() => handleDelete(food.item_id)}>
-											<DeleteIcon color="error" />
-										</IconButton>
+									<IconButton onClick={() => handleEditClick(food.item_id)}>
+										<EditIcon color="primary" />
+	    							</IconButton>
+	    							<IconButton onClick={() => handleDelete(food.item_id)}>
+	    								<DeleteIcon color="error" />
+	    							</IconButton>
 									</Box>
 								</Card>
 							))

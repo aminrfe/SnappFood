@@ -2,10 +2,12 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
+from rest_framework.exceptions import NotFound
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from restaurant.models import RestaurantProfile, Item
+from restaurant.serializers import ItemSerializer
 from .models import CustomerProfile, Favorite, Cart, CartItem
 from .serializers import CustomerProfileSerializer, FavoriteSerializer, AddToCartSerializer, UpdateCartItemSerializer, CartSerializer
 from .permissions import IsCustomer
@@ -340,3 +342,50 @@ class CartItemDeleteView(APIView):
         cart.save()
 
         return Response({"message": "Cart item deleted."}, status=status.HTTP_200_OK)
+    
+class MenuItemsView(generics.ListAPIView):
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    @swagger_auto_schema(
+        operation_summary="List All Items of a Restaurant",
+        responses={
+            200: ItemSerializer(many=True),
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            404: openapi.Response(description="Restaurant not found"),
+        },
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        restaurant_id = self.kwargs.get('restaurant_id')
+        if not RestaurantProfile.objects.filter(pk=restaurant_id).exists():
+            raise NotFound("Restaurant not found")
+        return Item.objects.filter(restaurant_id=restaurant_id)
+
+class MenuItemDetailView(generics.RetrieveAPIView):
+    serializer_class = ItemSerializer
+    permission_classes = [IsAuthenticated, IsCustomer]
+    lookup_field = 'item_id'
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve a Specific Item of a Restaurant",
+        responses={
+            200: ItemSerializer,
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            404: openapi.Response(description="Item not found"),
+        },
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    def get_object(self):
+        restaurant_id = self.kwargs.get('restaurant_id')
+        item_id = self.kwargs.get('item_id')
+        try:
+            return Item.objects.get(restaurant_id=restaurant_id, item_id=item_id)
+        except Item.DoesNotExist:
+            raise NotFound("Item not found")

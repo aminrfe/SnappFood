@@ -364,7 +364,8 @@ class MenuItemsView(generics.ListAPIView):
 
 class MenuItemDetailView(generics.RetrieveAPIView):
     serializer_class = ItemSerializer
-
+    lookup_field = 'item_id'
+    
     @swagger_auto_schema(
         operation_summary="Retrieve a Specific Item of a Restaurant",
         responses={

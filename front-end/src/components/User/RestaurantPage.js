@@ -1,5 +1,5 @@
-import React, { useState, useEffect  } from "react";
-import { useNavigate, useParams  } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
 	Box,
 	Typography,
@@ -9,8 +9,6 @@ import {
 	Card,
 	CardMedia,
 	CardContent,
-	Tabs,
-	Tab,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -27,82 +25,82 @@ const RestaurantPage = () => {
 	const [openingTime, setOpeningTime] = useState(null);
 	const [closingTime, setClosingTime] = useState(null);
 	const [logo, setLogo] = useState(null);
-	const { id } = useParams(); 
-  	const navigate = useNavigate();
-  	const [restaurantId, setRestaurantId] = useState(null);
+	const { id } = useParams();
+	const navigate = useNavigate();
+	const [restaurantId, setRestaurantId] = useState(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [favorites, setFavorites] = useState({});
 	const [foodData, setFoodData] = useState([]);
-	const [addedToCart, setAddedToCart] = useState({}); 
+	const [addedToCart, setAddedToCart] = useState({});
 
-  	useEffect(() => {
-    	setRestaurantId(id); 
- 	}, [id]);
+	useEffect(() => {
+		setRestaurantId(id);
+	}, [id]);
 
 	useEffect(() => {
 		if (restaurantId) {
-		  fetchProfileData();
+			fetchProfileData();
 		}
 	}, [restaurantId]);
 
 	useEffect(() => {
 		const token = localStorage.getItem("access");
 		if (token) {
-		  setIsAuthenticated(true);
+			setIsAuthenticated(true);
 		} else {
-		  setIsAuthenticated(false);
+			setIsAuthenticated(false);
 		}
-	  }, []);
+	}, []);
 
 	useEffect(() => {
 		const checkIfFavorite = async () => {
 			if (!isAuthenticated || !restaurantId) return;
-		
+
 			try {
 				const response = await axiosInstance.get("/customer/favorites");
 				const updatedFavorites = {};
 				response.data.forEach((fav) => {
-					updatedFavorites[fav.restaurant] = true; 
+					updatedFavorites[fav.restaurant] = true;
 				});
-				setFavorites(updatedFavorites); 
+				setFavorites(updatedFavorites);
 			} catch (error) {
 				console.error("Error checking favorites:", error);
 			}
 		};
-	  
+
 		if (restaurantId) {
-		  checkIfFavorite();
+			checkIfFavorite();
 		}
-	  }, [restaurantId, isAuthenticated]);
-	  
-	  const toggleFavorite = async () => {
+	}, [restaurantId, isAuthenticated]);
+
+	const toggleFavorite = async () => {
 		if (!isAuthenticated) {
 			alert("لطفا ابتدا وارد حساب کاربری خود شوید!");
 			return;
 		}
-	
+
 		try {
 			if (favorites[restaurantId]) {
 				const response = await axiosInstance.delete(`/customer/favorites`, {
 					params: { restaurant_id: restaurantId },
 				});
-	
+
 				if (response.status === 204) {
 					alert("رستوران از علاقه‌مندی‌ها حذف شد.");
-	
+
 					setFavorites((prevFavorites) => ({
 						...prevFavorites,
-						[restaurantId]: false, 
+						[restaurantId]: false,
 					}));
 				}
 			} else {
 				const response = await axiosInstance.post("/customer/favorites", {
 					restaurant_id: parseInt(restaurantId),
 				});
-	
+
 				if (response.status === 201) {
 					alert("رستوران به علاقه‌مندی‌ها اضافه شد.");
-	
+
 					setFavorites((prevFavorites) => ({
 						...prevFavorites,
 						[restaurantId]: true,
@@ -117,7 +115,6 @@ const RestaurantPage = () => {
 		}
 	};
 
-
 	const fetchProfileData = async () => {
 		if (!id) {
 			console.error("userId is undefined. Cannot fetch profile data.");
@@ -125,7 +122,9 @@ const RestaurantPage = () => {
 		}
 
 		try {
-			const response = await publicAxiosInstance.get(`/restaurant/${id}/profile`);
+			const response = await publicAxiosInstance.get(
+				`/restaurant/${id}/profile`,
+			);
 			const data = response.data;
 
 			if (data) {
@@ -134,8 +133,8 @@ const RestaurantPage = () => {
 				setAddress(data.address || "");
 				setDeliveryCost(data.delivery_price || "");
 				setDescription(data.description || "");
-				setOpeningTime(data.open_hour.slice(0,5));
-				setClosingTime(data.close_hour.slice(0,5));
+				setOpeningTime(data.open_hour.slice(0, 5));
+				setClosingTime(data.close_hour.slice(0, 5));
 				setCityName(data.city_name || "");
 				if (data.photo) {
 					setLogo(data.photo);
@@ -152,54 +151,61 @@ const RestaurantPage = () => {
 		fetchFoodData();
 		fetchCartData();
 	}, [id]);
-	
 
 	const fetchFoodData = async () => {
 		try {
-			const response = await axiosInstance.get(`/customer/restaurants/${id}/items`);
+			const response = await axiosInstance.get(
+				`/customer/restaurants/${id}/items`,
+			);
 			const allData = response.data;
 			setFoodData(allData);
 		} catch (error) {
-			console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
+			console.error(
+				"خطا در دریافت داده‌ها:",
+				error.response?.data || error.message,
+			);
 			alert("خطا در دریافت داده‌ها.");
 		}
 	};
 
 	const fetchCartData = async () => {
 		try {
-		  const response = await axiosInstance.get("/customer/carts", {
-			params: { restaurant_id: id },
-		  });	  
-		  const cartItems = response.data?.[0]?.cart_items || []; 	  
-		  const cartStatus = {};
-		  cartItems.forEach((item) => {
-			cartStatus[item.item] = true; 
-		  });	  
-		  setAddedToCart(cartStatus);
+			const response = await axiosInstance.get("/customer/carts", {
+				params: { restaurant_id: id },
+			});
+			const cartItems = response.data?.[0]?.cart_items || [];
+			const cartStatus = {};
+			cartItems.forEach((item) => {
+				cartStatus[item.item] = true;
+			});
+			setAddedToCart(cartStatus);
 		} catch (error) {
-		  console.error("خطا در دریافت اطلاعات سبد خرید:", error.response?.data || error.message);
+			console.error(
+				"خطا در دریافت اطلاعات سبد خرید:",
+				error.response?.data || error.message,
+			);
 		}
-	  };
-	  
-	  const handleAddToCart = async (foodItem) => {
+	};
+
+	const handleAddToCart = async (foodItem) => {
 		try {
-		  const response = await axiosInstance.post("/customer/carts", {
-			restaurant_id: id,
-			item_id: foodItem.item_id,
-			count: 1,
-		  });
-	
-		  if (response.status === 201) {
-			setAddedToCart((prevState) => ({
-			  ...prevState,
-			  [foodItem.item_id]: true,
-			}));
-		  }
+			const response = await axiosInstance.post("/customer/carts", {
+				restaurant_id: id,
+				item_id: foodItem.item_id,
+				count: 1,
+			});
+
+			if (response.status === 201) {
+				setAddedToCart((prevState) => ({
+					...prevState,
+					[foodItem.item_id]: true,
+				}));
+			}
 		} catch (error) {
-		  console.error("خطا در افزودن آیتم به سبد خرید:", error);
+			console.error("خطا در افزودن آیتم به سبد خرید:", error);
 		}
-	  };
-	  
+	};
+
 	return (
 		<Grid
 			container
@@ -233,15 +239,19 @@ const RestaurantPage = () => {
 						}}
 					/>
 					<IconButton
-  						sx={{
-   						position: "absolute",
-    					bottom: 8,
-    					left: 8,
-    					color: favorites[restaurantId] ? "red" : "white",
-  						}}
-  						onClick={toggleFavorite}
+						sx={{
+							position: "absolute",
+							bottom: 8,
+							left: 8,
+							color: favorites[restaurantId] ? "red" : "white",
+						}}
+						onClick={toggleFavorite}
 					>
-  						{favorites[restaurantId] ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+						{favorites[restaurantId] ? (
+							<FavoriteIcon />
+						) : (
+							<FavoriteBorderIcon />
+						)}
 					</IconButton>
 				</Box>
 				<Box
@@ -254,7 +264,15 @@ const RestaurantPage = () => {
 				>
 					<Chip label="۴.۷" />
 					<Chip label={cityName} />
-					<Chip label={deliveryCost === 0 ? "رایگان" : `${Math.floor(parseFloat(deliveryCost)).toLocaleString()} تومان`} />
+					<Chip
+						label={
+							deliveryCost === 0
+								? "رایگان"
+								: `${Math.floor(
+										parseFloat(deliveryCost),
+								  ).toLocaleString()} تومان`
+						}
+					/>
 				</Box>
 				<Box display="flex" justifyContent="center" alignItems="center">
 					<Typography variant="h6" sx={{ pointerEvents: "none", py: 1 }}>
@@ -270,7 +288,7 @@ const RestaurantPage = () => {
 				<Typography
 					variant="body2"
 					color="grey"
-					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" }}}
+					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
 				>
 					آدرس: {address}
 				</Typography>
@@ -280,8 +298,11 @@ const RestaurantPage = () => {
 				>
 					{description}
 				</Typography>
-				<Button variant="contained" color="success" fullWidth
-						onClick={() => navigate(`/cart?restaurant_id=${id}`)}
+				<Button
+					variant="contained"
+					color="success"
+					fullWidth
+					onClick={() => navigate(`/cart?restaurant_id=${id}`)}
 				>
 					مشاهده سبد خرید
 				</Button>
@@ -329,7 +350,7 @@ const RestaurantPage = () => {
 											</Box>
 										)}
 									</Box>
-									
+
 									<CardContent sx={{ flex: 1 }}>
 										<Typography variant="h6" sx={{ pointerEvents: "none" }}>
 											{food.name}
@@ -360,7 +381,10 @@ const RestaurantPage = () => {
 														color="#D68240"
 														sx={{ display: "inline-block" }}
 													>
-														{Math.floor(food.price * (1 - food.discount / 100)).toLocaleString()} تومان
+														{Math.floor(
+															food.price * (1 - food.discount / 100),
+														).toLocaleString()}{" "}
+														تومان
 													</Typography>
 												</>
 											) : (
@@ -373,24 +397,26 @@ const RestaurantPage = () => {
 											)}
 										</Box>
 									</CardContent>
-										
+
 									<Button
-            						  variant="contained"
-            						  onClick={(event) => {
-										event.stopPropagation(); 
-										handleAddToCart(food); 
-									  }}
-            						  disabled={!!addedToCart[food.item_id]} 
-            						  sx={{
-            						    backgroundColor: addedToCart[food.item_id] ? "gray" : "#D68240",
-            						    color: addedToCart[food.item_id] ? "white" : "black",
-            						    alignSelf: "center",
-            						    margin: 1,
-            						    borderRadius: 20,
-            						  }}
-            						>
-            						  {addedToCart[food.item_id] ? "افزوده شد" : "افزودن"}
-            						</Button>
+										variant="contained"
+										onClick={(event) => {
+											event.stopPropagation();
+											handleAddToCart(food);
+										}}
+										disabled={!!addedToCart[food.item_id]}
+										sx={{
+											backgroundColor: addedToCart[food.item_id]
+												? "gray"
+												: "#D68240",
+											color: addedToCart[food.item_id] ? "white" : "black",
+											alignSelf: "center",
+											margin: 1,
+											borderRadius: 20,
+										}}
+									>
+										{addedToCart[food.item_id] ? "افزوده شد" : "افزودن"}
+									</Button>
 								</Card>
 							))
 						) : (
@@ -401,7 +427,7 @@ const RestaurantPage = () => {
 							>
 								هیچ غذایی در منو وجود ندارد.
 							</Typography>
-							)}
+						)}
 					</Box>
 				</Box>
 			</Grid>

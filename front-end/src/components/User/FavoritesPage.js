@@ -70,76 +70,69 @@ const FavoritesPage = () => {
 			>
 				لیست علاقه‌مندی‌های من
 			</Typography>
-			<Grid container spacing={1} justifyContent="center">
-				{fullFavoritesData.map((restaurant) => (
-					<Grid item xs={12} sm={6} md={4} key={restaurant.id} sx={{ flexGrow: 1 }}>
-						<Card
-							sx={{
-								position: "relative",
-								padding: 5,
-								borderRadius: "16px",
-								boxShadow: 3,
-								height: "310px",
-								display: "flex",
-								flexDirection: "column",
-								justifyContent: "space-between",
-								alignItems: "center",
-								// width: "100%", 
-								maxWidth: "100%",
-								"&:hover": { transform: "scale(1.05)", boxShadow: 5 },
-							  }}
-							  onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-						>
-							<CardMedia
-    							component="img"
-    							// height="350px"
-   								image={restaurant.photo}
-   								alt={restaurant.name}
-   								sx={{
-   								  borderRadius: "12px",
-   								//   width: "100%", 
-   								  objectFit: "cover", 
-   							}}
-							></CardMedia>
-							<CardContent sx={{ textAlign: "center", paddingBottom: "8px" }}>
-								<Typography
-									variant="h6"
-									sx={{
-										fontWeight: "bold",
-										fontFamily: "'Vazir', sans-serif",
-										fontSize: "1.2rem",
-										color: "#333",
-									}}
-								>
-									{restaurant.name}
-								</Typography>
-							</CardContent>
-
-							
-							<Box
-								sx={{
-									display: "flex",
-									justifyContent: "space-evenly",
-									width: "100%",
-								}}
-							>
-								<IconButton
-								    sx={{ color: "#D68240" }}
-								
-									onClick={() => alert(`حذف ${restaurant.name}`)}
-								>
-									<Delete />
-								</IconButton>
-								<IconButton
-									sx={{ color: "#FF1493" }}
-								>
-									<Favorite />
-								</IconButton>
-							</Box>
-						</Card>
-					</Grid>
-				))}
-			</Grid>
+			<Grid container spacing={3} justifyContent="center">
+  				{fullFavoritesData.map((restaurant) => (
+				<Grid item xs={6} sm={4} md={2} key={restaurant.id}>
+				      <Card
+				        sx={{
+				          position: "relative",
+				          padding: 3,
+				          borderRadius: "16px",
+				          boxShadow: 3,
+				          minHeight: "310px",
+				          display: "flex",
+				          flexDirection: "column",
+				          justifyContent: "space-between",
+				          alignItems: "center",
+				          maxWidth: "100%",
+				          "&:hover": { transform: "scale(1.05)", boxShadow: 5 },
+				        }}
+				        onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+				      >
+				        <CardMedia
+				          component="img"
+				          image={restaurant.photo}
+				          alt={restaurant.name}
+				          sx={{
+				            borderRadius: "12px",
+				            objectFit: "cover",
+				          }}
+				        />
+				        <CardContent sx={{ textAlign: "center", paddingBottom: "8px" }}>
+				          <Typography
+				            variant="h6"
+				            sx={{
+				              fontWeight: "bold",
+				              fontFamily: "'Vazir', sans-serif",
+				              fontSize: "1.2rem",
+				              color: "#333",
+				            }}
+				          >
+				            {restaurant.name}
+				          </Typography>
+				        </CardContent>
+						
+				        <Box
+				          sx={{
+				            display: "flex",
+				            justifyContent: "space-evenly",
+				            width: "100%",
+				          }}
+				        >
+				          <IconButton
+				            sx={{ color: "#D68240" }}
+				            onClick={() => alert(`حذف ${restaurant.name}`)}
+				          >
+				            <Delete />
+				          </IconButton>
+				          <IconButton sx={{ color: "#FF1493" }}>
+				            <Favorite />
+				          </IconButton>
+				        </Box>
+				      </Card>
+				    </Grid>
+				  ))}
+				</Grid>
 		</Box>
 	);
 };

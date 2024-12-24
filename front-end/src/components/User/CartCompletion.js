@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,45 +20,101 @@ import {
 } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import FoodiLogo from "../../assets/imgs/foodiIcon.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams  } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
+import publicAxiosInstance from "../../utills/publicAxiosInstance";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "پیتزا مخصوص", description: "پیتزا مخصوص با پنیر اضافه و سس ویژه", price: 150000, quantity: 1, discount: 10, image: "https://via.placeholder.com/120" },
-    { id: 2, name: "برگر دوبل", description: "برگر دوبل همراه با سیب‌زمینی سرخ‌کرده", price: 120000, quantity: 2, discount: 5, image: "https://via.placeholder.com/120" },
-    { id: 3, name: "سالاد سزار", description: "سالاد سزار با مرغ گریل شده و سس مخصوص", price: 95000, quantity: 1, discount: 8, image: "https://via.placeholder.com/120" },
-  ]);
-
+  const [cartItems, setCartItems] = useState([]);
   const [description, setDescription] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState("pickup"); // پیش‌فرض: تحویل حضوری
+  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get("restaurant_id");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [cartID, setCartID] = useState(0);
+  const [deliveryCost, setDeliveryCost] = useState(0);
 
-  const DELIVERY_COST = deliveryMethod === "delivery" ? 20000 : 0; // هزینه ارسال
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
+  const DELIVERY_COST = deliveryMethod === "delivery" ? Math.floor(parseInt(deliveryCost)) : 0; 
   const discount = cartItems.reduce(
-    (acc, item) => acc + (item.price * (item.discount / 100)) * item.quantity,
+    (acc, item) => acc + (item.price * (item.discount / 100)) * item.count,
     0
   );
-  const tax = Math.round(totalPrice * 0.09); // 9 درصد مالیات
-  const totalAfterDiscount = totalPrice - discount;
+  const tax = Math.round(parseInt(totalPrice) * 0.09); 
+  const totalAfterDiscount = parseInt(totalPrice) - discount;
   const finalAmount = totalAfterDiscount + tax + DELIVERY_COST;
 
-  const handleQuantityChange = (id, delta) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
+  useEffect(() => {
+    fetchProfileData();
+    if (restaurantId) {
+      fetchCartData();
+    }
+  }, [restaurantId]);
+
+  const fetchCartData = async () => {
+    try {
+      const response = await axiosInstance.get("/customer/carts", {
+        params: { restaurant_id: restaurantId }, 
+      });
+
+      const filteredData = response.data.filter(
+        (cart) => cart.restaurant === parseInt(restaurantId) 
+      );
+      setCartID(parseInt(filteredData[0].id));
+      setTotalPrice(parseInt(filteredData[0].total_price));
+      setCartItems(response.data?.[0]?.cart_items);
+    } catch (error) {
+      console.error("خطا در دریافت اطلاعات سبد خرید:", error);
+    }
   };
 
-  const handleDeleteItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+  const handleQuantityChange = async (cartItemId, delta) => {
+    try {
+      const item = cartItems.find((item) => item.id === cartItemId);
+      if (!item) return;
+  
+      const newCount = item.count + delta;
+      if (newCount < 1) return;
+  
+      const response = await axiosInstance.put(`/customer/carts/${cartID}`, {
+        cart_item_id: cartItemId, 
+        count: newCount, 
+      });  
+      fetchCartData();
+    } catch (error) {
+      console.error("خطا در به‌روزرسانی تعداد آیتم:", error.response?.data || error);
+    }
   };
+  
+
+  const handleDeleteItem = async (cartItemId) => {
+    try {
+      await axiosInstance.delete(`/customer/carts/${cartID}/items/${cartItemId}`);
+  
+      fetchCartData();
+    } catch (error) {
+      console.error("خطا در حذف آیتم:", error.response?.data || error);
+    }
+  };
+
+  const fetchProfileData = async () => {
+
+		try {
+			const response = await publicAxiosInstance.get(`/restaurant/${restaurantId}/profile`);
+			const data = response.data;
+
+			if (data) {
+				setDeliveryCost(data.delivery_price || 0);
+			} else {
+				console.error("No restaurant data received from API");
+			}
+		} catch (error) {
+			console.error("Error fetching profile data:", error);
+		}
+	};
 
   return (
-    <Box sx={{ backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
+    <Box sx={{ backgroundColor: "#f9f9f9", minHeight: "100vh", maxWidth:"70%", margin:"auto" }}>
       {/* هدر */}
       <AppBar position="static" sx={{ backgroundColor: "#F4DCC9" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -75,15 +131,26 @@ const CartPage = () => {
           {cartItems.map((item) => (
             <Grid item xs={12} key={item.id}>
               <Card sx={{ display: "flex", justifyContent: "space-between", p: 2, boxShadow: 2, borderRadius: 2 }}>
-                <CardMedia component="img" image={item.image} alt={item.name} sx={{ width: 100, height: 100 }} />
+                <CardMedia component="img" image={item.photo} alt={item.name} sx={{ width: 100, height: 100 }} />
                 <CardContent sx={{ flex: 1 }}>
                   <Typography variant="h6" fontWeight="bold">{item.name}</Typography>
                   <Typography variant="body2" color="text.secondary">{item.description}</Typography>
-                  <Typography variant="subtitle1" fontWeight="bold" color="#D68240">{item.price.toLocaleString()} تومان</Typography>
+                  <Typography variant="subtitle1" color="#D68240"
+                  sx={{ pointerEvents: "none", userSelect: "none",
+                    textDecoration: item.discount > 0 ? "line-through" : "none",
+                    color: item.discount > 0 ? "gray" : "black",
+                    display:"inline"
+                   }}
+                   >{Math.floor(item.price).toLocaleString()} تومان</Typography>
+                   {item.discount > 0 && (
+                        <Typography color="#D68240" sx={{ fontWeight: "bold", display:"inline", marginLeft:"15px"}}>
+                          {Math.floor(item.price - (item.price * item.discount/100)).toLocaleString()} تومان
+                        </Typography>
+                    )}
                 </CardContent>
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   <IconButton color="primary" onClick={() => handleQuantityChange(item.id, 1)}><Add /></IconButton>
-                  <Typography variant="h6">{item.quantity}</Typography>
+                  <Typography variant="h6">{item.count}</Typography>
                   <IconButton color="primary" onClick={() => handleQuantityChange(item.id, -1)}><Remove /></IconButton>
                   <IconButton color="error" onClick={() => handleDeleteItem(item.id)}><Delete /></IconButton>
                 </Box>
@@ -110,7 +177,7 @@ const CartPage = () => {
           <FormControl component="fieldset">
             <RadioGroup row value={deliveryMethod} onChange={(e) => setDeliveryMethod(e.target.value)}>
               <FormControlLabel value="pickup" control={<Radio />} label="تحویل حضوری" />
-              <FormControlLabel value="delivery" control={<Radio />} label="تحویل با پیک (۲۰,۰۰۰ تومان)" />
+              <FormControlLabel value="delivery" control={<Radio />} label={`تحویل با پیک (${Math.floor(deliveryCost).toLocaleString()}) تومان`} />
             </RadioGroup>
           </FormControl>
         </Box>
@@ -119,7 +186,7 @@ const CartPage = () => {
         <Divider sx={{ my: 4 }} />
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Typography>جمع سفارش:</Typography>
-          <Typography>{totalPrice.toLocaleString()} تومان</Typography>
+          <Typography>{Math.floor(parseInt(totalPrice)).toLocaleString()} تومان</Typography>
         </Box>
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Typography color="success">سود شما از این خرید:</Typography>

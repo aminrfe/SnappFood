@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -15,63 +15,84 @@ import {
 } from "@mui/material";
 import { Add, Remove, Delete } from "@mui/icons-material";
 import FoodiLogo from "../../assets/imgs/foodiIcon.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams  } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const CartPage = () => {
   const navigate = useNavigate();
-  const [cartItems, setCartItems] = useState([
-    {
-      id: 1,
-      name: "پیتزا مخصوص",
-      description: "پیتزا مخصوص با پنیر اضافه و سس ویژه",
-      price: 150000,
-      quantity: 1,
-      image: "https://via.placeholder.com/120",
-    },
-    {
-      id: 2,
-      name: "برگر دوبل",
-      description: "برگر دوبل همراه با سیب‌زمینی سرخ‌کرده",
-      price: 120000,
-      quantity: 2,
-      image: "https://via.placeholder.com/120",
-    },
-    {
-      id: 3,
-      name: "سالاد سزار",
-      description: "سالاد سزار با مرغ گریل شده و سس مخصوص",
-      price: 95000,
-      quantity: 1,
-      image: "https://via.placeholder.com/120",
-    },
-  ]);
+  const [searchParams] = useSearchParams();
+  const restaurantId = searchParams.get("restaurant_id");
+  const [cartItems, setCartItems] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [cartID, setCartID] = useState(0);
 
-  const handleQuantityChange = (id, delta) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
-  };
-
-  const handleDeleteItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
-
-  const totalPrice = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
+  const totalDiscount = cartItems.reduce(
+    (acc, item) => acc + (item.price * (item.discount / 100)) * item.count,
     0
   );
 
+  useEffect(() => {
+
+    if (restaurantId) {
+      fetchCartData();
+    }
+  }, [restaurantId]);
+
+  const fetchCartData = async () => {
+    try {
+      const response = await axiosInstance.get("/customer/carts", {
+        params: { restaurant_id: restaurantId }, 
+      });
+
+      const filteredData = response.data.filter(
+        (cart) => cart.restaurant === parseInt(restaurantId) 
+      );
+      setCartID(parseInt(filteredData[0].id));
+      setTotalPrice(parseInt(filteredData[0].total_price));
+      setCartItems(response.data?.[0]?.cart_items);
+    } catch (error) {
+      console.error("خطا در دریافت اطلاعات سبد خرید:", error);
+    }
+  };
+
+
+  const handleQuantityChange = async (cartItemId, delta) => {
+    try {
+      const item = cartItems.find((item) => item.id === cartItemId);
+      if (!item) return;
+  
+      const newCount = item.count + delta;
+      if (newCount < 1) return;
+  
+      const response = await axiosInstance.put(`/customer/carts/${cartID}`, {
+        cart_item_id: cartItemId, 
+        count: newCount,
+      });  
+      fetchCartData();
+    } catch (error) {
+      console.error("خطا در به‌روزرسانی تعداد آیتم:", error.response?.data || error);
+    }
+  };
+  
+
+  const handleDeleteItem = async (cartItemId) => {
+    try {
+      await axiosInstance.delete(`/customer/carts/${cartID}/items/${cartItemId}`);
+  
+      fetchCartData();
+    } catch (error) {
+      console.error("خطا در حذف آیتم:", error.response?.data || error);
+    }
+  };
+
+
   return (
-    <Box sx={{ backgroundColor: "#f9f9f9", minHeight: "100vh" }}>
+    <Box sx={{ backgroundColor: "#f9f9f9", minHeight: "100vh", maxWidth:"70%", margin:"auto"}}>
       {/* هدر */}
       <AppBar
         position="static"
         sx={{
-          backgroundColor: "#F4DCC9", // رنگ هدر از پالت شما
+          backgroundColor: "#F4DCC9", 
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -85,9 +106,9 @@ const CartPage = () => {
           <Typography
             variant="h5"
             sx={{
-              color: "#D68240", // رنگ سفید برای نوشته
+              color: "#D68240", 
               fontWeight: "bold",
-              flex: 1, // وسط چین
+              flex: 1, 
               textAlign: "center",
               userSelect: "none",
               pointerEvents: "none",
@@ -118,7 +139,7 @@ const CartPage = () => {
                 {/* تصویر */}
                 <CardMedia
                   component="img"
-                  image={item.image}
+                  image={item.photo}
                   alt={item.name}
                   sx={{
                     width: 100,
@@ -140,12 +161,20 @@ const CartPage = () => {
                   </Typography>
                   <Typography
                     variant="subtitle1"
-                    fontWeight="bold"
                     color="#D68240"
-                    sx={{ pointerEvents: "none", userSelect: "none" }}
+                    sx={{ pointerEvents: "none", userSelect: "none",
+                      textDecoration: item.discount > 0 ? "line-through" : "none",
+  			              color: item.discount > 0 ? "gray" : "#D68240",
+                      display:"inline"
+                     }}
                   >
-                    {item.price.toLocaleString()} تومان
+                    {Math.floor(item.price).toLocaleString()} تومان
                   </Typography>
+                  {item.discount > 0 && (
+                      <Typography color="#D68240" sx={{ fontWeight: "bold", display:"inline", marginLeft:"15px"}}>
+                      {Math.floor(item.price - (item.price * item.discount/100)).toLocaleString()} تومان
+                      </Typography>
+                  )}
                 </CardContent>
 
                 {/* دکمه‌های تغییر تعداد */}
@@ -172,7 +201,7 @@ const CartPage = () => {
                   <Typography 
                   variant="h6"
                   sx={{ pointerEvents: "none", userSelect: "none" }}>
-                    {item.quantity}</Typography>
+                    {item.count}</Typography>
                   <IconButton
                     color="primary"
                     onClick={() => handleQuantityChange(item.id, -1)}
@@ -203,10 +232,19 @@ const CartPage = () => {
           sx={{ pointerEvents: "none", userSelect: "none" }}>
             جمع کل:
           </Typography>
-          <Typography variant="h6" fontWeight="bold" color="#D68240"
-          sx={{ pointerEvents: "none", userSelect: "none" }}>
-            {totalPrice.toLocaleString()} تومان
+          <Typography variant="h6" color="#D68240"
+          sx={{ pointerEvents: "none", userSelect: "none",
+                textDecoration: totalDiscount > 0 ? "line-through" : "none",
+                color: totalDiscount > 0 ? "gray" : "#D68240",
+                display:"inline"
+           }}>
+            {Math.floor(totalPrice).toLocaleString()} تومان
           </Typography>
+          {totalDiscount > 0  && (
+          <Typography color="#D68240" variant="h6" sx={{fontWeight:"bold", display:"inline"}}>
+          {Math.floor(totalPrice - totalDiscount).toLocaleString()} تومان
+          </Typography>
+          )}
         </Box>
 
         {/* دکمه تکمیل خرید */}
@@ -214,15 +252,16 @@ const CartPage = () => {
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "#4caf50", // رنگ دکمه از پالت شما
+              backgroundColor: "#4caf50", 
               color: "#fff",
               fontSize: "1.1rem",
               borderRadius: 2,
               "&:hover": {
-                backgroundColor: "#388e3c", // رنگ هاور
+                backgroundColor: "#388e3c", 
               },
             }}
             style={{padding:"10px 15px"}}
+            onClick={() => navigate(`/cart-completion?restaurant_id=${restaurantId}`)}
           >
             تکمیل خرید
           </Button>

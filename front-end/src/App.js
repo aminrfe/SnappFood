@@ -23,7 +23,7 @@ import RestaurantPage from "./components/User/RestaurantPage";
 import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
 import SearchPage from "./components/User/SearchPage.js";
-import OrderList from "./components/Restaurant/Orders.js";
+import RestaurantOrderList from "./components/Restaurant/Orders.js";
 import RestaurantReportPage from "./components/Restaurant/ReportPage.js"; 
 import CartPage from "./components/User/CartPage.js";
 import CartCompletion from "./components/User/CartCompletion.js";
@@ -58,9 +58,6 @@ function App() {
               <Route path="/restuarant-signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
-              <Route path="/cart" element={<CartPage />} />
-              <Route path="/cart-completion" element={<CartCompletion />} />
-              <Route path="/orders" element={<OrderList />} />
 
               <Route
                 path="/favorites"
@@ -138,8 +135,36 @@ function App() {
                   )
                 }
               />
-              {/* <Route path="/restaurant-report" element={<RestaurantReportPage />} /> */}
-
+              <Route
+                path="/cart"
+                element={
+                  isAuthenticated() ? (
+                    <CartPage />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/cart-completion"
+                element={
+                  isAuthenticated() ? (
+                    <CartCompletion />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/restaurant-orders"
+                element={
+                  isAuthenticated() ? (
+                    <RestaurantOrderList />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
             </Routes>
           </Router>
         </UserProvider>

@@ -63,13 +63,13 @@ const OrderList = () => {
 
 	return (
 		<Box
-			sx={{ backgroundColor: "#FFFFFF", padding: "2rem", minHeight: "100vh" }}
+			sx={{ backgroundColor: "#FFFFFF", padding: "2rem", minHeight: "100vh", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}
 		>
 			<Typography
 				variant="h5"
 				align="center"
 				gutterBottom
-				sx={{ fontWeight: "bold", marginBottom: "2rem" }}
+				sx={{ fontWeight: "bold", marginBottom: "2rem"}}
 			>
 				لیست سفارش‌ها
 			</Typography>

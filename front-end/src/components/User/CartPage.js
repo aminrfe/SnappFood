@@ -26,6 +26,11 @@ const CartPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartID, setCartID] = useState(0);
 
+  const totalDiscount = cartItems.reduce(
+    (acc, item) => acc + (item.price * (item.discount / 100)) * item.count,
+    0
+  );
+
   useEffect(() => {
 
     if (restaurantId) {
@@ -60,8 +65,8 @@ const CartPage = () => {
       if (newCount < 1) return;
   
       const response = await axiosInstance.put(`/customer/carts/${cartID}`, {
-        cart_item_id: cartItemId, // شناسه آیتم
-        count: newCount, // مقدار جدید
+        cart_item_id: cartItemId, 
+        count: newCount,
       });  
       fetchCartData();
     } catch (error) {
@@ -156,12 +161,20 @@ const CartPage = () => {
                   </Typography>
                   <Typography
                     variant="subtitle1"
-                    fontWeight="bold"
                     color="#D68240"
-                    sx={{ pointerEvents: "none", userSelect: "none" }}
+                    sx={{ pointerEvents: "none", userSelect: "none",
+                      textDecoration: item.discount > 0 ? "line-through" : "none",
+  			              color: item.discount > 0 ? "gray" : "#D68240",
+                      display:"inline"
+                     }}
                   >
                     {Math.floor(item.price).toLocaleString()} تومان
                   </Typography>
+                  {item.discount > 0 && (
+                      <Typography color="#D68240" sx={{ fontWeight: "bold", display:"inline", marginLeft:"15px"}}>
+                      {Math.floor(item.price - (item.price * item.discount/100)).toLocaleString()} تومان
+                      </Typography>
+                  )}
                 </CardContent>
 
                 {/* دکمه‌های تغییر تعداد */}
@@ -219,10 +232,19 @@ const CartPage = () => {
           sx={{ pointerEvents: "none", userSelect: "none" }}>
             جمع کل:
           </Typography>
-          <Typography variant="h6" fontWeight="bold" color="#D68240"
-          sx={{ pointerEvents: "none", userSelect: "none" }}>
+          <Typography variant="h6" color="#D68240"
+          sx={{ pointerEvents: "none", userSelect: "none",
+                textDecoration: totalDiscount > 0 ? "line-through" : "none",
+                color: totalDiscount > 0 ? "gray" : "#D68240",
+                display:"inline"
+           }}>
             {Math.floor(totalPrice).toLocaleString()} تومان
           </Typography>
+          {totalDiscount > 0  && (
+          <Typography color="#D68240" variant="h6" sx={{fontWeight:"bold", display:"inline"}}>
+          {Math.floor(totalPrice - totalDiscount).toLocaleString()} تومان
+          </Typography>
+          )}
         </Box>
 
         {/* دکمه تکمیل خرید */}
@@ -239,6 +261,7 @@ const CartPage = () => {
               },
             }}
             style={{padding:"10px 15px"}}
+            onClick={() => navigate(`/cart-completion?restaurant_id=${restaurantId}`)}
           >
             تکمیل خرید
           </Button>

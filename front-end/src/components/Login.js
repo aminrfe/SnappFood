@@ -168,6 +168,7 @@ function Login() {
 					marginRight: "10px",
 					cursor: "pointer",
 				}}
+				sx={{pointerEvents: "auto"}}
 			>
 				ثبت‌نام
 			</Typography>
@@ -175,6 +176,7 @@ function Login() {
 				variant="body2"
 				onClick={handleStoreSignUpClick}
 				style={{ marginTop: "0px", cursor: "pointer" }}
+				sx={{pointerEvents: "auto"}}
 			>
 				ثبت نام فروشندگان
 			</Typography>

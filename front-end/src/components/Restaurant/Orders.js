@@ -69,7 +69,7 @@ const OrderList = () => {
 				variant="h5"
 				align="center"
 				gutterBottom
-				sx={{ fontWeight: "bold", marginBottom: "2rem", pointerEvents: "none", userSelect: "none"}}
+				sx={{ fontWeight: "bold", marginBottom: "2rem"}}
 			>
 				لیست سفارش‌ها
 			</Typography>
@@ -92,11 +92,10 @@ const OrderList = () => {
 						}}
 					>
 						<Box sx={{ flexGrow: 1, textAlign: "left" }}>
-							<Typography variant="h6" sx={{ fontWeight: "bold", pointerEvents: "none", userSelect: "none" }}>
+							<Typography variant="h6" sx={{ fontWeight: "bold" }}>
 								{order.name}
 							</Typography>
-							<Typography variant="body2" color="text.secondary"
-							sx={{pointerEvents: "none", userSelect: "none"}}>
+							<Typography variant="body2" color="text.secondary">
 								{order.date} - {order.time}
 							</Typography>
 						</Box>
@@ -109,13 +108,13 @@ const OrderList = () => {
 								textAlign: "right",
 							}}
 						>
-							<Typography variant="body1" sx={{ fontWeight: "bold", pointerEvents: "none", userSelect: "none" }}>
+							<Typography variant="body1" sx={{ fontWeight: "bold" }}>
 								{order.price}
 							</Typography>
 							<Typography
 								variant="body2"
 								color="primary"
-								sx={{ marginBottom: "1rem", pointerEvents: "none", userSelect: "none" }}
+								sx={{ marginBottom: "1rem" }}
 							>
 								{orderStatuses[order.id] &&
 									`آخرین وضعیت: ${orderStatuses[order.id]}`}
@@ -138,13 +137,13 @@ const OrderList = () => {
 					<AccordionDetails
 						sx={{ backgroundColor: "#FFF8F1", boxShadow: "none" }}
 					>
-						<Typography variant="body2" sx={{ marginBottom: "1rem", pointerEvents: "none", userSelect: "none" }}>
+						<Typography variant="body2" sx={{ marginBottom: "1rem" }}>
 							جزئیات سفارش:
 						</Typography>
 						<ul>
 							{order.items.map((item, index) => (
 								<li key={index}>
-									<Typography variant="body2" sx={{pointerEvents: "none", userSelect: "none"}}>{item}</Typography>
+									<Typography variant="body2">{item}</Typography>
 								</li>
 							))}
 						</ul>
@@ -193,7 +192,6 @@ const OrderList = () => {
 								backgroundColor: "#FFEBE1",
 								borderRadius: "8px",
 								marginBottom: "1rem",
-								pointerEvents: "none", userSelect: "none"
 							}}
 						>
 							<MenuItem value="در حال آماده سازی">در حال آماده سازی</MenuItem>

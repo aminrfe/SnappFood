@@ -245,6 +245,7 @@ function SignUp() {
 				display={"inline"}
 				style={{ marginTop: "15px", marginRight: "10px", cursor: "pointer" }}
 				onClick={handleLoginClick}
+				sx={{pointerEvents: "auto"}}
 			>
 				وارد شوید
 			</Typography>

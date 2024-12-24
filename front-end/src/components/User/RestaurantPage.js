@@ -377,10 +377,10 @@ const RestaurantPage = () => {
 									<Button
             						  variant="contained"
             						  onClick={(event) => {
-										event.stopPropagation(); // جلوگیری از اجرای رویداد کارت
-										handleAddToCart(food); // افزودن آیتم به سبد خرید
+										event.stopPropagation(); 
+										handleAddToCart(food); 
 									  }}
-            						  disabled={!!addedToCart[food.item_id]} // غیرفعال کردن دکمه پس از افزودن
+            						  disabled={!!addedToCart[food.item_id]} 
             						  sx={{
             						    backgroundColor: addedToCart[food.item_id] ? "gray" : "#D68240",
             						    color: addedToCart[food.item_id] ? "white" : "black",

@@ -17,6 +17,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import DescriptionIcon from "@mui/icons-material/Description";
 import LogoutIcon from "@mui/icons-material/Logout";
+import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
@@ -154,6 +155,21 @@ const RestaurantProfile = () => {
 					</CardContent>
 				</Card>
 
+				<Card
+					sx={{
+						marginBottom: 2,
+						bgcolor: "#f5d5c0",
+					}}
+				>
+					<CardContent 
+					style={{ cursor: "pointer" }}
+					onClick={() => navigate("/restaurant-orders")}
+					sx={{ display: "flex", alignItems: "center" }}>
+						<ShoppingBagIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+						<Typography>سفارش های فروشگاه</Typography>
+					</CardContent>
+				</Card>
+
 				<Card 
 					sx={{
 						marginBottom: 2,
@@ -178,6 +194,7 @@ const RestaurantProfile = () => {
 						<Typography>خروج از حساب کاربری</Typography>
 					</CardContent>
 				</Card>
+				
 			</Box>
 
 			<Dialog

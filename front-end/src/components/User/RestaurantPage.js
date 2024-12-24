@@ -17,10 +17,6 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import publicAxiosInstance from "../../utills/publicAxiosInstance";
 import axiosInstance from "../../utills/axiosInstance";
-import Food1 from "../../assets/imgs/food1.png";
-import Food2 from "../../assets/imgs/food2.png";
-import Food3 from "../../assets/imgs/food3.png";
-import Food4 from "../../assets/imgs/food4.png";
 
 const RestaurantPage = () => {
 	const [name, setName] = useState("");
@@ -36,6 +32,7 @@ const RestaurantPage = () => {
   	const [restaurantId, setRestaurantId] = useState(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [favorites, setFavorites] = useState({});
+	const [foodData, setFoodData] = useState([]);
 
   	useEffect(() => {
     	setRestaurantId(id); 
@@ -151,66 +148,21 @@ const RestaurantPage = () => {
 		}
 	};
 
-	const categories = [
-		{ id: 1, name: "غذای ۱" },
-		{ id: 2, name: "غذای ۲" },
-		{ id: 3, name: "غذای ۳" },
-		{ id: 4, name: "غذای ۴" },
-	];
+	useEffect(() => {
+		const fetchFoodData = async () => {
+			try {
+				const response = await axiosInstance.get(`/customer/restaurants/${id}/items`);
+				const allData = response.data;
+				console.log(allData);
+            	setFoodData(allData);
+			} catch (error) {
+				console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
+				alert("خطا در دریافت داده‌ها.");
+			}
+		};
 
-	
-	const foodData = [
-		{
-			id: 1,
-			name: "اسم غذای نمونه ۱",
-			description: "توضیحات نمونه ۱",
-			price: "۳۴۰۰۰۰",
-			image: Food1,
-		},
-		{
-			id: 2,
-			name: "اسم غذای نمونه ۲",
-			description: "توضیحات نمونه ۲",
-			price: "۴۵۰۰۰۰",
-			image: Food2,
-		},
-		{
-			id: 3,
-			name: "اسم غذای نمونه ۳",
-			description: "توضیحات نمونه ۳",
-			price: "۲۱۰۰۰۰",
-			image: Food3,
-		},
-		{
-			id: 4,
-			name: "اسم غذای نمونه ۴",
-			description: "توضیحات نمونه ۴",
-			price: "۱۸۰۰۰۰",
-			image: Food4,
-		},
-
-		{
-			id: 5,
-			name: "اسم غذای نمونه ۲",
-			description: "توضیحات نمونه ۲",
-			price: "۴۵۰۰۰۰",
-			image: Food2,
-		},
-		{
-			id: 6,
-			name: "اسم غذای نمونه ۳",
-			description: "توضیحات نمونه ۳",
-			price: "۲۱۰۰۰۰",
-			image: Food3,
-		},
-		{
-			id: 7,
-			name: "اسم غذای نمونه ۴",
-			description: "توضیحات نمونه ۴",
-			price: "۱۸۰۰۰۰",
-			image: Food4,
-		},
-	];
+		fetchFoodData();
+	}, [id]);
 
 	return (
 		<Grid
@@ -266,7 +218,7 @@ const RestaurantPage = () => {
 				>
 					<Chip label="۴.۷" />
 					<Chip label={cityName} />
-					<Chip label={deliveryCost === 0 ? "رایگان" : `${Math.floor(parseFloat(deliveryCost))} تومان`} />
+					<Chip label={deliveryCost === 0 ? "رایگان" : `${Math.floor(parseFloat(deliveryCost)).toLocaleString()} تومان`} />
 				</Box>
 				<Box display="flex" justifyContent="center" alignItems="center">
 					<Typography variant="h6" sx={{ pointerEvents: "none", py: 1 }}>
@@ -299,16 +251,12 @@ const RestaurantPage = () => {
 
 			<Grid>
 				<Box sx={{ width: { lg: "700px" } }}>
-					{/* Category Tabs */}
-					
-
-					{/* Food List */}
 					<Box sx={{ cursor: "pointer" }}>
 						{foodData.length > 0 ? (
 							foodData.map((food) => (
 								<Card
-									key={food.id}
-									onClick={() => navigate("/menu-item")}
+									key={food.item_id}
+									onClick={() => navigate(`/restaurant/${id}/${food.item_id}`)}
 									sx={{
 										display: "flex",
 										mb: 2,
@@ -316,17 +264,34 @@ const RestaurantPage = () => {
 										paddingBottom: 2,
 										borderRadius: 0,
 										borderBottom: "1px solid gray",
-										// "&:hover": {
-										// 	backgroundColor: "black", // Change this to your desired hover color
-										// },
 									}}
 								>
-									<CardMedia
-										component="img"
-										image={food.image}
-										alt={food.name}
-										sx={{ width: 120, borderRadius: 3 }}
-									/>
+									<Box sx={{ position: "relative" }}>
+										<CardMedia
+											component="img"
+											image={food.photo}
+											alt={food.name}
+											sx={{ width: 120, borderRadius: 3 }}
+										/>
+										{food.discount > 0 && (
+											<Box
+												sx={{
+													position: "absolute",
+													top: 8,
+													right: 8,
+													backgroundColor: "red",
+													color: "white",
+													fontSize: "12px",
+													fontWeight: "bold",
+													padding: "2px 6px",
+													borderRadius: "3px",
+												}}
+											>
+												{food.discount}٪ تخفیف
+											</Box>
+										)}
+									</Box>
+									
 									<CardContent sx={{ flex: 1 }}>
 										<Typography variant="h6" sx={{ pointerEvents: "none" }}>
 											{food.name}
@@ -338,13 +303,39 @@ const RestaurantPage = () => {
 										>
 											{food.description}
 										</Typography>
-										<Typography
-											variant="body1"
-											sx={{ pointerEvents: "none", paddingTop: 2 }}
-										>
-											{food.price} تومان
-										</Typography>
+										<Box sx={{ paddingTop: 2 }}>
+											{food.discount > 0 ? (
+												<>
+													<Typography
+														variant="body2"
+														color="text.secondary"
+														sx={{
+															textDecoration: "line-through",
+															display: "inline-block",
+															marginRight: "8px",
+														}}
+													>
+														{Math.floor(food.price).toLocaleString()} تومان
+													</Typography>
+													<Typography
+														variant="body1"
+														color="#D68240"
+														sx={{ display: "inline-block" }}
+													>
+														{Math.floor(food.price * (1 - food.discount / 100)).toLocaleString()} تومان
+													</Typography>
+												</>
+											) : (
+												<Typography
+													variant="body1"
+													sx={{ pointerEvents: "none" }}
+												>
+													{Math.floor(food.price).toLocaleString()} تومان
+												</Typography>
+											)}
+										</Box>
 									</CardContent>
+										
 									<Button
 										variant="contained"
 										sx={{
@@ -371,9 +362,9 @@ const RestaurantPage = () => {
 								color="text.secondary"
 								sx={{ textAlign: "center" }}
 							>
-								هیچ غذایی در این دسته وجود ندارد.
+								هیچ غذایی در منو وجود ندارد.
 							</Typography>
-						)}
+							)}
 					</Box>
 				</Box>
 			</Grid>

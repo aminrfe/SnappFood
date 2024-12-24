@@ -23,11 +23,8 @@ function Login() {
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
-
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
-
 	const handleMouseDownPassword = (event) => event.preventDefault();
-
 	const navigate = useNavigate(); 
 
 	const handleSignUpClick = () => {

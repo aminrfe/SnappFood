@@ -162,7 +162,8 @@ const RestaurantProfile = () => {
 				>
 					<CardContent 
 					style={{ cursor: "pointer" }}
-					sx={{ display: "flex", alignItems: "center" }}>
+					sx={{ display: "flex", alignItems: "center" }}
+					onClick={() => navigate("/restaurant-report")}>
 						<DescriptionIcon sx={{ marginRight: 2, color: "#f28b82" }} />
 						<Typography>گزارش مالی فروشگاه</Typography>
 					</CardContent>

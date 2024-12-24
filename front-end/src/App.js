@@ -138,8 +138,6 @@ function App() {
                   )
                 }
               />
-              {/* <Route path="/restaurant-report" element={<RestaurantReportPage />} /> */}
-
             </Routes>
           </Router>
         </UserProvider>

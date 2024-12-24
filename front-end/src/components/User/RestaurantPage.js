@@ -33,6 +33,7 @@ const RestaurantPage = () => {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [favorites, setFavorites] = useState({});
 	const [foodData, setFoodData] = useState([]);
+	const [addedToCart, setAddedToCart] = useState({}); 
 
   	useEffect(() => {
     	setRestaurantId(id); 
@@ -59,8 +60,7 @@ const RestaurantPage = () => {
 		
 			try {
 				const response = await axiosInstance.get("/customer/favorites");
-				console.log("Favorites data:", response.data);
-						const updatedFavorites = {};
+				const updatedFavorites = {};
 				response.data.forEach((fav) => {
 					updatedFavorites[fav.restaurant] = true; 
 				});
@@ -149,21 +149,57 @@ const RestaurantPage = () => {
 	};
 
 	useEffect(() => {
-		const fetchFoodData = async () => {
-			try {
-				const response = await axiosInstance.get(`/customer/restaurants/${id}/items`);
-				const allData = response.data;
-				console.log(allData);
-            	setFoodData(allData);
-			} catch (error) {
-				console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
-				alert("خطا در دریافت داده‌ها.");
-			}
-		};
-
 		fetchFoodData();
+		fetchCartData();
 	}, [id]);
+	
 
+	const fetchFoodData = async () => {
+		try {
+			const response = await axiosInstance.get(`/customer/restaurants/${id}/items`);
+			const allData = response.data;
+			setFoodData(allData);
+		} catch (error) {
+			console.error("خطا در دریافت داده‌ها:", error.response?.data || error.message);
+			alert("خطا در دریافت داده‌ها.");
+		}
+	};
+
+	const fetchCartData = async () => {
+		try {
+		  const response = await axiosInstance.get("/customer/carts", {
+			params: { restaurant_id: id },
+		  });	  
+		  const cartItems = response.data?.[0]?.cart_items || []; 	  
+		  const cartStatus = {};
+		  cartItems.forEach((item) => {
+			cartStatus[item.item] = true; 
+		  });	  
+		  setAddedToCart(cartStatus);
+		} catch (error) {
+		  console.error("خطا در دریافت اطلاعات سبد خرید:", error.response?.data || error.message);
+		}
+	  };
+	  
+	  const handleAddToCart = async (foodItem) => {
+		try {
+		  const response = await axiosInstance.post("/customer/carts", {
+			restaurant_id: id,
+			item_id: foodItem.item_id,
+			count: 1,
+		  });
+	
+		  if (response.status === 201) {
+			setAddedToCart((prevState) => ({
+			  ...prevState,
+			  [foodItem.item_id]: true,
+			}));
+		  }
+		} catch (error) {
+		  console.error("خطا در افزودن آیتم به سبد خرید:", error);
+		}
+	  };
+	  
 	return (
 		<Grid
 			container
@@ -244,7 +280,9 @@ const RestaurantPage = () => {
 				>
 					{description}
 				</Typography>
-				<Button variant="contained" color="success" fullWidth>
+				<Button variant="contained" color="success" fullWidth
+						onClick={() => navigate(`/cart?restaurant_id=${id}`)}
+				>
 					مشاهده سبد خرید
 				</Button>
 			</Grid>
@@ -337,23 +375,22 @@ const RestaurantPage = () => {
 									</CardContent>
 										
 									<Button
-										variant="contained"
-										sx={{
-											backgroundColor: "white !important",
-											fontWeight: "normal !important",
-											color: "#D68240 !important",
-											border: "1px solid #D68240",
-											alignSelf: "center",
-											margin: 1,
-											borderRadius: 20,
-											"&:hover": {
-												border: "2px solid #D68240",
-												backgroundColor: "inherit",
-											},
-										}}
-									>
-										افزودن
-									</Button>
+            						  variant="contained"
+            						  onClick={(event) => {
+										event.stopPropagation(); // جلوگیری از اجرای رویداد کارت
+										handleAddToCart(food); // افزودن آیتم به سبد خرید
+									  }}
+            						  disabled={!!addedToCart[food.item_id]} // غیرفعال کردن دکمه پس از افزودن
+            						  sx={{
+            						    backgroundColor: addedToCart[food.item_id] ? "gray" : "#D68240",
+            						    color: addedToCart[food.item_id] ? "white" : "black",
+            						    alignSelf: "center",
+            						    margin: 1,
+            						    borderRadius: 20,
+            						  }}
+            						>
+            						  {addedToCart[food.item_id] ? "افزوده شد" : "افزودن"}
+            						</Button>
 								</Card>
 							))
 						) : (

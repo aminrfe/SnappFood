@@ -17,34 +17,29 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import LoginImg from "../assets/imgs/login.png";
 import axios from "../utills/axiosInstance.js";
-// import { useUser } from "../contexts/UserContext.js";
 
 function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
-	// const [loading, setLoading] = useState(false);
-
-	// const { fetchUser } = useUser();
 
 	const handleClickShowPassword = () => setShowPassword((show) => !show);
 
 	const handleMouseDownPassword = (event) => event.preventDefault();
 
-	const navigate = useNavigate(); // Initialize navigate
+	const navigate = useNavigate(); 
 
 	const handleSignUpClick = () => {
-		navigate("/user-signup"); // Navigate to sign up page
+		navigate("/user-signup"); 
 	};
 
 	const handleStoreSignUpClick = () => {
-		navigate("/restuarant-signup"); // Navigate to store sign up page
+		navigate("/restuarant-signup");
 	};
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
-		// setLoading(true);
 		setError("");
 
 		if (!phoneNumber) {
@@ -84,14 +79,10 @@ function Login() {
 			);
 
 			console.log(response.data);
-			// ذخیره توکن‌ها در localStorage
 			localStorage.setItem("access", response.data.access);
 			localStorage.setItem("refresh", response.data.refresh);
 			localStorage.setItem("res_id", response.data.restaurant_id);
 			localStorage.setItem("phone", phoneNumber);
-
-			// login(response.data.access);
-			// await fetchUser();
 
 			if (response.data.restaurant_id)
 				navigate(`/restaurant/${response.data.restaurant_id}/profile`);

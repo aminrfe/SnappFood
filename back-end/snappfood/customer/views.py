@@ -345,14 +345,11 @@ class CartItemDeleteView(APIView):
     
 class MenuItemsView(generics.ListAPIView):
     serializer_class = ItemSerializer
-    permission_classes = [IsAuthenticated, IsCustomer]
 
     @swagger_auto_schema(
         operation_summary="List All Items of a Restaurant",
         responses={
             200: ItemSerializer(many=True),
-            401: openapi.Response(description="Unauthorized"),
-            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Restaurant not found"),
         },
     )
@@ -367,15 +364,12 @@ class MenuItemsView(generics.ListAPIView):
 
 class MenuItemDetailView(generics.RetrieveAPIView):
     serializer_class = ItemSerializer
-    permission_classes = [IsAuthenticated, IsCustomer]
     lookup_field = 'item_id'
-
+    
     @swagger_auto_schema(
         operation_summary="Retrieve a Specific Item of a Restaurant",
         responses={
             200: ItemSerializer,
-            401: openapi.Response(description="Unauthorized"),
-            403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Item not found"),
         },
     )

@@ -27,6 +27,7 @@ import RestaurantOrderList from "./components/Restaurant/Orders.js";
 import RestaurantReportPage from "./components/Restaurant/ReportPage.js";
 import CartPage from "./components/User/CartPage.js";
 import CartCompletion from "./components/User/CartCompletion.js";
+import CartsList from "./components/User/CartsList";
 
 function App() {
 	function isAuthenticated() {
@@ -161,6 +162,16 @@ function App() {
 									) : (
 										<Navigate to="/login" />
 									)
+								}
+							/>
+							<Route
+								path="/cart-list"
+								element={
+								isAuthenticated() ? (
+									<CartsList />
+								) : (
+									<Navigate to="/login"  replace />
+								)
 								}
 							/>
 						</Routes>

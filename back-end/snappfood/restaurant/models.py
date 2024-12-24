@@ -20,9 +20,17 @@ class RestaurantProfile(models.Model):
         return os.path.join('restaurant-ptofile-images/', filename)
 
     STATE_CHOICES = [
-        ("pending", "PENDING "),
+        ("pending", "PENDING"),
         ("approved", "APPROVED"),
         ("rejected", "REJECTED"),
+    ]
+
+    BUSINESS_TYPES = [
+        ("restaurant", "Restaurant"),
+        ("cafe", "Cafe"),
+        ("bakery", "Bakery"),
+        ("sweets", "Sweets"),
+        ("ice_cream", "Ice Cream"),
     ]
 
     manager = models.OneToOneField(
@@ -31,7 +39,7 @@ class RestaurantProfile(models.Model):
         related_name="restaurant_profile"
     )  
     name = models.CharField(max_length=255) 
-    business_type = models.CharField(max_length=255)  
+    business_type = models.CharField(max_length=255, choices=BUSINESS_TYPES, default='restaurant')  
     city_name = models.CharField(max_length=255)  
     score = models.DecimalField(max_digits=5, decimal_places=2, default=0.0)
     delivery_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)

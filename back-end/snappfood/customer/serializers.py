@@ -60,10 +60,11 @@ class UpdateCartItemSerializer(serializers.Serializer):
 
 class CartItemSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="item.name", read_only=True)
-    
+    photo = serializers.ImageField(source="item.photo", read_only=True)
+
     class Meta:
         model = CartItem
-        fields = ['id', 'item', 'name', 'discount','count', 'price']
+        fields = ['id', 'item', 'name', 'discount','count', 'price', 'photo']
     
 class CartSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(many=True, read_only=True)
@@ -71,4 +72,4 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ['id', 'restaurant', 'restaurant_name','total_price', 'cart_items']
+        fields = ['id', 'restaurant', 'restaurant_name', 'total_price', 'total_discount','cart_items']

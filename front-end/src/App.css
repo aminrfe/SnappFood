@@ -89,3 +89,7 @@ button.MuiButton-root:hover {
 .MuiInput-underline.Mui-focused:after {
 	border-bottom: 2px solid #eead7a !important;
 }
+
+.MuiAccordionSummary-expandIconWrapper {
+	margin-right: 20px;
+}

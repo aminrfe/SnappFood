@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import "./App.css";
 import RTLProvider from "./ThemeProvider";
 import HomePage from "./components/User/HomePage";
 import LoginPage from "./components/Login";
@@ -18,7 +19,6 @@ import CustomerProfile from "./components/User/profile";
 import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext";
 import FoodItemPage from "./components/User/MenuItem";
-import "./App.css";
 import RestaurantPage from "./components/User/RestaurantPage";
 import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
@@ -46,7 +46,6 @@ function App() {
                 path="/"
                 element={
                   <>
-                    {/* <OrderList /> */}
                     <Header isAuthenticated={isAuthenticated} />
                     <HomePage isAuthenticated={isAuthenticated} />
                   </>
@@ -55,7 +54,7 @@ function App() {
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/user-signup" element={<UserSignUp />} />
-              <Route path="/menu-item" element={<FoodItemPage />} />
+              <Route path="/restaurant/:id/:item_id" element={<FoodItemPage />} />
               <Route path="/restuarant-signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />

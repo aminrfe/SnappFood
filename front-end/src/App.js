@@ -5,7 +5,6 @@ import {
 	Route,
 	Navigate,
 } from "react-router-dom";
-import "./App.css";
 import RTLProvider from "./ThemeProvider";
 import HomePage from "./components/User/HomePage";
 import LoginPage from "./components/Login";
@@ -19,6 +18,7 @@ import CustomerProfile from "./components/User/profile";
 import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext";
 import FoodItemPage from "./components/User/MenuItem";
+import "./App.css";
 import RestaurantPage from "./components/User/RestaurantPage";
 import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";

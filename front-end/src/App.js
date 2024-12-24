@@ -5,7 +5,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import "./App.css";
 import RTLProvider from "./ThemeProvider";
 import HomePage from "./components/User/HomePage";
 import LoginPage from "./components/Login";
@@ -19,11 +18,12 @@ import CustomerProfile from "./components/User/profile";
 import RestaurantProfile from "./components/Restaurant/Profile";
 import UserProvider from "./contexts/UserContext";
 import FoodItemPage from "./components/User/MenuItem";
+import "./App.css";
 import RestaurantPage from "./components/User/RestaurantPage";
 import EditMenu from "./components/Restaurant/EditMenu";
 import FavoritesPage from "./components/User/FavoritesPage.js";
 import SearchPage from "./components/User/SearchPage.js";
-import RestaurantOrderList from "./components/Restaurant/Orders.js";
+import OrderList from "./components/Restaurant/Orders.js";
 import RestaurantReportPage from "./components/Restaurant/ReportPage.js"; 
 import CartPage from "./components/User/CartPage.js";
 import CartCompletion from "./components/User/CartCompletion.js";
@@ -54,10 +54,13 @@ function App() {
 
               <Route path="/login" element={<LoginPage />} />
               <Route path="/user-signup" element={<UserSignUp />} />
-              <Route path="/restaurant/:id/:item_id" element={<FoodItemPage />} />
+              <Route path="/menu-item" element={<FoodItemPage />} />
               <Route path="/restuarant-signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/cart" element={<CartPage />} />
+              <Route path="/cart-completion" element={<CartCompletion />} />
+              <Route path="/orders" element={<OrderList />} />
 
               <Route
                 path="/favorites"
@@ -135,36 +138,8 @@ function App() {
                   )
                 }
               />
-              <Route
-                path="/cart"
-                element={
-                  isAuthenticated() ? (
-                    <CartPage />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
-              <Route
-                path="/cart-completion"
-                element={
-                  isAuthenticated() ? (
-                    <CartCompletion />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
-              <Route
-                path="/restaurant-orders"
-                element={
-                  isAuthenticated() ? (
-                    <RestaurantOrderList />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
+              {/* <Route path="/restaurant-report" element={<RestaurantReportPage />} /> */}
+
             </Routes>
           </Router>
         </UserProvider>

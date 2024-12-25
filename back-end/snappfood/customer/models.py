@@ -34,7 +34,7 @@ class Cart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="carts")
     restaurant = models.ForeignKey('restaurant.RestaurantProfile', on_delete=models.CASCADE)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
-
+    
     class Meta:
         unique_together = ('user', 'restaurant')
 
@@ -47,7 +47,7 @@ class CartItem(models.Model):
     item = models.ForeignKey('restaurant.Item', on_delete=models.CASCADE, related_name="cart_items")
     count = models.PositiveIntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount = models.DecimalField(max_digits=10, decimal_places=2)
+    discount = models.PositiveIntegerField(default=0, help_text="Discount percentage (0 to 100)")
 
     def __str__(self):
         return f"{self.count} x {self.item.name} in cart for {self.cart.user}"

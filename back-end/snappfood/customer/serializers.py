@@ -65,11 +65,11 @@ class CartItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartItem
         fields = ['id', 'item', 'name', 'discount','count', 'price', 'photo']
-    
+
 class CartSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(many=True, read_only=True)
     restaurant_name = serializers.CharField(source="restaurant.name", read_only=True)
 
     class Meta:
         model = Cart
-        fields = ['id', 'restaurant', 'restaurant_name', 'total_price', 'total_discount','cart_items']
+        fields = ['id', 'restaurant', 'restaurant_name', 'total_price', 'cart_items']

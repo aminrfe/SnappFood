@@ -228,7 +228,6 @@ class CartListCreateView(generics.ListCreateAPIView):
                 cart_item.save()
 
             cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
-            cart.total_discount = sum(ci.discount * ci.count for ci in cart.cart_items.all())
             cart.save()
 
             cart_serializer = CartSerializer(cart)
@@ -292,7 +291,6 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             cart_item.save()
 
             cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
-            cart.total_discount = sum(ci.discount * ci.count for ci in cart.cart_items.all())
             cart.save()
 
             cart_serializer = CartSerializer(cart)
@@ -335,7 +333,6 @@ class CartItemDeleteView(APIView):
         cart_item.delete()
 
         cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
-        cart.total_discount = sum(ci.discount * ci.count for ci in cart.cart_items.all())
         cart.save()
 
         return Response({"message": "Cart item deleted."}, status=status.HTTP_200_OK)

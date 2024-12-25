@@ -86,7 +86,7 @@ class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
     restaurant = models.ForeignKey(RestaurantProfile, on_delete=models.CASCADE, related_name='items')
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    discount = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    discount = models.PositiveIntegerField(default=0, help_text="Discount percentage (0 to 100)")
     name = models.CharField(max_length=100)
     score = models.FloatField(default=0.0)
     description = models.TextField(null=True, blank=True)

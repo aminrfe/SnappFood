@@ -1,20 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Grid, Box, Typography, Card, CardMedia, Button } from "@mui/material";
-import food1 from "../../assets/imgs/food1.png";
-import food2 from "../../assets/imgs/food2.png";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const CartsList = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "اسم رستوران نمونه 1", image: food1 },
-    { id: 2, name: "اسم رستوران نمونه 2", image: food2 },
-  ]);
+  const navigate = useNavigate();
+  const [cartItems, setCartItems] = useState([]);
 
-  const handleDeleteItem = (id) => {
-    setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
-  };
+  const handleDeleteItem = async (id) => {
+    try {
+      const response = await axiosInstance.delete(`/customer/carts/${id}`);
+      
+      if (response.status === 200) {
+        alert(`کارت با موفقیت حذف شد.`);
+        fetchCartData(); 
+      } else {
+        alert("حذف کارت ناموفق بود.");
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        alert("کارت پیدا نشد.");
+      } else {
+        alert("خطا در حذف کارت. لطفاً دوباره تلاش کنید.");
+      }
+      console.error("خطا در حذف کارت:", error);
+    }
+  };  
+  
 
   const handleContinueShopping = (id) => {
-    alert(`ادامه خرید برای ${id}`);
+    navigate(`/cart?restaurant_id=${id}`);
+  };
+
+  useEffect(() => {
+    fetchCartData();
+  }, []); 
+  
+
+  const fetchCartData = async () => {
+    try {
+      const response = await axiosInstance.get("/customer/carts");
+      const carts = response.data;
+
+      const updatedCarts = await Promise.all(
+        carts.map(async (cart) => {
+          try {
+            const profileResponse = await axiosInstance.get(`/restaurant/${cart.restaurant}/profile`);
+            const restaurantProfile = profileResponse.data;
+
+            return {
+              ...cart,
+              photo: restaurantProfile.photo,
+            };
+          } catch (error) {
+            console.error(`خطا در دریافت اطلاعات رستوران برای کارت با آیدی ${cart.restaurant}:`, error);
+            return cart;
+          }
+        })
+      );
+      setCartItems(updatedCarts);
+    } catch (error) {
+      console.error("خطا در دریافت اطلاعات سبد خرید:", error);
+    }
   };
 
   return (
@@ -45,7 +92,9 @@ const CartsList = () => {
               <Card
                 sx={{
                   display: "flex",
+                  margin:"auto",
                   justifyContent: "space-between",
+                  maxWidth: "820px",
                   alignItems: "center",
                   padding: 2,
                   border: "1px solid #f0f0f0",
@@ -61,8 +110,8 @@ const CartsList = () => {
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <CardMedia
                     component="img"
-                    image={item.image}
-                    alt={item.name}
+                    image={item.photo}
+                    alt={item.restaurant_name}
                     sx={{
                       width: 150,
                       height: 150,
@@ -73,7 +122,7 @@ const CartsList = () => {
                     variant="h6"
                     sx={{ mt: 1, textAlign: "center", fontSize: "16px" }}
                   >
-                    {item.name}
+                    {item.restaurant_name}
                   </Typography>
                 </Box>
                 <Box sx={{ display: "flex", gap: 2 }}>
@@ -95,7 +144,7 @@ const CartsList = () => {
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={() => handleContinueShopping(item.id)}
+                    onClick={() => handleContinueShopping(item.restaurant)}
                     sx={{
                       minWidth: "100px",
                       borderRadius: "20px",

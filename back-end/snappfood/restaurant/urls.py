@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RestaurantProfileView, ItemListCreateView, ItemDetailView, RestaurantListView
+from .views import RestaurantProfileView, ItemListCreateView, ItemDetailView, RestaurantListView, SalesReportView
 from order.views import RestaurantOrderListView, UpdateOrderStatusView
 
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path('orders', RestaurantOrderListView.as_view(), name='order-list'),
     path('orders/<int:id>/status', UpdateOrderStatusView.as_view(), name='update-order-status'),
     path('list/', RestaurantListView.as_view(), name='restaurant-list'),
+    path('sales-reports', SalesReportView.as_view(), name='sales-report'),
 
 ]

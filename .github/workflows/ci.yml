@@ -29,6 +29,11 @@ jobs:
         python -m pip install --upgrade pip 
         pip install -r requirements.txt
 
+    - name: Create .env file with secrets
+      run: |
+        cd back-end/snappfood
+        echo "DJANGO_SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> .env
+
     - name: Run Migrations
       run: |
         cd back-end/snappfood

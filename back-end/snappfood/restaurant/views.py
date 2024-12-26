@@ -1,13 +1,17 @@
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from django.utils import timezone
 from django.http import Http404
-from rest_framework import permissions
+from django.db import models
+from django.utils.timezone import now, timedelta
+from django.db.models import Sum, F
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from rest_framework import status
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
+from order.models import OrderItem
 from .models import RestaurantProfile, Item
 from .serializers import RestaurantProfileSerializer, ItemSerializer
 from .permissions import IsRestaurantManager
@@ -192,3 +196,62 @@ class RestaurantListView(APIView):
         serializer = RestaurantProfileSerializer(queryset, many=True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+class SalesReportView(APIView):
+    permission_classes = [IsAuthenticated, IsRestaurantManager]
+
+    @swagger_auto_schema(
+        operation_summary="Sales Report",
+        manual_parameters=[
+            openapi.Parameter(
+                'filter',
+                openapi.IN_QUERY,
+                description="Filter sales report by time period. Options: 'today', 'last_week', 'last_month'.",
+                type=openapi.TYPE_STRING,
+                required=True,
+                enum=['today', 'last_week', 'last_month']
+            )
+        ],
+        responses={
+            200: "Successful response with sales report data",
+            400: "Invalid filter option",
+            401: "Unauthorized",
+            403: "Forbidden",
+        }
+    )
+    def get(self, request, *args, **kwargs):
+        filter_option = request.query_params.get('filter')
+        restaurant = request.user.restaurant_profile
+
+        if filter_option == 'today':
+            start_date = now().replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = now()
+        elif filter_option == 'last_week':
+            start_date = now() - timedelta(days=7)
+            end_date = now()
+        elif filter_option == 'last_month':
+            start_date = now() - timedelta(days=30)
+            end_date = now()
+        else:
+            raise ValidationError("Invalid filter option. Use 'today', 'last_week', or 'last_month'.")
+
+        order_items = Item.objects.filter(
+            order_items__order__restaurant=restaurant,
+            order_items__order__order_date__range=(start_date, end_date),
+            order_items__order__state='completed'
+        ).annotate(
+            total_count=Sum('order_items__count'),
+            total_price=Sum(
+                F('order_items__price') * F('order_items__count') * (1 - F('order_items__discount') / 100.0),
+                output_field=models.DecimalField()
+            )
+        ).values('name', 'photo', 'total_count', 'total_price')
+
+        total_income = sum(item['total_price'] for item in order_items)
+
+        return Response({
+            "filter": filter_option,
+            "total_income": total_income,
+            "items": order_items
+        })

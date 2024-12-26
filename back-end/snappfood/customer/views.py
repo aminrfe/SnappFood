@@ -287,8 +287,12 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             new_count = serializer.validated_data['count']
 
             cart_item = get_object_or_404(CartItem, id=cart_item_id, cart=cart)
-            cart_item.count = new_count
-            cart_item.save()
+
+            if new_count == 0:
+                cart_item.delete()
+            else:
+                cart_item.count = new_count
+                cart_item.save()
 
             cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
             cart.save()
@@ -331,9 +335,12 @@ class CartItemDeleteView(APIView):
         cart_item = get_object_or_404(CartItem, id=cart_item_id, cart=cart)
 
         cart_item.delete()
-
-        cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
-        cart.save()
+        
+        if cart.cart_items.count() == 0:
+            cart.delete()
+        else:
+            cart.total_price = sum(ci.price * ci.count for ci in cart.cart_items.all())
+            cart.save()
 
         return Response({"message": "Cart item deleted."}, status=status.HTTP_200_OK)
     

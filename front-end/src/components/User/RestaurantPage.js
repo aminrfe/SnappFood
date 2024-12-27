@@ -73,6 +73,15 @@ const RestaurantPage = () => {
 		}
 	}, [restaurantId, isAuthenticated]);
 
+	const handleViewCartClick = async () => {
+		if(isAuthenticated){
+			navigate(`/cart?restaurant_id=${id}`);
+		}
+		else{
+			alert("ابتدا وارد حساب کاربری خود شوید.")
+		}
+	};
+
 	const toggleFavorite = async () => {
 		if (!isAuthenticated) {
 			alert("لطفا ابتدا وارد حساب کاربری خود شوید!");
@@ -128,7 +137,6 @@ const RestaurantPage = () => {
 			const data = response.data;
 
 			if (data) {
-				console.log(data);
 				setName(data.name || "");
 				setAddress(data.address || "");
 				setDeliveryCost(data.delivery_price || "");
@@ -150,11 +158,12 @@ const RestaurantPage = () => {
 	useEffect(() => {
 		fetchFoodData();
 		fetchCartData();
-	}, [id]);
+	}, [id, isAuthenticated]);
 
 	const fetchFoodData = async () => {
+
 		try {
-			const response = await axiosInstance.get(
+			const response = await publicAxiosInstance.get(
 				`/customer/restaurants/${id}/items`,
 			);
 			const allData = response.data;
@@ -169,41 +178,46 @@ const RestaurantPage = () => {
 	};
 
 	const fetchCartData = async () => {
-		try {
-			const response = await axiosInstance.get("/customer/carts", {
-				params: { restaurant_id: id },
-			});
-			const cartItems = response.data?.[0]?.cart_items || [];
-			const cartStatus = {};
-			cartItems.forEach((item) => {
-				cartStatus[item.item] = true;
-			});
-			setAddedToCart(cartStatus);
-		} catch (error) {
-			console.error(
-				"خطا در دریافت اطلاعات سبد خرید:",
-				error.response?.data || error.message,
-			);
-		}
+		if (!isAuthenticated) return;
+			try {
+				const response = await axiosInstance.get("/customer/carts", {
+					params: { restaurant_id: id },
+				});
+				const cartItems = response.data?.[0]?.cart_items || [];
+				const cartStatus = {};
+				cartItems.forEach((item) => {
+					cartStatus[item.item] = true;
+				});
+				setAddedToCart(cartStatus);
+			} catch (error) {
+				console.error(
+					"خطا در دریافت اطلاعات سبد خرید:",
+					error.response?.data || error.message,
+				);
+			}
 	};
 
 	const handleAddToCart = async (foodItem) => {
-		try {
-			const response = await axiosInstance.post("/customer/carts", {
-				restaurant_id: id,
-				item_id: foodItem.item_id,
-				count: 1,
-			});
-
-			if (response.status === 201) {
-				setAddedToCart((prevState) => ({
-					...prevState,
-					[foodItem.item_id]: true,
-				}));
-			}
-		} catch (error) {
-			console.error("خطا در افزودن آیتم به سبد خرید:", error);
+		if (!isAuthenticated || !restaurantId) {
+			alert("ابتدا وارد حساب کاربری خود شوید.")
+			return;
 		}
+			try {
+				const response = await axiosInstance.post("/customer/carts", {
+					restaurant_id: id,
+					item_id: foodItem.item_id,
+					count: 1,
+				});
+	
+				if (response.status === 201) {
+					setAddedToCart((prevState) => ({
+						...prevState,
+						[foodItem.item_id]: true,
+					}));
+				}
+			} catch (error) {
+				console.error("خطا در افزودن آیتم به سبد خرید:", error);
+			}
 	};
 
 	return (
@@ -302,7 +316,7 @@ const RestaurantPage = () => {
 					variant="contained"
 					color="success"
 					fullWidth
-					onClick={() => navigate(`/cart?restaurant_id=${id}`)}
+					onClick={handleViewCartClick}
 				>
 					مشاهده سبد خرید
 				</Button>

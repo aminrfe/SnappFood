@@ -43,7 +43,7 @@ const EditProfile = () => {
 		}
 
 		try {
-			const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+			const response = await axiosInstance.get(`/restaurant/profiles/me`);
 			const data = response.data;
 
 			if (data) {
@@ -113,7 +113,7 @@ const EditProfile = () => {
 				console.warn("No valid file selected for photo.");
 			}
 			// console.log([...formData]);
-			await axiosInstance.patch(`/restaurant/${id}/profile`, formData, {
+			await axiosInstance.put(`/restaurant/profiles/me`, formData, {
 				headers: {
 					"Content-Type": "multipart/form-data",
 				},

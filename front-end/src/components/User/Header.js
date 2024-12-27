@@ -84,7 +84,7 @@ const Header = () => {
     try {
       const params = { name: query };
 
-      const response = await axiosInstance.get("/restaurant/list/", {
+      const response = await axiosInstance.get("/restaurant/profiles", {
         params,
       });
 

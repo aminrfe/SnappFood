@@ -116,7 +116,7 @@ const RestaurantListPage = () => {
 
   const fetchRestaurants = async (filters = {}) => {
     try {
-      const response = await publicAxiosInstance.get("/restaurant/list/", { params: filters });
+      const response = await publicAxiosInstance.get("/restaurant/profiles", { params: filters });
       setRestaurants(response.data);
     } catch (err) {
       setError("خطا در دریافت اطلاعات رستوران‌ها");

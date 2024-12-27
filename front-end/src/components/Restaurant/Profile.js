@@ -41,7 +41,7 @@ const RestaurantProfile = () => {
 		}
 
 		try {
-			const response = await axiosInstance.get(`/restaurant/${id}/profile`);
+			const response = await axiosInstance.get(`/restaurant/profiles/me`);
 			const data = response.data;
 
 			if (data) {

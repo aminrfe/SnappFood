@@ -133,7 +133,7 @@ const RestaurantPage = () => {
 
 		try {
 			const response = await publicAxiosInstance.get(
-				`/restaurant/${id}/profile`,
+				`/restaurant/profiles/${id}`,
 			);
 			const data = response.data;
 

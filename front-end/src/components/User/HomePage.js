@@ -169,7 +169,7 @@ const ProductSlider = () => {
 	useEffect(() => {
 		const fetchRestaurants = async () => {
 			try {
-				const response = await publicAxiosInstance.get("/restaurant/list/");
+				const response = await publicAxiosInstance.get("/restaurant/profiles");
 				const sortedRestaurants = response.data.sort((a, b) => b.score - a.score); 
         		setRestaurants(sortedRestaurants);
 			} catch (error) {

@@ -84,7 +84,7 @@ const CategoryCards = () => {
 		{ title: "رستوران", icon: "🍔", type: "restaurant" },
 		{ title: "کافه", icon: "☕️", type: "cafe" },
 		{ title: "شیرینی", icon: "🍩", type: "sweets" },
-		{ title: "آبمیوه و بستنی", icon: "🍹", type: "icecream" },
+		{ title: "آبمیوه و بستنی", icon: "🍹", type: "ice_cream" },
 		{ title: "نانوایی", icon: "🍞", type: "bakery" },
 	];
 
@@ -170,6 +170,7 @@ const ProductSlider = () => {
 		const fetchRestaurants = async () => {
 			try {
 				const response = await publicAxiosInstance.get("/restaurant/list/");
+				console.log(response.data);
 				setRestaurants(response.data);
 			} catch (error) {
 				console.error("خطا در دریافت اطلاعات رستوران‌ها:", error);

@@ -274,6 +274,7 @@ const EditProfile = () => {
 							component="span"
 							fullWidth
 							style={{ backgroundColor: "primary" }}
+							sx={{pointerEvents: "auto"}}
 						>
 							بارگذاری لوگو
 						</Button>
@@ -313,6 +314,7 @@ const EditProfile = () => {
 						fullWidth
 						style={{ backgroundColor: "primary" }}
 						onClick={() => navigate(`/restaurant/${id}/menu`)}
+						sx={{pointerEvents: "auto"}}
 					>
 						ویرایش منو
 					</Button>
@@ -431,7 +433,7 @@ const EditProfile = () => {
 
 				{/* Delivery Cost */}
 				<TextField
-					value={deliveryCost}
+					value={Math.floor(deliveryCost)}
 					placeholder="هزینه پیک (به تومان)"
 					variant="outlined"
 					fullWidth

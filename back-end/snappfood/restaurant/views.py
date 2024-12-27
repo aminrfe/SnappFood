@@ -11,42 +11,76 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 from rest_framework import status
-from order.models import OrderItem
 from .models import RestaurantProfile, Item
 from .serializers import RestaurantProfileSerializer, ItemSerializer
 from .permissions import IsRestaurantManager
 import pytz
 
 
-class RestaurantProfileView(generics.RetrieveUpdateAPIView):
+class MyRestaurantProfileView(APIView):
+    permission_classes = [IsAuthenticated, IsRestaurantManager]
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve your restaurant's profile details.",
+        responses={
+            200: RestaurantProfileSerializer,
+            401: 'Authentication credentials were not provided or invalid.',
+            403: 'You do not have permission to perform this action.',
+            404: 'Restaurant profile not found',
+        },
+    )
+    def get(self, request):
+        try:
+            restaurant_profile = RestaurantProfile.objects.get(manager=request.user)
+            serializer = RestaurantProfileSerializer(restaurant_profile)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except RestaurantProfile.DoesNotExist:
+            return Response(
+                {"detail": "Restaurant profile not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+    @swagger_auto_schema(
+        operation_summary="Update your restaurant's profile details.",
+        responses={
+            200: RestaurantProfileSerializer,
+            400: 'Invalid request data.',
+            401: 'Authentication credentials were not provided or invalid.',
+            403: 'You do not have permission to perform this action.',
+            404: 'Restaurant profile not found',
+        },
+        request_body=RestaurantProfileSerializer,
+    )
+    def put(self, request):
+        try:
+            restaurant_profile = RestaurantProfile.objects.get(manager=request.user)
+            serializer = RestaurantProfileSerializer(restaurant_profile, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except RestaurantProfile.DoesNotExist:
+            return Response(
+                {"detail": "Restaurant profile not found."}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+class PublicRestaurantProfileView(generics.RetrieveAPIView):
     queryset = RestaurantProfile.objects.all()
     serializer_class = RestaurantProfileSerializer
     lookup_field = 'id'
-    # permission_classes = [permissions.IsAuthenticated, IsRestaurantManager]
-
 
     @swagger_auto_schema(
-        operation_summary="Retrieve a restaurant's profile details.",
+        operation_summary="Retrieve a restaurant's profile by ID.",
         responses={
             200: RestaurantProfileSerializer,
-            404: 'Restaurant profile not found'
-        }
+            404: 'Restaurant profile not found',
+        },
     )
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @swagger_auto_schema(
-        operation_summary="Update the restaurant's profile details",
-        responses={
-            200: RestaurantProfileSerializer,
-            404: 'Restaurant profile not found'
-        },
-        request_body=RestaurantProfileSerializer
-    )
-    def put(self, request, *args, **kwargs):
-        return super().put(request, *args, **kwargs)
-
-    
+   
 class ItemListCreateView(generics.ListCreateAPIView):
     serializer_class = ItemSerializer
     permission_classes = [IsAuthenticated, IsRestaurantManager]

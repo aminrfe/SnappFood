@@ -57,6 +57,27 @@ const FavoritesPage = () => {
 		}
 	}, [favorites]);
 
+	const deleteFromFavorites = async (restaurantId) => {
+		try {
+			const response = await axiosInstance.delete(`/customer/favorites`, {
+				params: { restaurant_id: restaurantId },
+			});
+	
+			if (response.status === 204) {
+				alert("فروشگاه از لیست علاقه مندی شما حذف شد");
+	
+				setFavorites((prevFavorites) =>
+					prevFavorites.filter((favorite) => favorite.restaurant !== restaurantId)
+				);
+				setFullFavoritesData((prevData) =>
+					prevData.filter((restaurant) => restaurant.id !== restaurantId)
+				);
+			}
+		} catch (error) {
+			console.error("Error deleting favorite:", error);
+		}
+	};	
+
 	return (
 		<Box sx={{ padding: 3 }}>
 			<Typography
@@ -121,11 +142,15 @@ const FavoritesPage = () => {
 				        >
 				          <IconButton
 				            sx={{ color: "#D68240" }}
-				            onClick={() => alert(`حذف ${restaurant.name}`)}
+				            onClick={(e) => {
+								e.stopPropagation(); 
+								deleteFromFavorites(restaurant.id);
+							}}
 				          >
 				            <Delete />
 				          </IconButton>
-				          <IconButton sx={{ color: "#FF1493" }}>
+				          <IconButton sx={{ color: "#FF1493", pointerEvents:"none"}}
+						  onClick={(e) => e.stopPropagation()}>
 				            <Favorite />
 				          </IconButton>
 				        </Box>

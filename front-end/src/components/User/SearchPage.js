@@ -111,7 +111,7 @@ const RestaurantListPage = () => {
     cafe: "کافه",
     bakery: "نانوایی",
     sweets: "شیرینی",
-    icecream: "بستنی",
+    ice_cream: "بستنی",
   };
 
   const fetchRestaurants = async (filters = {}) => {

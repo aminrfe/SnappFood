@@ -9,45 +9,119 @@ import {
 	Rating,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import axiosInstance from "../../utills/publicAxiosInstance.js";
+import privateAxiosInstance from "../../utills/axiosInstance.js";
+import publicAxiosInstance from "../../utills/publicAxiosInstance.js";
 
 const FoodItemPage = () => {
+	const navigate = useNavigate();
 	const { id, item_id } = useParams();
 	const [foodData, setFoodData] = useState([]);
-	const [showQuantitySelector, setShowQuantitySelector] = useState(false);
-	const [quantity, setQuantity] = useState(0);
+	const [cartItems, setCartItems] = useState([]);
+	const [Item, setItem] = useState(null);
+	const [totalPrice, setTotalPrice] = useState(0);
+	const [cartID, setCartID] = useState(0);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	useEffect(() => {
-		const fetchFoodItem = async () => {
-			try {
-				const response = await axiosInstance.get(
-					`/customer/restaurants/${id}/items/${item_id}`,
-				);
-				console.log(response.data);
-				setFoodData(response.data);
-			} catch (error) {
-				console.error("Error fetching food item:", error);
-			}
-		};
+		checkLoginStatus(); 
 		fetchFoodItem();
-	}, [id, item_id]);
+		fetchCartData();
+	}, [id, item_id, isLoggedIn]);
 
-	const finalPrice = foodData.price
-		? foodData.price - (foodData.price * (foodData.discount || 0)) / 100
-		: 0;
-
-	const handleQuantityChange = (delta) => {
-		setQuantity((prevQuantity) => Math.max(prevQuantity + delta, 0));
+	const checkLoginStatus = async () => {
+		const accessToken = localStorage.getItem("access");
+    	const refreshToken = localStorage.getItem("refresh");
+    	setIsLoggedIn(!!(accessToken && refreshToken));
 	};
 
-	const handleAddToCart = () => {
-		setShowQuantitySelector(true);
-		setQuantity(1);
-		console.log("Item added to cart");
+	const handleViewCartClick = async () => {
+		if(isLoggedIn){
+			navigate(`/cart?restaurant_id=${id}`);
+		}
+		else{
+			alert("ابتدا وارد حساب کاربری خود شوید.")
+		}
 	};
+
+	const fetchFoodItem = async () => {
+		try {
+			const response = await publicAxiosInstance.get(
+				`/customer/restaurants/${id}/items/${item_id}`
+			);
+			setFoodData(response.data);
+		} catch (error) {
+			console.error("Error fetching food item:", error);
+		}
+	};
+
+	const fetchCartData = async () => {
+		if(!isLoggedIn) return;
+		try {
+				const response = await privateAxiosInstance.get("/customer/carts", {
+					params: { restaurant_id: id },
+				});
+		
+				const filteredData = response.data.filter(
+					(cart) => cart.restaurant === parseInt(id)
+				);
+		
+				const myCart = filteredData[0].cart_items || [];
+				const item = myCart.find((i) => i.item === parseInt(item_id));
+		
+				if (item) {
+					setItem(item); 
+				} else {
+					setItem({ count: 0 }); 
+				}
+		
+				setCartID(parseInt(filteredData[0].id));
+				setTotalPrice(parseInt(filteredData[0].total_price));
+				setCartItems(myCart);
+		} catch (error) {
+			console.error("خطا در دریافت اطلاعات سبد خرید:", error);
+		}
+	};
+	
+	const handleAddToCart = async () => {
+		if (!isLoggedIn) {
+			alert("ابتدا وارد حساب کاربری خود شوید");
+			return;
+		}
+	
+		try {
+			await privateAxiosInstance.post("/customer/carts", {
+				restaurant_id: id,
+				item_id: parseInt(item_id),
+				count: 1
+			});
+	
+			alert("آیتم به سبد خرید شما اضافه شد");
+			fetchCartData(); 
+		} catch (error) {
+			console.error("Error adding to cart:", error);
+		}
+	};
+	
+
+	const handleQuantityChange = async (delta) => {
+		try {
+			const newCount = Item.count + delta;
+			if (newCount < 1) return;
+	
+			const response = await privateAxiosInstance.put(`/customer/carts/${cartID}`, {
+				cart_item_id: Item.id, 
+				count: newCount,
+			});
+			fetchCartData(); 
+		} catch (error) {
+			console.error("خطا در به‌روزرسانی تعداد آیتم:", error.response?.data || error);
+		}
+	};
+	
 
 	const comments = [
 		{
@@ -91,7 +165,7 @@ const FoodItemPage = () => {
 			}}
 		>
 			<Grid sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-				<Box sx={{ position: "relative", width: "fit-content" }}>
+				<Box sx={{ position: "relative", width: "fit-content", margin:"auto" }}>
 					{foodData.discount > 0 && (
 						<Box
 							sx={{
@@ -114,6 +188,7 @@ const FoodItemPage = () => {
 							height: "300px",
 							display: "block",
 							borderRadius: 18,
+							margin:"auto"
 						}}
 					/>
 				</Box>
@@ -153,11 +228,11 @@ const FoodItemPage = () => {
 						</Typography>
 						{foodData.discount > 0 && (
 							<Typography sx={{ color: "green", fontWeight: "bold" }}>
-								{finalPrice.toLocaleString()} تومان
+								{(foodData.price - (foodData.price * foodData.discount / 100)).toLocaleString()} تومان
 							</Typography>
 						)}
 					</Box>
-					{quantity === 0 ? (
+					{!isLoggedIn || !Item || Item.count === 0 ? (
 						<Button
 							variant="contained"
 							color="success"
@@ -170,11 +245,11 @@ const FoodItemPage = () => {
 						<Box display="flex" alignItems="center" gap={1}>
 							<IconButton
 								onClick={() => handleQuantityChange(-1)}
-								disabled={quantity === 0}
+								disabled={Item.count === 0}
 							>
 								<RemoveIcon />
 							</IconButton>
-							<Typography>{quantity}</Typography>
+							<Typography>{Item.count}</Typography>
 							<IconButton onClick={() => handleQuantityChange(1)}>
 								<AddIcon />
 							</IconButton>
@@ -182,7 +257,8 @@ const FoodItemPage = () => {
 					)}
 				</Box>
 
-				<Button variant="contained" color="primary" fullWidth>
+				<Button variant="contained" color="primary" fullWidth
+				onClick={handleViewCartClick}>
 					مشاهده سبد خرید
 				</Button>
 			</Grid>

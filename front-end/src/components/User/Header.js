@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
-import { AppBar, Toolbar, Button } from "@mui/material";
+import { AppBar, Toolbar, Button, Box} from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import FoodiImg from "../../assets/imgs/foodiIcon.png";
 import { styled } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
-import axiosInstance from "../../utills/publicAxiosInstance"; // فرض بر این است که axios برای ارسال درخواست‌ها تنظیم شده باشد
+import axiosInstance from "../../utills/publicAxiosInstance"; 
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -44,8 +45,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [restaurantList, setRestaurantList] = useState([]); // لیست رستوران‌ها
-  const [debounceTimeout, setDebounceTimeout] = useState(null); // مدیریت debounce
+  const [restaurantList, setRestaurantList] = useState([]); 
+  const [debounceTimeout, setDebounceTimeout] = useState(null); 
   const navigate = useNavigate();
 
   const checkAuthentication = () => {
@@ -87,7 +88,7 @@ const Header = () => {
         params,
       });
 
-      setRestaurantList(response.data); // لیست رستوران‌ها را در state ذخیره می‌کنیم
+      setRestaurantList(response.data); 
     } catch (error) {
       console.error("Error fetching restaurant list:", error);
       setRestaurantList([]);
@@ -99,14 +100,14 @@ const Header = () => {
     setSearchTerm(value);
 
     if (debounceTimeout) {
-      clearTimeout(debounceTimeout); // تایمر قبلی را پاک می‌کنیم
+      clearTimeout(debounceTimeout); 
     }
 
     const timeout = setTimeout(() => {
-      fetchRestaurantList(value); // ارسال درخواست به API بعد از تایپ
-    }, 500); // پس از 500 میلی‌ثانیه درخواست ارسال می‌شود
+      fetchRestaurantList(value); 
+    }, 500); 
 
-    setDebounceTimeout(timeout); // ذخیره تایمر برای پاک کردن در صورت تغییر
+    setDebounceTimeout(timeout); 
   };
 
   const handleKeyPress = (e) => {
@@ -138,7 +139,7 @@ const Header = () => {
             inputProps={{ "aria-label": "search" }}
             value={searchTerm}
             onChange={handleSearchChange}
-            onKeyPress={handleKeyPress} // اضافه کردن handler برای فشردن Enter
+            onKeyPress={handleKeyPress} 
           />
           {/* نمایش لیست رستوران‌ها */}
           {restaurantList.length > 0 && (
@@ -165,24 +166,24 @@ const Header = () => {
                       display: "flex",
                       alignItems: "center",
                     }}
-                    onClick={() => navigate(`/restaurant/${restaurant.id}`)} // کلیک بر روی هر رستوران برای رفتن به صفحه آن
+                    onClick={() => navigate(`/restaurant/${restaurant.id}`)} 
                   >
                     {/* نمایش تصویر رستوران */}
                     {restaurant.photo && (
                       <img
-                        src={`http://127.0.0.1:8000${restaurant.photo}`} // مسیر عکس رستوران
+                        src={`http://127.0.0.1:8000${restaurant.photo}`} 
                         alt={restaurant.name}
                         style={{
-                          width: "80px", // بزرگتر کردن اندازه عکس
+                          width: "80px", 
                           height: "80px",
-                          borderRadius: "4px", // مربع کردن عکس
+                          borderRadius: "4px", 
                           marginRight: "10px",
                         }}
                       />
                     )}
                     <div>
                       {/* نمایش نام رستوران و آدرس */}
-                      <div style={{ fontWeight: "bold", marginRight:"10px", color: "#555"}}>{restaurant.name}</div> {/* اضافه کردن نام رستوران */}
+                      <div style={{ fontWeight: "bold", marginRight:"10px", color: "#555"}}>{restaurant.name}</div> 
                       <div style={{ fontSize: "12px", color: "#555", marginRight:"10px" }}>
                         {restaurant.city_name}
                       </div>
@@ -209,20 +210,30 @@ const Header = () => {
 						ورود یا عضویت
 					</Button>
 				) : (
-					<Button
-						variant="contained"
-						color="primary"
-						onClick={handleProfileClick}
-						sx={{
-							marginTop: "10px !important",
-							width: "130px",
-							height: "45px",
-							borderRadius: "50px !important",
-							fontWeight: "400 !important",
-						}}
-					>
-						پروفایل
-					</Button>
+					<Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <ShoppingCartIcon
+              sx={{
+                color: "#555",
+                cursor: "pointer",
+                "&:hover": { color: "#000" },
+              }}
+              onClick={() => navigate("/cart-list")}
+            />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleProfileClick}
+              sx={{
+                marginTop: "10px !important",
+                width: "130px",
+                height: "45px",
+                borderRadius: "50px !important",
+                fontWeight: "400 !important",
+              }}
+            >
+              پروفایل
+            </Button>
+          </Box>
 				)}
       </Toolbar>
     </AppBar>

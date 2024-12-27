@@ -170,8 +170,8 @@ const ProductSlider = () => {
 		const fetchRestaurants = async () => {
 			try {
 				const response = await publicAxiosInstance.get("/restaurant/list/");
-				console.log(response.data);
-				setRestaurants(response.data);
+				const sortedRestaurants = response.data.sort((a, b) => b.score - a.score); 
+        		setRestaurants(sortedRestaurants);
 			} catch (error) {
 				console.error("خطا در دریافت اطلاعات رستوران‌ها:", error);
 			}

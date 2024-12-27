@@ -21,6 +21,7 @@ const RestaurantPage = () => {
 	const [address, setAddress] = useState("");
 	const [deliveryCost, setDeliveryCost] = useState("");
 	const [cityName, setCityName] = useState("");
+	const [score, setScore] = useState(0);
 	const [description, setDescription] = useState("");
 	const [openingTime, setOpeningTime] = useState(null);
 	const [closingTime, setClosingTime] = useState(null);
@@ -143,6 +144,7 @@ const RestaurantPage = () => {
 				setDescription(data.description || "");
 				setOpeningTime(data.open_hour.slice(0, 5));
 				setClosingTime(data.close_hour.slice(0, 5));
+				setScore(data.score || 0);
 				setCityName(data.city_name || "");
 				if (data.photo) {
 					setLogo(data.photo);
@@ -276,7 +278,7 @@ const RestaurantPage = () => {
 					alignItems="center"
 					py={2}
 				>
-					<Chip label="۴.۷" />
+					<Chip label={score} />
 					<Chip label={cityName} />
 					<Chip
 						label={

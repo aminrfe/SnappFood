@@ -27,6 +27,7 @@ class MyRestaurantProfileView(APIView):
             401: 'Authentication credentials were not provided or invalid.',
             403: 'You do not have permission to perform this action.',
             404: 'Restaurant profile not found',
+            500: 'Internal server error.',
         },
     )
     def get(self, request):
@@ -48,6 +49,7 @@ class MyRestaurantProfileView(APIView):
             401: 'Authentication credentials were not provided or invalid.',
             403: 'You do not have permission to perform this action.',
             404: 'Restaurant profile not found',
+            500: 'Internal server error.',
         },
         request_body=RestaurantProfileSerializer,
     )
@@ -75,6 +77,7 @@ class PublicRestaurantProfileView(generics.RetrieveAPIView):
         responses={
             200: RestaurantProfileSerializer,
             404: 'Restaurant profile not found',
+            500: 'Internal server error.',
         },
     )
     def get(self, request, *args, **kwargs):
@@ -90,7 +93,8 @@ class ItemListCreateView(generics.ListCreateAPIView):
         responses={
             200: ItemSerializer(many=True),
             401: "Unauthorized",
-            403: "Forbidden"
+            403: "Forbidden",
+            500: "Internal server error.",
         }
     )
     def get(self, request, *args, **kwargs):
@@ -101,7 +105,8 @@ class ItemListCreateView(generics.ListCreateAPIView):
         responses={
             201: ItemSerializer,
             401: "Unauthorized",
-            403: "Forbidden"
+            403: "Forbidden",
+            500: "Internal server error.",
         },
         request_body=ItemSerializer
     )
@@ -126,7 +131,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
             200: ItemSerializer,
             401: "Unauthorized",
             403: "Forbidden",
-            404: "Item not found"
+            404: "Item not found",
+            500: "Internal server error.",
         }
     )
     def get(self, request, *args, **kwargs):
@@ -138,7 +144,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
             200: ItemSerializer,
             401: "Unauthorized",
             403: "Forbidden",
-            404: "Item not found"
+            404: "Item not found",
+            500: "Internal server error.",
         },
         request_body=ItemSerializer
     )
@@ -151,7 +158,8 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
             204: "No Content",
             401: "Unauthorized",
             403: "Forbidden",
-            404: "Item not found"
+            404: "Item not found",
+            500: "Internal server error.",
         }
     )
     def delete(self, request, *args, **kwargs):
@@ -200,7 +208,8 @@ class RestaurantListView(APIView):
                 description="List of restaurants matching the filters.",
                 schema=RestaurantProfileSerializer(many=True)
             ),
-            400: "Invalid request parameters."
+            400: "Invalid request parameters.",
+            500: "Internal server error.",
         }
     )
     def get(self, request):
@@ -252,6 +261,7 @@ class SalesReportView(APIView):
             400: "Invalid filter option",
             401: "Unauthorized",
             403: "Forbidden",
+            500: "Internal server error.",
         }
     )
     def get(self, request, *args, **kwargs):

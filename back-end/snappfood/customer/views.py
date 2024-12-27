@@ -40,6 +40,7 @@ class CustomerProfileView(APIView):
             200: openapi.Response(description="Customer profile updated successfully."),
             400: openapi.Response(description="Invalid data."),
             404: openapi.Response(description="Customer profile not found."),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def put(self, request):
@@ -62,6 +63,7 @@ class CustomerProfileView(APIView):
             200: openapi.Response(description="Customer profile updated successfully."),
             400: openapi.Response(description="Invalid data."),
             404: openapi.Response(description="Customer profile not found."),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def patch(self, request):
@@ -80,9 +82,12 @@ class FavoriteView(APIView):
     permission_classes = [IsAuthenticated, IsCustomer]
 
     @swagger_auto_schema(
-        operation_summary="List Favorites",
+        operation_summary="List Favorite Restaurants",
         operation_description="Retrieve a list of favorite restaurants for the currently authenticated user.",
-        responses={200: FavoriteSerializer(many=True)},
+        responses={
+            200: FavoriteSerializer(many=True),
+            500: openapi.Response(description="Internal server error."),
+        },
     )
     def get(self, request):
         favorites = Favorite.objects.filter(user=request.user)
@@ -90,7 +95,7 @@ class FavoriteView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
-        operation_summary="Add to Favorites",
+        operation_summary="Add to Favorite Restaurants",
         operation_description="Add a restaurant to the authenticated user's list of favorites.",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -103,6 +108,7 @@ class FavoriteView(APIView):
             201: FavoriteSerializer,
             400: openapi.Response(description="Invalid data."),
             404: openapi.Response(description="Restaurant not found."),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def post(self, request):
@@ -125,7 +131,7 @@ class FavoriteView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        operation_summary="Remove from Favorites",
+        operation_summary="Remove from Favorite Restaurants",
         operation_description="Remove a restaurant from the authenticated user's list of favorites.",
         manual_parameters=[
             openapi.Parameter(
@@ -138,6 +144,7 @@ class FavoriteView(APIView):
         responses={
             204: openapi.Response(description="Favorite removed successfully."),
             404: openapi.Response(description="Favorite not found."),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def delete(self, request):
@@ -183,6 +190,7 @@ class CartListCreateView(generics.ListCreateAPIView):
             ),
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def get(self, request, *args, **kwargs):
@@ -200,6 +208,7 @@ class CartListCreateView(generics.ListCreateAPIView):
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Item or Restaurant not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def post(self, request, *args, **kwargs):
@@ -253,6 +262,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart not found"),
+            500: openapi.Response(description="Internal server error."),
         }
     )
     def get(self, request, *args, **kwargs):
@@ -277,6 +287,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart or Cart item not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def put(self, request, *args, **kwargs):
@@ -308,6 +319,7 @@ class CartDetailView(generics.RetrieveUpdateDestroyAPIView):
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def delete(self, request, *args, **kwargs):
@@ -328,6 +340,7 @@ class CartItemDeleteView(APIView):
             401: openapi.Response(description="Unauthorized"),
             403: openapi.Response(description="Forbidden"),
             404: openapi.Response(description="Cart or Cart item not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def delete(self, request, id, cart_item_id):
@@ -352,6 +365,7 @@ class MenuItemsView(generics.ListAPIView):
         responses={
             200: ItemSerializer(many=True),
             404: openapi.Response(description="Restaurant not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def get(self, request, *args, **kwargs):
@@ -372,6 +386,7 @@ class MenuItemDetailView(generics.RetrieveAPIView):
         responses={
             200: ItemSerializer,
             404: openapi.Response(description="Item not found"),
+            500: openapi.Response(description="Internal server error."),
         },
     )
     def get(self, request, *args, **kwargs):

@@ -22,6 +22,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
+import FoodiImg from "../../assets/imgs/foodiIcon.png"; 
 
 const UserProfilePage = () => {
 	const navigate = useNavigate();
@@ -64,9 +65,27 @@ const UserProfilePage = () => {
 				borderRadius: 2,
 				boxShadow: 3,
 				p: 2,
-				minHeight: "80vh",
+				minHeight: "100vh",
 			}}
 		>
+			<Box
+				sx={{
+					display: "flex", 
+					justifyContent: "center", 
+					alignItems: "center", 
+					marginBottom: "20px", 
+				}}
+			>
+				<img
+					onClick={() => navigate("/")}
+					src={FoodiImg}
+					alt="Foodi Logo"
+					style={{
+						width: "100px",
+						cursor: "pointer",
+					}}
+				/>
+			</Box>
 			{/* Profile Header */}
 			<Box
 				sx={{

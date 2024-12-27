@@ -25,7 +25,7 @@ class RestaurantOrderListView(generics.ListAPIView):
             401: "Unauthorized",
             403: "Forbidden",
             404: openapi.Response(description="Restaurant not found"),
-            500: openapi.Response(description="Internal server error."),
+            500: openapi.Response(description="Internal server error"),
         }    
     )
     def get(self, request, *args, **kwargs):
@@ -54,7 +54,7 @@ class UpdateOrderStatusView(APIView):
             401: "Unauthorized",
             403: "Forbidden",
             404: openapi.Response('Order not found'),
-            500: openapi.Response("Internal server error."),
+            500: openapi.Response("Internal server error"),
         },
     )
     def patch(self, request, *args, **kwargs):

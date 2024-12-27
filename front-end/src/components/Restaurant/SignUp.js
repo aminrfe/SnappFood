@@ -142,22 +142,50 @@ function SignUp({ onUserSignUp }) {
 					<MenuItem value={"restaurant"}>رستوران</MenuItem>
 					<MenuItem value={"bakery"}>نانوایی</MenuItem>
 					<MenuItem value={"sweets"}>شیرینی</MenuItem>
-					<MenuItem value={"icecream"}>آبمیوه و بستنی</MenuItem>
+					<MenuItem value={"ice_cream"}>آبمیوه و بستنی</MenuItem>
 				</Select>
 			</FormControl>
 
-			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
-				<TextField
-					fullWidth
-					type="text"
-					label="نام استان"
-					variant="standard"
-					margin="normal"
-					name="provinceName"
+			<FormControl fullWidth variant="standard" sx={{ marginTop: "30px" }}>
+				<InputLabel> نام استان</InputLabel>
+				<Select
 					value={provinceName}
+					name="provinceName"
 					onChange={(e) => setProvinceName(e.target.value)}
-				/>
-			</Box>
+				>
+					<MenuItem value={"آذربایجان شرقی"}>آذربایجان شرقی</MenuItem>
+					<MenuItem value={"آذربایجان غربی"}>آذربایجان غربی</MenuItem>
+					<MenuItem value={"اردبیل"}>اردبیل</MenuItem>
+					<MenuItem value={"اصفهان"}>اصفهان</MenuItem>
+					<MenuItem value={"البرز"}>البرز</MenuItem>
+					<MenuItem value={"ایلام"}>ایلام</MenuItem>
+					<MenuItem value={"بوشهر"}>بوشهر</MenuItem>
+					<MenuItem value={"تهران"}>تهران</MenuItem>
+					<MenuItem value={"چهارمحال و بختیاری"}>چهارمحال و بختیاری</MenuItem>
+					<MenuItem value={"خراسان جنوبی"}>خراسان جنوبی</MenuItem>
+					<MenuItem value={"خراسان شمالی"}>خراسان شمالی</MenuItem>
+					<MenuItem value={"خراسان رضوی"}>خراسان رضوی</MenuItem>
+					<MenuItem value={"خوزستان"}>خوزستان</MenuItem>
+					<MenuItem value={"زنجان"}>زنجان</MenuItem>
+					<MenuItem value={"سمنان"}>سمنان</MenuItem>
+					<MenuItem value={"سیستان و بلوچستان"}>سیستان و بلوچستان</MenuItem>
+					<MenuItem value={"شیراز"}>شیراز</MenuItem>
+					<MenuItem value={"قزوین"}>قزوین</MenuItem>
+					<MenuItem value={"قم"}>قم</MenuItem>
+					<MenuItem value={"کردستان"}>کردستان</MenuItem>
+					<MenuItem value={"کرمان"}>کرمان</MenuItem>
+					<MenuItem value={"کرمانشاه"}>کرمانشاه</MenuItem>
+					<MenuItem value={"کهگیلویه و بویراحمد"}>کهگیلویه و بویراحمد</MenuItem>
+					<MenuItem value={"گلستان"}>گلستان</MenuItem>
+					<MenuItem value={"گیلان"}>گیلان</MenuItem>
+					<MenuItem value={"لرستان"}>لرستان</MenuItem>
+					<MenuItem value={"مازندران"}>مازندران</MenuItem>
+					<MenuItem value={"مرکزی"}>مرکزی</MenuItem>
+					<MenuItem value={"هرمزگان"}>هرمزگان</MenuItem>
+					<MenuItem value={"همدان"}>همدان</MenuItem>
+					<MenuItem value={"یزد"}>یزد</MenuItem>
+				</Select>
+			</FormControl>
 
 			<Box sx={{ display: "flex", alignItems: "flex-end" }} marginBottom={0.9}>
 				<StoreIcon sx={{ color: "action.active", mr: 1, mb: 2 }} />

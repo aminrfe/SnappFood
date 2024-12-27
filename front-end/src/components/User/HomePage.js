@@ -11,9 +11,11 @@ import {
 import Footer from "./Footer";
 import Grid from "@mui/material/Grid2";
 import BigPizza from "../../assets/imgs/big-pizza.png";
-import { FavoriteBorder, Star } from "@mui/icons-material";
+import { FavoriteBorder, Favorite, Star } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import axiosInstance from "../../utills/publicAxiosInstance";
+import axiosInstance from "../../utills/axiosInstance";
+import publicAxiosInstance from "../../utills/publicAxiosInstance";
+
 
 const HeroSection = () => {
 	return (
@@ -82,7 +84,7 @@ const CategoryCards = () => {
 		{ title: "رستوران", icon: "🍔", type: "restaurant" },
 		{ title: "کافه", icon: "☕️", type: "cafe" },
 		{ title: "شیرینی", icon: "🍩", type: "sweets" },
-		{ title: "آبمیوه و بستنی", icon: "🍹", type: "icecream" },
+		{ title: "آبمیوه و بستنی", icon: "🍹", type: "ice_cream" },
 		{ title: "نانوایی", icon: "🍞", type: "bakery" },
 	];
 
@@ -149,96 +151,167 @@ const CategoryCards = () => {
 };
 
 const ProductSlider = () => {
-	const navigate = useNavigate();
-	const [restaurants, setRestaurants] = useState([]);
+    const navigate = useNavigate();
+    const [restaurants, setRestaurants] = useState([]);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [favorites, setFavorites] = useState([]);
+
+    const checkAuthentication = () => {
+        const accessToken = localStorage.getItem("access");
+        const refreshToken = localStorage.getItem("refresh");
+        setIsLoggedIn(!!(accessToken && refreshToken));
+    };
+
+	useEffect(() => {
+		checkAuthentication();
+	}, []);
 
 	useEffect(() => {
 		const fetchRestaurants = async () => {
 			try {
-				const response = await axiosInstance.get("/restaurant/list/");
-				setRestaurants(response.data); // ذخیره داده‌های دریافت‌شده
-				// console.log(response.data);
+				const response = await publicAxiosInstance.get("/restaurant/list/");
+				const sortedRestaurants = response.data.sort((a, b) => b.score - a.score); 
+        		setRestaurants(sortedRestaurants);
 			} catch (error) {
 				console.error("خطا در دریافت اطلاعات رستوران‌ها:", error);
-			} 
+			}
+		};
+
+		const fetchFavorites = async () => {
+			if (isLoggedIn) {
+				try {
+					const response = await axiosInstance.get("/customer/favorites");
+					const favoriteMap = {};
+					response.data.forEach((fav) => {
+						favoriteMap[fav.restaurant] = true; 
+					});
+					setFavorites(favoriteMap);
+				} catch (error) {
+					console.error("خطا در دریافت علاقه‌مندی‌ها:", error);
+				}
+			}
 		};
 
 		fetchRestaurants();
-	}, []);
+		fetchFavorites();
+	}, [isLoggedIn]);
 
+	const toggleFavorite = async (restaurantId) => {
+		if (!isLoggedIn) {
+			alert("برای افزودن به علاقه‌مندی‌ها لطفاً ابتدا وارد حساب خود شوید.");
+			return;
+		}
 
-	return (
-		<Box sx={{ width: "100%" }}>
-			<Typography
-				variant="h5"
-				sx={{
-					margin: 2,
-					marginTop: 8,
-					color: "#D68240",
-					fontWeight: "bold",
-					pointerEvents: "none",
-				}}
-			>
-				محبوب ترین ها
-			</Typography>
-			<Grid
-				container
-				spacing={2}
-				backgroundColor={"#F4DCC9"}
-				padding={3}
-				width={"100%"}
-			>
-				{restaurants.map((restaurant) => (
-					<Card
-						key={restaurant.id}
-						onClick={() => navigate(`restaurant/${restaurant.id}`)}
-						sx={{
-							cursor: "pointer",
-							padding: 2,
-							margin: 1,
-							minWidth: 250,
-							borderRadius: "20px",
-							boxShadow: 0,
-							"&:hover": {
-								transform: "scale(1.05)",
-								border: "2px solid #D68240",
-							},
-						}}
-					>
-						<CardMedia
-							component="img"
-							height="140"
-							image={`http://127.0.0.1:8000${restaurant.photo}`}
-							alt={restaurant.name}
-						/>
-						<CardContent>
-							<Typography variant="h6" sx={{ pointerEvents: "none" }}>
-								{restaurant.name}
-							</Typography>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								sx={{ pointerEvents: "none" }}
-							>
-								<Star sx={{ paddingTop: "12px" }} />
-								امتیاز: {restaurant.score}
-							</Typography>
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								sx={{ pointerEvents: "none" }}
-							>
-								هزینه ارسال: {Math.floor(parseFloat(restaurant.delivery_price))} تومان
-							</Typography>
-						</CardContent>
-						<IconButton sx={{ position: "absolute", top: 8, right: 8 }}>
-							<FavoriteBorder />
-						</IconButton>
-					</Card>
-				))}
-			</Grid>
-		</Box>
-	);
+		const isFavorite = favorites[restaurantId];
+		try {
+			if (isFavorite) {
+				await axiosInstance.delete(`/customer/favorites`, {
+					params: { restaurant_id: restaurantId },
+				});
+				setFavorites((prevFavorites) => ({
+					...prevFavorites,
+					[restaurantId]: false,
+				}));
+			} else {
+				await axiosInstance.post("/customer/favorites", {
+					restaurant_id: restaurantId,
+				});
+				setFavorites((prevFavorites) => ({
+					...prevFavorites,
+					[restaurantId]: true,
+				}));
+			}
+		} catch (error) {
+			console.error("خطا در تغییر علاقه‌مندی‌ها:", error);
+		}
+	};
+
+    return (
+        <Box sx={{ width: "100%" }}>
+            <Typography
+                variant="h5"
+                sx={{
+                    margin: 2,
+                    marginTop: 8,
+                    color: "#D68240",
+                    fontWeight: "bold",
+                    pointerEvents: "none",
+                }}
+            >
+                محبوب ترین ها
+            </Typography>
+            <Grid
+                container
+                spacing={2}
+                backgroundColor={"#F4DCC9"}
+                padding={3}
+                width={"100%"}
+            >
+                {restaurants.map((restaurant) => {
+                    const isFavorite = favorites[restaurant.id]; 
+
+                    return (
+                        <Card
+                            key={restaurant.id}
+                            onClick={() => navigate(`restaurant/${restaurant.id}`)}
+                            sx={{
+                                cursor: "pointer",
+                                padding: 2,
+                                margin: 1,
+                                minWidth: 250,
+                                borderRadius: "20px",
+                                boxShadow: 0,
+                                "&:hover": {
+                                    transform: "scale(1.05)",
+                                    border: "2px solid #D68240",
+                                },
+                            }}
+                        >
+                            <CardMedia
+                                component="img"
+                                height="140"
+                                image={`http://127.0.0.1:8000${restaurant.photo}`}
+                                alt={restaurant.name}
+                            />
+                            <CardContent>
+                                <Typography variant="h6" sx={{ pointerEvents: "none" }}>
+                                    {restaurant.name}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ pointerEvents: "none" }}
+                                >
+                                    <Star sx={{ paddingTop: "12px" }} />
+                                    امتیاز: {restaurant.score}
+                                </Typography>
+                                <Typography
+                                    variant="body2"
+                                    color="text.secondary"
+                                    sx={{ pointerEvents: "none" }}
+                                >
+                                    هزینه ارسال: {Math.floor(parseFloat(restaurant.delivery_price))} تومان
+                                </Typography>
+                            </CardContent>
+                            <IconButton
+                                sx={{ position: "absolute", top: 8, right: 8 }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleFavorite(restaurant.id);
+                                }}
+                            >
+                                {isFavorite ? (
+                                    <Favorite sx={{ color: "red" }} />
+                                ) : (
+                                    <FavoriteBorder />
+                                )}
+                            </IconButton>
+                        </Card>
+                    );
+                })}
+            </Grid>
+        </Box>
+    );
 };
 
 const UpFooter = () => {

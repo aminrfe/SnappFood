@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField ,InputAdornment ,Typography, Card, CardMedia, CardContent, Grid, IconButton } from "@mui/material";
 import { FavoriteBorder, Favorite, Star } from "@mui/icons-material";
-import axiosInstance from "../../utills/publicAxiosInstance";
+import publicAxiosInstance from "../../utills/publicAxiosInstance";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { AppBar, Toolbar, Button } from "@mui/material";
 import FoodiImg from "../../assets/imgs/foodiIcon.png"; 
 import SearchIcon from "@mui/icons-material/Search";
+import axiosInstance from "../../utills/axiosInstance";
 
 const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -110,12 +111,12 @@ const RestaurantListPage = () => {
     cafe: "کافه",
     bakery: "نانوایی",
     sweets: "شیرینی",
-    icecream: "بستنی",
+    ice_cream: "بستنی",
   };
 
   const fetchRestaurants = async (filters = {}) => {
     try {
-      const response = await axiosInstance.get("/restaurant/list/", { params: filters });
+      const response = await publicAxiosInstance.get("/restaurant/list/", { params: filters });
       setRestaurants(response.data);
     } catch (err) {
       setError("خطا در دریافت اطلاعات رستوران‌ها");

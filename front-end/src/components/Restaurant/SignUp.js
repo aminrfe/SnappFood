@@ -142,7 +142,7 @@ function SignUp({ onUserSignUp }) {
 					<MenuItem value={"restaurant"}>رستوران</MenuItem>
 					<MenuItem value={"bakery"}>نانوایی</MenuItem>
 					<MenuItem value={"sweets"}>شیرینی</MenuItem>
-					<MenuItem value={"icecream"}>آبمیوه و بستنی</MenuItem>
+					<MenuItem value={"ice_cream"}>آبمیوه و بستنی</MenuItem>
 				</Select>
 			</FormControl>
 

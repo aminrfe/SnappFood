@@ -167,11 +167,11 @@ function App() {
 							<Route
 								path="/cart-list"
 								element={
-								isAuthenticated() ? (
-									<CartsList />
-								) : (
-									<Navigate to="/login"  replace />
-								)
+									isAuthenticated() ? (
+										<CartsList />
+									) : (
+										<Navigate to="/login" replace />
+									)
 								}
 							/>
 						</Routes>

@@ -282,8 +282,12 @@ const EditProfile = () => {
 
 					{logo && typeof logo === "string" ? (
 						<img
-							src={logo}
+							src={`http://localhost:8000${logo}`}
 							alt="Logo preview"
+							onError={(e) => {
+								e.target.onerror = null; 
+								e.target.src = "https://via.placeholder.com/100";
+							}}
 							style={{
 								marginTop: "10px",
 								width: "100px",

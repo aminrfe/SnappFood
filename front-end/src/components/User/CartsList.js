@@ -45,7 +45,7 @@ const CartsList = () => {
       const updatedCarts = await Promise.all(
         carts.map(async (cart) => {
           try {
-            const profileResponse = await axiosInstance.get(`/restaurant/${cart.restaurant}/profile`);
+            const profileResponse = await axiosInstance.get(`/restaurant/profiles/${cart.restaurant}`);
             const restaurantProfile = profileResponse.data;
 
             return {

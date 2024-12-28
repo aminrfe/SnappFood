@@ -100,7 +100,7 @@ const CartPage = () => {
   const fetchProfileData = async () => {
 
 		try {
-			const response = await publicAxiosInstance.get(`/restaurant/${restaurantId}/profile`);
+			const response = await publicAxiosInstance.get(`/restaurant/profiles/${restaurantId}`);
 			const data = response.data;
 
 			if (data) {

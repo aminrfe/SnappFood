@@ -36,7 +36,7 @@ const FavoritesPage = () => {
 		const fetchAllRestaurantsDetails = async () => {
 			try {
 				const restaurantPromises = favorites.map((restaurant) =>
-					axiosInstance.get(`/restaurant/${restaurant.restaurant}/profile`) 
+					axiosInstance.get(`/restaurant/profiles/${restaurant.restaurant}`) 
 				);
 
 				const restaurantResponses = await Promise.all(restaurantPromises);

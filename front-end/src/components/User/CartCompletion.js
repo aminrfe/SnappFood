@@ -131,7 +131,7 @@ const CartPage = () => {
           {cartItems.map((item) => (
             <Grid item xs={12} key={item.id}>
               <Card sx={{ display: "flex", justifyContent: "space-between", p: 2, boxShadow: 2, borderRadius: 2 }}>
-                <CardMedia component="img" image={item.photo} alt={item.name} sx={{ width: 100, height: 100 }} />
+                <CardMedia component="img" image={item.photo ? item.photo : "https://via.placeholder.com/120"} alt={item.name} sx={{ width: 100, height: 100 }} />
                 <CardContent sx={{ flex: 1 }}>
                   <Typography variant="h6" fontWeight="bold">{item.name}</Typography>
                   <Typography variant="body2" color="text.secondary">{item.description}</Typography>

@@ -112,7 +112,7 @@ const FavoritesPage = () => {
 				      >
 				        <CardMedia
 				          component="img"
-				          image={restaurant.photo}
+				          image={restaurant.photo ? restaurant.photo : "https://via.placeholder.com/120"}
 				          alt={restaurant.name}
 				          sx={{
 				            borderRadius: "12px",

@@ -139,7 +139,7 @@ const CartPage = () => {
                 {/* تصویر */}
                 <CardMedia
                   component="img"
-                  image={item.photo}
+                  image={item.photo ? item.photo : "https://via.placeholder.com/120"}
                   alt={item.name}
                   sx={{
                     width: 100,

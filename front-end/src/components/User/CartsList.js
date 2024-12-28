@@ -110,7 +110,7 @@ const CartsList = () => {
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <CardMedia
                     component="img"
-                    image={item.photo}
+                    image={item.photo ? item.photo : "https://via.placeholder.com/120"}
                     alt={item.restaurant_name}
                     sx={{
                       width: 150,

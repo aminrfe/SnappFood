@@ -300,6 +300,10 @@ const EditProfile = () => {
 							<img
 								src={URL.createObjectURL(logo)}
 								alt="Logo preview"
+								onError={(e) => {
+									e.target.onerror = null; 
+									e.target.src = "https://via.placeholder.com/100";
+								}}
 								style={{
 									marginTop: "10px",
 									width: "100px",

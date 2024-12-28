@@ -285,7 +285,7 @@ const RestaurantListPage = () => {
               <CardMedia
                 component="img"
                 height="160"
-                image={`http://127.0.0.1:8000${restaurant.photo}`}
+                image={restaurant.photo ? `http://127.0.0.1:8000${restaurant.photo}` : "https://via.placeholder.com/120"}
                 alt={restaurant.name}
                 sx={{ borderRadius: "12px", objectFit: "cover" }}
               />

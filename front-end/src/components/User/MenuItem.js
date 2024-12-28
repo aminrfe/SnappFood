@@ -182,7 +182,7 @@ const FoodItemPage = () => {
 						</Box>
 					)}
 					<img
-						src={foodData.photo}
+						src={foodData.photo ? foodData.photo : "https://via.placeholder.com/120"}
 						alt="Food"
 						style={{
 							height: "300px",

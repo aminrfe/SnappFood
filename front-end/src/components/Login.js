@@ -28,11 +28,11 @@ function Login() {
 	const navigate = useNavigate(); 
 
 	const handleSignUpClick = () => {
-		navigate("/user-signup"); 
+		navigate("/usersignup"); 
 	};
 
 	const handleStoreSignUpClick = () => {
-		navigate("/restuarant-signup");
+		navigate("/restuarant/signup");
 	};
 
 	const handleSubmit = async (event) => {

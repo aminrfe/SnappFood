@@ -13,7 +13,6 @@ class Command(BaseCommand):
         first_name = os.getenv("DJANGO_SUPERUSER_FIRST_NAME", "Amin")
         last_name = os.getenv("DJANGO_SUPERUSER_LAST_NAME", "Rafiee")
         password = os.getenv("DJANGO_SUPERUSER_PASSWORD", "admin123")
-        role = os.getenv("DJANGO_SUPERUSER_ROLE", "admin")  
 
         if not User.objects.filter(phone_number=phone_number, is_superuser=True).exists():
             User.objects.create_superuser(
@@ -21,7 +20,6 @@ class Command(BaseCommand):
                 password=password,
                 first_name=first_name,
                 last_name=last_name,
-                role=role,
             )
             self.stdout.write(self.style.SUCCESS(f"Superuser created successfully with phone number {phone_number}."))
         else:

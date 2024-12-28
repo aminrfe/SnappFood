@@ -68,7 +68,7 @@ function Login() {
 
 		try {
 			const response = await axios.post(
-				"http://127.0.0.1:8000/api/auth/token",
+				"https://snappfood-aghc.onrender.com/api/auth/token",
 				{
 					phone_number: `98${phoneNumber.slice(1)}`,
 					password: password,

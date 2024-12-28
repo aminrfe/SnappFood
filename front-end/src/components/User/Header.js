@@ -171,7 +171,7 @@ const Header = () => {
                     {/* نمایش تصویر رستوران */}
                     {restaurant.photo && (
                       <img
-                        src={`http://127.0.0.1:8000${restaurant.photo}`} 
+                        src={`https://snappfood-aghc.onrender.com${restaurant.photo}`} 
                         alt={restaurant.name}
                         style={{
                           width: "80px", 

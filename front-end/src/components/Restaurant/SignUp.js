@@ -93,7 +93,7 @@ function SignUp({ onUserSignUp }) {
 
 		try {
 			const response = await axios.post(
-				"http://localhost:8000/api/auth/signup/restaurant",
+				"https://snappfood-aghc.onrender.com/api/auth/signup/restaurant",
 				RestaurantData,
 			);
 

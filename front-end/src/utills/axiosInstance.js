@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "http://127.0.0.1:8000/api",
+    baseURL: "https://snappfood-aghc.onrender.com/api",
     headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.getItem("access")}`,
@@ -16,7 +16,7 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true;
             try {
                 const response = await axios.post(
-                    "http://127.0.0.1:8000/api/auth/token/refresh",
+                    "https://snappfood-aghc.onrender.com/api/auth/token/refresh",
                     {
                         refresh: localStorage.getItem("refresh"),
                     },

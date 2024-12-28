@@ -248,6 +248,10 @@ const RestaurantPage = () => {
 					<img
 						src={`${logo}`}
 						alt="Food"
+						onError={(e) => {
+							e.target.onerror = null; 
+							e.target.src = "https://via.placeholder.com/100";
+						}}
 						style={{
 							height: "300px",
 							display: "block",
@@ -344,7 +348,7 @@ const RestaurantPage = () => {
 									<Box sx={{ position: "relative" }}>
 										<CardMedia
 											component="img"
-											image={food.photo}
+											image={food.photo ? food.photo : "https://via.placeholder.com/120"}
 											alt={food.name}
 											sx={{ width: 120, borderRadius: 3 }}
 										/>

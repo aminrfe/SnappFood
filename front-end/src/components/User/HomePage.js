@@ -62,6 +62,10 @@ const HeroSection = () => {
 					<img
 						src={BigPizza}
 						alt="Hero Pizza"
+						onError={(e) => {
+							e.target.onerror = null; 
+							e.target.src = "https://via.placeholder.com/100";
+						}}
 						style={{
 							marginRight: "15vw",
 							width: "600px",
@@ -270,7 +274,7 @@ const ProductSlider = () => {
                             <CardMedia
                                 component="img"
                                 height="140"
-                                image={`http://127.0.0.1:8000${restaurant.photo}`}
+                                image={restaurant.photo ? `http://127.0.0.1:8000${restaurant.photo}` : "https://via.placeholder.com/120"}
                                 alt={restaurant.name}
                             />
                             <CardContent>

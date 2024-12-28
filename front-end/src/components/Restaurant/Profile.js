@@ -28,7 +28,8 @@ const RestaurantProfile = () => {
 	const [openLogoutDialog, setOpenLogoutDialog] = useState(false);
 	const navigate = useNavigate();
 	const { id } = useParams();
-	
+	console.log(id);  // Check if id is logged properly
+    return <div>Restaurant {id}</div>;
 
 	useEffect(() => {
 		fetchProfileData();

@@ -53,12 +53,12 @@ function App() {
 							/>
 
 							<Route path="/login" element={<LoginPage />} />
-							<Route path="/user-signup" element={<UserSignUp />} />
+							<Route path="/user/signup" element={<UserSignUp />} />
 							<Route
 								path="/restaurant/:id/:item_id"
 								element={<FoodItemPage />}
 							/>
-							<Route path="/restuarant-signup" element={<RestaurantSignUp />} />
+							<Route path="/restuarant/signup" element={<RestaurantSignUp />} />
 							<Route path="/restaurant/:id" element={<RestaurantPage />} />
 							<Route path="/search" element={<SearchPage />} />
 
@@ -89,7 +89,7 @@ function App() {
 								}
 							/>
 							<Route
-								path="/user-edit-profile"
+								path="/user/edit-profile"
 								element={
 									isAuthenticated() ? (
 										<UserEditProfile />
@@ -129,7 +129,7 @@ function App() {
 								}
 							/>
 							<Route
-								path="/restaurant-report"
+								path="/restaurant/report"
 								element={
 									isAuthenticated() ? (
 										<RestaurantReportPage />
@@ -155,7 +155,7 @@ function App() {
 								}
 							/>
 							<Route
-								path="/restaurant-orders"
+								path="/restaurant/orders"
 								element={
 									isAuthenticated() ? (
 										<RestaurantOrderList />
@@ -167,11 +167,11 @@ function App() {
 							<Route
 								path="/cart-list"
 								element={
-								isAuthenticated() ? (
-									<CartsList />
-								) : (
-									<Navigate to="/login"  replace />
-								)
+									isAuthenticated() ? (
+										<CartsList />
+									) : (
+										<Navigate to="/login" replace />
+									)
 								}
 							/>
 						</Routes>

@@ -74,6 +74,7 @@ const OrderList = () => {
 	
 
 	const handleOpenDialog = (order) => {
+		console.log("Opening dialog for order:", order);
 		setSelectedOrder(order);
 		setOpen(true);
 		setStatus(orderStatuses[order.id] || "");
@@ -102,7 +103,7 @@ const OrderList = () => {
 				minHeight: "100vh",
 				display: "flex",
 				flexDirection: "column",
-				alignItems: "center",
+				justifyContent: "center",
 			}}
 		>
 			<Typography
@@ -187,28 +188,50 @@ const OrderList = () => {
 							>
 								آیتم‌های سفارش:
 							</Typography>
-							<List>
-								{order.order_items.map((item, idx) => (
-									<ListItem key={idx} sx={{ paddingLeft: 0 }}>
-										<ListItemText
-											primary={`${item.name} - تعداد: ${item.count}`}
-										/>
-									</ListItem>
-								))}
-							</List>
-							<Typography
-								variant="body1"
-								sx={{ fontWeight: "bold", marginTop: "0.5rem" }}
+						</Box>
+					</AccordionSummary>
+					<AccordionDetails
+						sx={{ backgroundColor: "#FFF8F1", boxShadow: "none" }}
+					>
+						<Box
+							sx={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								width: "100%",
+							}}
+						>
+							{/* Left Side Content */}
+							<Box>
+								<Typography variant="body2" sx={{ marginBottom: "1rem" }}>
+									جزئیات سفارش:
+								</Typography>
+								<ul>
+									{order.items.map((item, index) => (
+										<li key={index}>
+											<Typography variant="body2">{item}</Typography>
+										</li>
+									))}
+								</ul>
+							</Box>
+
+							{/* Right Side Button */}
+							<Button
+								variant="contained"
+								onClick={() => handleOpenDialog(order)}
+								sx={{
+									fontWeight: "normal !important",
+									border: "1px solid #d68240",
+									alignSelf: "flex-start", // Align to the top if content height differs
+								}}
 							>
-								توضیحات سفارش:
-							</Typography>
-							<Typography variant="body2" color="text.secondary">
-								{order.description || "بدون توضیحات"}
-							</Typography>
-						</AccordionDetails>
-					</Accordion>
-				))
-			)}
+								وارد کردن وضعیت سفارش
+							</Button>
+						</Box>
+					</AccordionDetails>
+				</Accordion>
+			))}
+
 
 			<Dialog
 				open={open}

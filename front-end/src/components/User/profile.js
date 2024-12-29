@@ -13,7 +13,7 @@ import {
 	DialogContent,
 	DialogContentText,
 	DialogTitle,
-	Button
+	Button,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
@@ -22,7 +22,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
-import FoodiImg from "../../assets/imgs/foodiIcon.png"; 
+import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
 const UserProfilePage = () => {
 	const navigate = useNavigate();
@@ -30,14 +30,14 @@ const UserProfilePage = () => {
 	const user = JSON.parse(localStorage.getItem("user"));
 
 	const handleEditClick = () => {
-		navigate("/user-edit-profile");
+		navigate("/user/edit-profile");
 	};
 
 	const handleSignUpClick = () => {
-		navigate("/restuarant-signup");
+		navigate("/");
 	};
 
-	const handleFavorites= () => {
+	const handleFavorites = () => {
 		navigate("/favorites");
 	};
 
@@ -70,10 +70,10 @@ const UserProfilePage = () => {
 		>
 			<Box
 				sx={{
-					display: "flex", 
-					justifyContent: "center", 
-					alignItems: "center", 
-					marginBottom: "20px", 
+					display: "flex",
+					justifyContent: "center",
+					alignItems: "center",
+					marginBottom: "20px",
 				}}
 			>
 				<img
@@ -198,75 +198,75 @@ const UserProfilePage = () => {
 				aria-labelledby="logout-dialog-title"
 				aria-describedby="logout-dialog-description"
 				sx={{
-				  "& .MuiDialog-paper": {
-					padding: "15px 16px", 
-					borderRadius: "12px", 
-				  },
+					"& .MuiDialog-paper": {
+						padding: "15px 16px",
+						borderRadius: "12px",
+					},
 				}}
 			>
-			<DialogTitle
-			  id="logout-dialog-title"
-			  sx={{
-				  padding: "10px 8px", 
-				fontSize: "18px",
-				pointerEvents: "none", 
-				userSelect: "none"
-			  }}
-			>
-			تأیید خروج
-			</DialogTitle>
-			<DialogContent
-			  sx={{
-				padding: "8px 8px", 
-				pointerEvents: "none", 
-				userSelect: "none"
-			  }}
-			>
-			  <DialogContentText id="logout-dialog-description">
-				آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
-			  </DialogContentText>
-			</DialogContent>
-			<DialogActions
-				sx={{
-				  padding: "8px 8px", 
-				  display: "flex",
-				  justifyContent: "center",
-				  gap: "12px",
-				}}
-			>
-			<Button
-			  onClick={handleCloseLogoutDialog}
-			  sx={{
-				bgcolor: "#e4a073",
-				color: "white",
-				fontSize: "16px",
-				fontWeight: "bold",
-				borderRadius: "8px",
-				"&:hover": {
-				  bgcolor: "#d48b6c",
-				},
-			  }}
-			>
-			خیر
-			</Button>
-			<Button
-			  onClick={handleLogOutClick}
-			  variant="contained"
-			  sx={{
-				bgcolor: "#f57c00",
-				color: "white",
-				fontSize: "16px",
-				fontWeight: "bold",
-				borderRadius: "8px",
-				"&:hover": {
-				  bgcolor: "#e56c00",
-				},
-			  }}
-			>
-			  بله
-			</Button>
-			</DialogActions>
-		</Dialog>
+				<DialogTitle
+					id="logout-dialog-title"
+					sx={{
+						padding: "10px 8px",
+						fontSize: "18px",
+						pointerEvents: "none",
+						userSelect: "none",
+					}}
+				>
+					تأیید خروج
+				</DialogTitle>
+				<DialogContent
+					sx={{
+						padding: "8px 8px",
+						pointerEvents: "none",
+						userSelect: "none",
+					}}
+				>
+					<DialogContentText id="logout-dialog-description">
+						آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
+					</DialogContentText>
+				</DialogContent>
+				<DialogActions
+					sx={{
+						padding: "8px 8px",
+						display: "flex",
+						justifyContent: "center",
+						gap: "12px",
+					}}
+				>
+					<Button
+						onClick={handleCloseLogoutDialog}
+						sx={{
+							bgcolor: "#e4a073",
+							color: "white",
+							fontSize: "16px",
+							fontWeight: "bold",
+							borderRadius: "8px",
+							"&:hover": {
+								bgcolor: "#d48b6c",
+							},
+						}}
+					>
+						خیر
+					</Button>
+					<Button
+						onClick={handleLogOutClick}
+						variant="contained"
+						sx={{
+							bgcolor: "#f57c00",
+							color: "white",
+							fontSize: "16px",
+							fontWeight: "bold",
+							borderRadius: "8px",
+							"&:hover": {
+								bgcolor: "#e56c00",
+							},
+						}}
+					>
+						بله
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</Box>
 	);
 };

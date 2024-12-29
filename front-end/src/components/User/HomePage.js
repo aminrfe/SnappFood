@@ -349,7 +349,7 @@ const UpFooter = () => {
 			<Button
 				variant="contained"
 				color="primary"
-				onClick={() => navigate("/restuarant-signup")}
+				onClick={() => navigate("/restuarant/signup")}
 				sx={{
 					marginTop: "100px !important",
 					width: "155px",

@@ -43,12 +43,14 @@ const CartPage = () => {
         params: { restaurant_id: restaurantId },
       });
 
-      const filteredData = response.data.filter(
+      const filteredData = response?.data.filter(
         (cart) => cart.restaurant === parseInt(restaurantId)
       );
-      setCartID(parseInt(filteredData[0].id));
-      setTotalPrice(parseInt(filteredData[0].total_price));
-      setCartItems(response.data?.[0]?.cart_items);
+      if(filteredData?.length !== 0){
+        setCartID(parseInt(filteredData[0].id));
+        setTotalPrice(parseInt(filteredData[0].total_price));
+        setCartItems(response.data?.[0]?.cart_items);
+      }
     } catch (error) {
       console.error("خطا در دریافت اطلاعات سبد خرید:", error);
     }
@@ -80,7 +82,13 @@ const CartPage = () => {
       await axiosInstance.delete(
         `/customer/carts/${cartID}/items/${cartItemId}`
       );
-
+      alert("آیتم با موفقیت از سبد خرید شما حذف شد")
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.id !== cartItemId)
+      );
+      setTotalPrice((prevTotal) =>
+        prevTotal - cartItems.find((item) => item.id === cartItemId)?.price
+      );
       fetchCartData();
     } catch (error) {
       console.error("خطا در حذف آیتم:", error.response?.data || error);
@@ -161,7 +169,7 @@ const CartPage = () => {
                     objectFit: "cover",
                   }}
                   onClick={() =>
-                    navigate(`/restaurant/${restaurantId}/${item.id}`)
+                    navigate(`/restaurant/${restaurantId}/${item.item}`)
                   }
                 />
 
@@ -171,9 +179,6 @@ const CartPage = () => {
                     variant="h6"
                     fontWeight="bold"
                     sx={{ cursor: "pointer" }}
-                    onClick={() =>
-                      navigate(`/restaurant/${restaurantId}/${item.id}`)
-                    }
                   >
                     {item.name}
                   </Typography>

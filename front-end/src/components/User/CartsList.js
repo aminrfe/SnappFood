@@ -146,6 +146,7 @@ const CartsList = () => {
                         height: 150,
                         borderRadius: "8px",
                       }}
+                      onClick={() => navigate(`/restaurant/${item.restaurant}`)}
                     />
                     <Typography
                       variant="h6"

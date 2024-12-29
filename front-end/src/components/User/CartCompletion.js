@@ -95,7 +95,13 @@ const CartPage = () => {
       await axiosInstance.delete(
         `/customer/carts/${cartID}/items/${cartItemId}`
       );
-
+      setCartItems((prevItems) =>
+        prevItems.filter((item) => item.id !== cartItemId)
+      );
+      setTotalPrice(
+        (prevTotal) =>
+          prevTotal - cartItems.find((item) => item.id === cartItemId)?.price
+      );
       fetchCartData();
     } catch (error) {
       console.error("خطا در حذف آیتم:", error.response?.data || error);
@@ -132,19 +138,6 @@ const CartPage = () => {
       {/* هدر */}
       <AppBar position="static" sx={{ backgroundColor: "#F4DCC9" }}>
         <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate("/");
-            }}
-          >
-            <img
-              src={FoodiLogo}
-              alt="Foodi Logo"
-              style={{ width: "100px", cursor: "pointer" }}
-            />
-          </a>
           <a
             href="/"
             onClick={(e) => {
@@ -197,17 +190,11 @@ const CartPage = () => {
                   alt={item.name}
                   sx={{ width: 100, height: 100 }}
                   onClick={() =>
-                    navigate(`/restaurant/${restaurantId}/${item.id}`)
+                    navigate(`/restaurant/${restaurantId}/${item.item}`)
                   }
                 />
                 <CardContent sx={{ flex: 1 }}>
-                  <Typography
-                    variant="h6"
-                    fontWeight="bold"
-                    onClick={() =>
-                      navigate(`/restaurant/${restaurantId}/${item.id}`)
-                    }
-                  >
+                  <Typography variant="h6" fontWeight="bold">
                     {item.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

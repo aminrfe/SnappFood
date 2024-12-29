@@ -160,6 +160,9 @@ const CartPage = () => {
                     borderRadius: 2,
                     objectFit: "cover",
                   }}
+                  onClick={() =>
+                    navigate(`/restaurant/${restaurantId}/${item.id}`)
+                  }
                 />
 
                 {/* جزئیات */}
@@ -168,6 +171,9 @@ const CartPage = () => {
                     variant="h6"
                     fontWeight="bold"
                     sx={{ cursor: "pointer" }}
+                    onClick={() =>
+                      navigate(`/restaurant/${restaurantId}/${item.id}`)
+                    }
                   >
                     {item.name}
                   </Typography>

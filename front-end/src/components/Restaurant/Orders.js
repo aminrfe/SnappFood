@@ -18,9 +18,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axiosInstance from "../../utills/axiosInstance";
 
-
 const OrderList = () => {
-
 	// const orders = [
 	// 	{
 	// 		id: 1,
@@ -49,8 +47,7 @@ const OrderList = () => {
 	// 	},
 	// ];
 
-
-	const [orders, setOrders] = useState([]); 
+	const [orders, setOrders] = useState([]);
 	const [open, setOpen] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [status, setStatus] = useState("");
@@ -71,10 +68,8 @@ const OrderList = () => {
 		};
 		fetchOrders();
 	}, []);
-	
 
 	const handleOpenDialog = (order) => {
-		console.log("Opening dialog for order:", order);
 		setSelectedOrder(order);
 		setOpen(true);
 		setStatus(orderStatuses[order.id] || "");
@@ -83,9 +78,12 @@ const OrderList = () => {
 	const handleCloseDialog = async () => {
 		if (selectedOrder) {
 			try {
-				await axiosInstance.patch(`/restaurant/orders/${selectedOrder.id}/status`, {
-					state: status,
-				});
+				await axiosInstance.patch(
+					`/restaurant/orders/${selectedOrder.id}/status`,
+					{
+						state: status,
+					},
+				);
 				setOrderStatuses((prev) => ({ ...prev, [selectedOrder.id]: status }));
 			} catch (err) {
 				console.error("خطا در به‌روزرسانی وضعیت سفارش:", err);
@@ -103,7 +101,7 @@ const OrderList = () => {
 				minHeight: "100vh",
 				display: "flex",
 				flexDirection: "column",
-				justifyContent: "center",
+				alignItems: "center",
 			}}
 		>
 			<Typography
@@ -156,82 +154,77 @@ const OrderList = () => {
 								<Typography variant="body2" color="primary">
 									وضعیت فعلی: {orderStatuses[order.id] || order.status}
 								</Typography>
-								</Box>
-									<Box>
-									<Typography
+							</Box>
+							<Box>
+								<Typography
 									variant="body1"
 									sx={{ fontWeight: "bold", marginBottom: "1rem" }}
-									>
-										قیمت کل: {order.total_price}
-									</Typography>
-									<Button
-										variant="contained"
-										onClick={() => handleOpenDialog(order)}
-										sx={{
-											fontWeight: "normal",
-											border: "1px solid #d68240",
-											"&:hover": {
-												color: "#d68240",
-											},
-										}}
-									>
-										وارد کردن وضعیت سفارش
-									</Button>
-								</Box>
+								>
+									قیمت کل: {order.total_price}
+								</Typography>
+							</Box>
 						</AccordionSummary>
 						<AccordionDetails
-							sx={{ backgroundColor: "#FFF8F1", boxShadow: "none" }}
-						>
-							<Typography
-								variant="body1"
-								sx={{ fontWeight: "bold", marginBottom: "0.5rem" }}
-							>
-								آیتم‌های سفارش:
-							</Typography>
-						</Box>
-					</AccordionSummary>
-					<AccordionDetails
-						sx={{ backgroundColor: "#FFF8F1", boxShadow: "none" }}
-					>
-						<Box
 							sx={{
+								backgroundColor: "#FFF8F1",
+								boxShadow: "none",
 								display: "flex",
-								justifyContent: "space-between",
-								alignItems: "center",
-								width: "100%",
+								flexDirection: "column",
 							}}
 						>
-							{/* Left Side Content */}
-							<Box>
-								<Typography variant="body2" sx={{ marginBottom: "1rem" }}>
-									جزئیات سفارش:
-								</Typography>
-								<ul>
-									{order.items.map((item, index) => (
-										<li key={index}>
-											<Typography variant="body2">{item}</Typography>
-										</li>
-									))}
-								</ul>
-							</Box>
-
-							{/* Right Side Button */}
-							<Button
-								variant="contained"
-								onClick={() => handleOpenDialog(order)}
+							<Box
 								sx={{
-									fontWeight: "normal !important",
-									border: "1px solid #d68240",
-									alignSelf: "flex-start", // Align to the top if content height differs
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "flex-start", // Align button to the top
+									flexWrap: "wrap", // Wrap content if needed
 								}}
 							>
-								وارد کردن وضعیت سفارش
-							</Button>
-						</Box>
-					</AccordionDetails>
-				</Accordion>
-			))}
+								{/* Left-side content */}
+								<Box>
+									<Typography
+										variant="body1"
+										sx={{ fontWeight: "bold", marginBottom: "0.5rem" }}
+									>
+										آیتم‌های سفارش:
+									</Typography>
+									<List>
+										{order.order_items.map((item, idx) => (
+											<ListItem key={idx} sx={{ paddingLeft: 0 }}>
+												<ListItemText
+													primary={`${item.name} - تعداد: ${item.count}`}
+												/>
+											</ListItem>
+										))}
+									</List>
+									<Typography
+										variant="body1"
+										sx={{ fontWeight: "bold", marginTop: "0.5rem" }}
+									>
+										توضیحات سفارش:
+									</Typography>
+									<Typography variant="body2" color="text.secondary">
+										{order.description || "بدون توضیحات"}
+									</Typography>
+								</Box>
 
+								{/* Right-side button */}
+								<Button
+									variant="contained"
+									onClick={() => handleOpenDialog(order)}
+									sx={{
+										fontWeight: "normal !important",
+										border: "1px solid #d68240",
+										alignSelf: "flex-start", // Ensures the button aligns to the top of the content
+									}}
+								>
+									وارد کردن وضعیت سفارش
+								</Button>
+							</Box>
+						</AccordionDetails>
+					</Accordion>
+				))
+			)}
 
 			<Dialog
 				open={open}

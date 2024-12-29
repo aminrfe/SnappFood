@@ -181,12 +181,12 @@ class ItemDetailView(generics.RetrieveUpdateDestroyAPIView):
 class RestaurantListView(APIView):
 
     @swagger_auto_schema(
-        operation_summary="Retrieve a list of restaurants filtered by name, business type, and open/closed status.",
+        operation_summary="Search and filter restaurants and items by various criteria.",
         manual_parameters=[
             openapi.Parameter(
-                'name',
+                'query',
                 openapi.IN_QUERY,
-                description="Filter by restaurant name (case-insensitive partial match).",
+                description="Search term to find matching restaurants and items.",
                 type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
@@ -205,40 +205,65 @@ class RestaurantListView(APIView):
         ],
         responses={
             200: openapi.Response(
-                description="List of restaurants matching the filters.",
-                schema=RestaurantProfileSerializer(many=True)
+                description="Search results including filtered restaurants and items.",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'restaurants': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_OBJECT)
+                        ),
+                        'items': openapi.Schema(
+                            type=openapi.TYPE_ARRAY,
+                            items=openapi.Schema(type=openapi.TYPE_OBJECT)
+                        )
+                    }
+                )
             ),
             400: "Invalid request parameters.",
             500: "Internal server error",
         }
     )
     def get(self, request):
-        name = request.query_params.get('name', None)
+        query = request.query_params.get('query', '').strip()
         business_type = request.query_params.get('business_type', None)
         is_open = request.query_params.get('is_open', None)
         
         desired_timezone = pytz.timezone('Asia/Tehran')
-
         current_time = timezone.now()
         localized_time = current_time.astimezone(desired_timezone)
 
-        queryset = RestaurantProfile.objects.all()
+        restaurant_queryset = RestaurantProfile.objects.all()
+        item_queryset = Item.objects.all()
 
-        if name:
-            queryset = queryset.filter(name__icontains=name)
-        
+        if query:
+            restaurant_queryset = restaurant_queryset.filter(name__icontains=query)
+            item_queryset = item_queryset.filter(name__icontains=query)
+
         if business_type:
-            queryset = queryset.filter(business_type__icontains=business_type)
-        
+            restaurant_queryset = restaurant_queryset.filter(business_type__icontains=business_type)
+
         if is_open is not None:
             if is_open.lower() == 'true':
-                queryset = queryset.filter(open_hour__lte=localized_time, close_hour__gte=localized_time)
+                restaurant_queryset = restaurant_queryset.filter(
+                    open_hour__lte=localized_time, close_hour__gte=localized_time
+                )
             elif is_open.lower() == 'false':
-                queryset = queryset.exclude(open_hour__lte=localized_time, close_hour__gte=localized_time)
+                restaurant_queryset = restaurant_queryset.exclude(
+                    open_hour__lte=localized_time, close_hour__gte=localized_time
+                )
 
-        serializer = RestaurantProfileSerializer(queryset, many=True)
+        restaurant_serializer = RestaurantProfileSerializer(restaurant_queryset.distinct(), many=True)
+        item_serializer = ItemSerializer(item_queryset.distinct(), many=True)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "restaurants": restaurant_serializer.data,
+                "items": item_serializer.data,
+            },
+            status=status.HTTP_200_OK
+        )
+
     
 
 class SalesReportView(APIView):

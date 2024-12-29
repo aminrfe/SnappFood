@@ -107,6 +107,7 @@ const CartPage = () => {
 			const response = await publicAxiosInstance.get(
 				`/restaurant/${restaurantId}/profile`,
 			);
+
 			const data = response.data;
 
 			if (data) {
@@ -118,6 +119,7 @@ const CartPage = () => {
 			console.error("Error fetching profile data:", error);
 		}
 	};
+
 
 	return (
 		<Box

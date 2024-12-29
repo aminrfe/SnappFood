@@ -293,7 +293,6 @@ const RestaurantListPage = () => {
 					</Typography>
 				))}
 			</Box>
-
 			{/* نمایش رستوران‌ها */}
 			{error && <Typography color="error">{error}</Typography>}
 			<Grid container spacing={3} justifyContent="center">

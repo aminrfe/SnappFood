@@ -45,7 +45,7 @@ const CartsList = () => {
       const updatedCarts = await Promise.all(
         carts.map(async (cart) => {
           try {
-            const profileResponse = await axiosInstance.get(`/restaurant/${cart.restaurant}/profile`);
+            const profileResponse = await axiosInstance.get(`/restaurant/profiles/${cart.restaurant}`);
             const restaurantProfile = profileResponse.data;
 
             return {
@@ -110,7 +110,7 @@ const CartsList = () => {
                 <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                   <CardMedia
                     component="img"
-                    image={item.photo}
+                    image={item.photo ? item.photo : "https://via.placeholder.com/120"}
                     alt={item.restaurant_name}
                     sx={{
                       width: 150,

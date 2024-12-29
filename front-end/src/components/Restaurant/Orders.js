@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Box,
 	Typography,
@@ -11,41 +11,67 @@ import {
 	FormControl,
 	InputLabel,
 	Dialog,
+	List,
+	ListItem,
+	ListItemText,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import axiosInstance from "../../utills/axiosInstance";
 
-const orders = [
-	{
-		id: 1,
-		name: "سفارش شماره یک",
-		date: "پنجشنبه 15 تیر",
-		time: "18:07",
-		price: "365,500 تومان",
-		items: ["محصول ۱", "محصول ۲", "محصول ۳"],
-	},
-	{
-		id: 2,
-		name: "سفارش شماره دو",
-		date: "پنجشنبه 15 تیر",
-		time: "18:07",
-		price: "365,500 تومان",
-		items: ["محصول ۴", "محصول ۵"],
-	},
-	{
-		id: 3,
-		name: "سفارش شماره سه",
-		date: "پنجشنبه 15 تیر",
-		time: "18:07",
-		price: "365,500 تومان",
-		items: ["محصول ۶"],
-	},
-];
 
 const OrderList = () => {
+
+	// const orders = [
+	// 	{
+	// 		id: 1,
+	// 		order_date: "پنجشنبه 15 تیر - ساعت 19:43:21",
+	// 		delivery_method: "پیک",
+	// 		payment_method: "آنلاین",
+	// 		address: "خیابان آزادی، پلاک ۱۲۳",
+	// 		status: "در حال آماده سازی",
+	// 		total_price: "۳۵۰,۰۰۰ تومان",
+	// 		description: "این سفارش باید سریع تحویل داده شود.",
+	// 		order_items: [
+	// 			{ name: "محصول ۱", count: 2 },
+	// 			{ name: "محصول ۲", count: 1 },
+	// 		],
+	// 	},
+	// 	{
+	// 		id: 2,
+	// 		order_date: "شنبه 17 تیر - ساعت 21:31:09",
+	// 		delivery_method: "حضوری",
+	// 		payment_method: "درب منزل",
+	// 		address: "خیابان ولیعصر، پلاک ۴۵۶",
+	// 		status: "در حال آماده سازی",
+	// 		total_price: "۲۰۰,۰۰۰ تومان",
+	// 		description: "به همراه یک پک قاشق اضافه ارسال شود.",
+	// 		order_items: [{ name: "محصول ۳", count: 1 }],
+	// 	},
+	// ];
+
+
+	const [orders, setOrders] = useState([]); 
 	const [open, setOpen] = useState(false);
 	const [selectedOrder, setSelectedOrder] = useState(null);
 	const [status, setStatus] = useState("");
 	const [orderStatuses, setOrderStatuses] = useState({});
+
+	useEffect(() => {
+		const fetchOrders = async () => {
+			try {
+				const response = await axiosInstance.get("/restaurant/orders");
+				const ordersWithId = response.data.map((order, index) => ({
+					...order,
+					id: index + 1,
+				}));
+				setOrders(ordersWithId);
+			} catch (err) {
+				console.log("خطا در دریافت اطلاعات");
+			}
+		};
+		fetchOrders();
+	}, []);
+	
 
 	const handleOpenDialog = (order) => {
 		console.log("Opening dialog for order:", order);
@@ -54,9 +80,16 @@ const OrderList = () => {
 		setStatus(orderStatuses[order.id] || "");
 	};
 
-	const handleCloseDialog = () => {
+	const handleCloseDialog = async () => {
 		if (selectedOrder) {
-			setOrderStatuses((prev) => ({ ...prev, [selectedOrder.id]: status }));
+			try {
+				await axiosInstance.patch(`/restaurant/orders/${selectedOrder.id}/status`, {
+					state: status,
+				});
+				setOrderStatuses((prev) => ({ ...prev, [selectedOrder.id]: status }));
+			} catch (err) {
+				console.error("خطا در به‌روزرسانی وضعیت سفارش:", err);
+			}
 		}
 		setOpen(false);
 		setStatus("");
@@ -71,7 +104,6 @@ const OrderList = () => {
 				display: "flex",
 				flexDirection: "column",
 				justifyContent: "center",
-				alignItems: "center",
 			}}
 		>
 			<Typography
@@ -83,50 +115,78 @@ const OrderList = () => {
 				لیست سفارش‌ها
 			</Typography>
 
-			{orders.map((order) => (
-				<Accordion
-					key={order.id}
-					sx={{ marginBottom: "1rem", width: "900px", boxShadow: "none" }}
-				>
-					<AccordionSummary
-						expandIcon={<ExpandMoreIcon />}
-						sx={{
-							backgroundColor: "#F4DCC9",
-							padding: "1rem",
-							alignItems: "center",
-							display: "flex",
-							justifyContent: "space-between",
-							paddingRight: "20px",
-							borderRadius: "20px",
-						}}
+			{orders.length === 0 ? (
+				<Typography variant="h6" color="text.secondary">
+					سفارشی در لیست شما وجود ندارد
+				</Typography>
+			) : (
+				orders.map((order, index) => (
+					<Accordion
+						key={order.id}
+						sx={{ marginBottom: "1rem", width: "900px", boxShadow: "none" }}
 					>
-						<Box sx={{ flexGrow: 1, textAlign: "left" }}>
-							<Typography variant="h6" sx={{ fontWeight: "bold" }}>
-								{order.name}
-							</Typography>
-							<Typography variant="body2" color="text.secondary">
-								{order.date} - {order.time}
-							</Typography>
-						</Box>
-						<Box
+						<AccordionSummary
+							expandIcon={<ExpandMoreIcon />}
 							sx={{
-								flex: 1,
+								backgroundColor: "#F4DCC9",
+								padding: "1rem",
+								alignItems: "center",
 								display: "flex",
-								flexDirection: "column",
-								alignItems: "flex-end",
-								textAlign: "right",
+								justifyContent: "space-between",
+								paddingRight: "20px",
+								borderRadius: "20px",
 							}}
 						>
-							<Typography variant="body1" sx={{ fontWeight: "bold" }}>
-								{order.price}
-							</Typography>
+							<Box sx={{ flexGrow: 1, textAlign: "left" }}>
+								<Typography variant="h6" sx={{ fontWeight: "bold" }}>
+									سفارش شماره {index + 1}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									تاریخ سفارش: {order.order_date}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									روش ارسال: {order.delivery_method}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									روش پرداخت: {order.payment_method}
+								</Typography>
+								<Typography variant="body2" color="text.secondary">
+									آدرس: {order.address}
+								</Typography>
+								<Typography variant="body2" color="primary">
+									وضعیت فعلی: {orderStatuses[order.id] || order.status}
+								</Typography>
+								</Box>
+									<Box>
+									<Typography
+									variant="body1"
+									sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+									>
+										قیمت کل: {order.total_price}
+									</Typography>
+									<Button
+										variant="contained"
+										onClick={() => handleOpenDialog(order)}
+										sx={{
+											fontWeight: "normal",
+											border: "1px solid #d68240",
+											"&:hover": {
+												color: "#d68240",
+											},
+										}}
+									>
+										وارد کردن وضعیت سفارش
+									</Button>
+								</Box>
+						</AccordionSummary>
+						<AccordionDetails
+							sx={{ backgroundColor: "#FFF8F1", boxShadow: "none" }}
+						>
 							<Typography
-								variant="body2"
-								color="primary"
-								sx={{ marginBottom: "1rem" }}
+								variant="body1"
+								sx={{ fontWeight: "bold", marginBottom: "0.5rem" }}
 							>
-								{orderStatuses[order.id] &&
-									`آخرین وضعیت: ${orderStatuses[order.id]}`}
+								آیتم‌های سفارش:
 							</Typography>
 						</Box>
 					</AccordionSummary>
@@ -172,10 +232,10 @@ const OrderList = () => {
 				</Accordion>
 			))}
 
-			{/* Dialog Component */}
+
 			<Dialog
 				open={open}
-				onClose={handleCloseDialog}
+				onClose={() => setOpen(false)}
 				BackdropProps={{
 					style: {
 						backgroundColor: "rgba(0, 0, 0, 0.4)",

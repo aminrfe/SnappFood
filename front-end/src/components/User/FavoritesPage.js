@@ -36,7 +36,7 @@ const FavoritesPage = () => {
 		const fetchAllRestaurantsDetails = async () => {
 			try {
 				const restaurantPromises = favorites.map((restaurant) =>
-					axiosInstance.get(`/restaurant/${restaurant.restaurant}/profile`) 
+					axiosInstance.get(`/restaurant/profiles/${restaurant.restaurant}`) 
 				);
 
 				const restaurantResponses = await Promise.all(restaurantPromises);
@@ -112,7 +112,7 @@ const FavoritesPage = () => {
 				      >
 				        <CardMedia
 				          component="img"
-				          image={restaurant.photo}
+				          image={restaurant.photo ? restaurant.photo : "https://via.placeholder.com/120"}
 				          alt={restaurant.name}
 				          sx={{
 				            borderRadius: "12px",

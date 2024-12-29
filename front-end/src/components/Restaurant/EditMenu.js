@@ -207,7 +207,7 @@ const EditMenu = () => {
 							{editingFood.photo && (
 								<CardMedia
 									component="img"
-									image={editingFood.photo}
+									image={editingFood.photo ? editingFood.photo : "https://via.placeholder.com/120"}
 									alt="food image"
 									sx={{ width: "100%", borderRadius: 3, mb: 2 }}
 								/>
@@ -289,7 +289,7 @@ const EditMenu = () => {
 								>
 									<CardMedia
 										component="img"
-										image={food.photo}
+										image={food.photo ? food.photo : "https://via.placeholder.com/120"}
 										alt={food.name}
 										sx={{ width: 120, borderRadius: 3 }}
 									/>

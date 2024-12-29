@@ -99,6 +99,10 @@ function Login() {
 			<img
 				src={LoginImg}
 				alt="Login Illustration"
+				onError={(e) => {
+					e.target.onerror = null; 
+					e.target.src = "https://via.placeholder.com/100";
+				}}
 				style={{ width: "80%", marginBottom: "20px" }}
 			/>
 			<Box

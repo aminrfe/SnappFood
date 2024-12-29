@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Container, Grid, Box, Typography, Card, CardMedia, Button } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Box,
+  Typography,
+  Card,
+  CardMedia,
+  Button,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
 
@@ -10,10 +18,10 @@ const CartsList = () => {
   const handleDeleteItem = async (id) => {
     try {
       const response = await axiosInstance.delete(`/customer/carts/${id}`);
-      
+
       if (response.status === 200) {
         alert(`کارت با موفقیت حذف شد.`);
-        fetchCartData(); 
+        fetchCartData();
       } else {
         alert("حذف کارت ناموفق بود.");
       }
@@ -25,8 +33,7 @@ const CartsList = () => {
       }
       console.error("خطا در حذف کارت:", error);
     }
-  };  
-  
+  };
 
   const handleContinueShopping = (id) => {
     navigate(`/cart?restaurant_id=${id}`);
@@ -34,8 +41,7 @@ const CartsList = () => {
 
   useEffect(() => {
     fetchCartData();
-  }, []); 
-  
+  }, []);
 
   const fetchCartData = async () => {
     try {
@@ -45,7 +51,9 @@ const CartsList = () => {
       const updatedCarts = await Promise.all(
         carts.map(async (cart) => {
           try {
-            const profileResponse = await axiosInstance.get(`/restaurant/profiles/${cart.restaurant}`);
+            const profileResponse = await axiosInstance.get(
+              `/restaurant/profiles/${cart.restaurant}`
+            );
             const restaurantProfile = profileResponse.data;
 
             return {
@@ -53,7 +61,10 @@ const CartsList = () => {
               photo: restaurantProfile.photo,
             };
           } catch (error) {
-            console.error(`خطا در دریافت اطلاعات رستوران برای کارت با آیدی ${cart.restaurant}:`, error);
+            console.error(
+              `خطا در دریافت اطلاعات رستوران برای کارت با آیدی ${cart.restaurant}:`,
+              error
+            );
             return cart;
           }
         })
@@ -92,7 +103,7 @@ const CartsList = () => {
               <Card
                 sx={{
                   display: "flex",
-                  margin:"auto",
+                  margin: "auto",
                   justifyContent: "space-between",
                   maxWidth: "820px",
                   alignItems: "center",
@@ -106,11 +117,20 @@ const CartsList = () => {
                   },
                 }}
               >
-                
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <CardMedia
                     component="img"
-                    image={item.photo ? item.photo : "https://via.placeholder.com/120"}
+                    image={
+                      item.photo
+                        ? item.photo
+                        : "https://via.placeholder.com/120"
+                    }
                     alt={item.restaurant_name}
                     sx={{
                       width: 150,

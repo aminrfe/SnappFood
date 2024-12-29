@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Container,
 	Typography,
@@ -8,66 +8,106 @@ import {
 	Box,
 	Select,
 	MenuItem,
+	CircularProgress,
 } from "@mui/material";
+import axios from "../../utills/axiosInstance";
 import food1 from "../../assets/imgs/food1.png";
 import food2 from "../../assets/imgs/food2.png";
 import food3 from "../../assets/imgs/food3.png";
 
-// Mock data with dates
-const soldItems = [
-	{
-		name: "اسم غذای نمونه 1",
-		quantity: 5,
-		price: 300000,
-		image: food1,
-		date: "2024-12-28",
-	},
-	{
-		name: "اسم غذای نمونه 2",
-		quantity: 8,
-		price: 480000,
-		image: food2,
-		date: "2024-12-25",
-	},
-	{
-		name: "اسم غذای نمونه 3",
-		quantity: 10,
-		price: 600000,
-		image: food3,
-		date: "2024-12-20",
-	},
-];
+// const mockData = [
+// 	{
+// 		filter: "today",
+// 		total_income: 1500,
+// 		items: [
+// 			{
+// 				name: "اسم غذای نمونه 1",
+// 				photo: food1,
+// 				total_count: 5,
+// 				total_price: 500,
+// 			},
+// 		],
+// 	},
+// 	{
+// 		filter: "last_week",
+// 		total_income: 7800,
+// 		items: [
+// 			{
+// 				name: "اسم غذای نمونه 2",
+// 				photo: food2,
+// 				total_count: 8,
+// 				total_price: 2400,
+// 			},
+// 			{
+// 				name: "اسم غذای نمونه 3",
+// 				photo: food3,
+// 				total_count: 10,
+// 				total_price: 5400,
+// 			},
+// 		],
+// 	},
+// 	{
+// 		filter: "last_month",
+// 		total_income: 15000,
+// 		items: [
+// 			{
+// 				name: "اسم غذای نمونه 4",
+// 				photo: food1,
+// 				total_count: 15,
+// 				total_price: 4500,
+// 			},
+// 			{
+// 				name: "اسم غذای نمونه 5",
+// 				photo: food2,
+// 				total_count: 10,
+// 				total_price: 6000,
+// 			},
+// 		],
+// 	},
+// ];
 
 const RestaurantReportPage = () => {
-	const [filter, setFilter] = useState("day");
+	const [filter, setFilter] = useState("today");
+	const [data, setData] = useState(null);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState(null);
 
-	// Filtering logic
-	const filteredItems = soldItems.filter((item) => {
-		const today = new Date();
-		const itemDate = new Date(item.date);
+	// Fetch data from the API
+	useEffect(() => {
+		const fetchData = async () => {
+			setLoading(true);
+			setError(null);
 
-		if (filter === "day") {
-			return itemDate.toDateString() === today.toDateString();
-		} else if (filter === "week") {
-			const startOfWeek = new Date(
-				today.setDate(today.getDate() - today.getDay()),
-			);
-			return itemDate >= startOfWeek;
-		} else if (filter === "month") {
-			return (
-				itemDate.getMonth() === today.getMonth() &&
-				itemDate.getFullYear() === today.getFullYear()
-			);
-		}
-		return true;
-	});
+			try {
+				const response = await axios.get(
+					`/restaurant/sales-reports?filter=${filter}`,
+				);
+				setData(response.data); // Update state with API response
+			} catch (err) {
+				setError("خطایی در دریافت داده‌ها رخ داده است.");
+			} finally {
+				setLoading(false);
+			}
+		};
 
-	// Sort by latest date
-	const sortedItems = filteredItems.sort(
-		(a, b) => new Date(b.date) - new Date(a.date),
-	);
+		fetchData();
+	}, [filter]); // Re-fetch when the filter changes
 
-	const totalRevenue = sortedItems.reduce((acc, item) => acc + item.price, 0);
+	if (loading) {
+		return (
+			<Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
+				<CircularProgress />
+			</Box>
+		);
+	}
+
+	if (error) {
+		return (
+			<Box sx={{ textAlign: "center", marginTop: 4, color: "red" }}>
+				<Typography>{error}</Typography>
+			</Box>
+		);
+	}
 
 	return (
 		<Container sx={{ marginTop: 4, width: "70%" }}>
@@ -101,15 +141,15 @@ const RestaurantReportPage = () => {
 					onChange={(e) => setFilter(e.target.value)}
 					sx={{ width: "200px" }}
 				>
-					<MenuItem value="day">گزارش روزانه</MenuItem>
-					<MenuItem value="week">گزارش هفتگی</MenuItem>
-					<MenuItem value="month">گزارش ماهانه</MenuItem>
+					<MenuItem value="today">گزارش روزانه</MenuItem>
+					<MenuItem value="last_week">گزارش هفتگی</MenuItem>
+					<MenuItem value="last_month">گزارش ماهانه</MenuItem>
 				</Select>
 			</Box>
 
 			{/* List of Sold Items */}
 			<Grid container spacing={2}>
-				{sortedItems.map((item, index) => (
+				{data?.items.map((item, index) => (
 					<Grid item xs={12} key={index}>
 						<Card
 							sx={{
@@ -121,7 +161,7 @@ const RestaurantReportPage = () => {
 							}}
 						>
 							<img
-								src={item.image}
+								src={item.photo}
 								alt={item.name}
 								style={{
 									width: "75px",
@@ -159,7 +199,7 @@ const RestaurantReportPage = () => {
 										pointerEvents: "none",
 									}}
 								>
-									تعداد فروش: {item.quantity}
+									تعداد فروش: {item.total_count}
 								</Typography>
 								<Typography
 									variant="body2"
@@ -170,7 +210,7 @@ const RestaurantReportPage = () => {
 										pointerEvents: "none",
 									}}
 								>
-									مجموع قیمت: {item.price.toLocaleString()} تومان
+									مجموع قیمت: {item.total_price.toLocaleString()} تومان
 								</Typography>
 							</CardContent>
 						</Card>
@@ -197,7 +237,7 @@ const RestaurantReportPage = () => {
 						pointerEvents: "none",
 					}}
 				>
-					مجموع درآمد: {totalRevenue.toLocaleString()} تومان
+					مجموع درآمد: {data?.total_income?.toLocaleString()} تومان
 				</Typography>
 			</Box>
 		</Container>

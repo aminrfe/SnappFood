@@ -28,7 +28,7 @@ function Login() {
 	const navigate = useNavigate(); 
 
 	const handleSignUpClick = () => {
-		navigate("/usersignup"); 
+		navigate("/user/signup"); 
 	};
 
 	const handleStoreSignUpClick = () => {

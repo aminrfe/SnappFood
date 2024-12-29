@@ -34,7 +34,7 @@ const UserProfilePage = () => {
   };
 
   const handleSignUpClick = () => {
-    navigate("/");
+    navigate("/restuarant/signup");
   };
 
   const handleFavorites = () => {

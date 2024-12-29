@@ -94,77 +94,87 @@ const FavoritesPage = () => {
         لیست علاقه‌مندی‌های من
       </Typography>
       <Grid container spacing={3} justifyContent="center">
-        {fullFavoritesData.map((restaurant) => (
-          <Grid item xs={6} sm={4} md={2} key={restaurant.id}>
-            <Card
-              sx={{
-                position: "relative",
-                padding: 3,
-                borderRadius: "16px",
-                boxShadow: 3,
-                minHeight: "310px",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                alignItems: "center",
-                maxWidth: "100%",
-                "&:hover": { transform: "scale(1.05)", boxShadow: 5 },
-              }}
-              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
-            >
-              <CardMedia
-                component="img"
-                image={
-                  restaurant.photo
-                    ? restaurant.photo
-                    : "https://via.placeholder.com/120"
-                }
-                alt={restaurant.name}
+        {fullFavoritesData.length === 0 ? (
+          <Typography
+            variant="h6"
+            color="text.secondary"
+            style={{ marginTop: "50px", marginRight:"25px"}}
+          >
+            لیست علاقه مندی شما خالی است.
+          </Typography>
+        ) : (
+          fullFavoritesData.map((restaurant) => (
+            <Grid item xs={6} sm={4} md={2} key={restaurant.id}>
+              <Card
                 sx={{
-                  borderRadius: "12px",
-                  objectFit: "cover",
-                }}
-              />
-              <CardContent sx={{ textAlign: "center", paddingBottom: "8px" }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: "bold",
-                    fontFamily: "'Vazir', sans-serif",
-                    fontSize: "1.2rem",
-                    color: "#333",
-                  }}
-                >
-                  {restaurant.name}
-                </Typography>
-              </CardContent>
-
-              <Box
-                sx={{
+                  position: "relative",
+                  padding: 3,
+                  borderRadius: "16px",
+                  boxShadow: 3,
+                  minHeight: "310px",
                   display: "flex",
-                  justifyContent: "space-evenly",
-                  width: "100%",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  maxWidth: "100%",
+                  "&:hover": { transform: "scale(1.05)", boxShadow: 5 },
                 }}
+                onClick={() => navigate(`/restaurant/${restaurant.id}`)}
               >
-                <IconButton
-                  sx={{ color: "#D68240" }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteFromFavorites(restaurant.id);
+                <CardMedia
+                  component="img"
+                  image={
+                    restaurant.photo
+                      ? restaurant.photo
+                      : "https://via.placeholder.com/120"
+                  }
+                  alt={restaurant.name}
+                  sx={{
+                    borderRadius: "12px",
+                    objectFit: "cover",
+                  }}
+                />
+                <CardContent sx={{ textAlign: "center", paddingBottom: "8px" }}>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: "bold",
+                      fontFamily: "'Vazir', sans-serif",
+                      fontSize: "1.2rem",
+                      color: "#333",
+                    }}
+                  >
+                    {restaurant.name}
+                  </Typography>
+                </CardContent>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    width: "100%",
                   }}
                 >
-                  <Delete />
-                </IconButton>
-                <IconButton
-                  sx={{ color: "#FF1493", pointerEvents: "none" }}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Favorite />
-                </IconButton>
-              </Box>
-            </Card>
-          </Grid>
-        ))}
+                  <IconButton
+                    sx={{ color: "#D68240" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteFromFavorites(restaurant.id);
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
+                  <IconButton
+                    sx={{ color: "#FF1493", pointerEvents: "none" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Favorite />
+                  </IconButton>
+                </Box>
+              </Card>
+            </Grid>
+          ))
+        )}
       </Grid>
     </Box>
   );

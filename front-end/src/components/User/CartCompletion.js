@@ -196,9 +196,18 @@ const CartPage = () => {
                   image={item.photo}
                   alt={item.name}
                   sx={{ width: 100, height: 100 }}
+                  onClick={() =>
+                    navigate(`/restaurant/${restaurantId}/${item.id}`)
+                  }
                 />
                 <CardContent sx={{ flex: 1 }}>
-                  <Typography variant="h6" fontWeight="bold">
+                  <Typography
+                    variant="h6"
+                    fontWeight="bold"
+                    onClick={() =>
+                      navigate(`/restaurant/${restaurantId}/${item.id}`)
+                    }
+                  >
                     {item.name}
                   </Typography>
                   <Typography variant="body2" color="text.secondary">

@@ -111,7 +111,7 @@ const FavoritesPage = () => {
                   padding: 3,
                   borderRadius: "16px",
                   boxShadow: 3,
-                  minHeight: "310px",
+                  minHeight: "340px",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",

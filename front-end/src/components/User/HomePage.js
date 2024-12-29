@@ -233,26 +233,44 @@ const ProductSlider = () => {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Typography
-        variant="h5"
-        sx={{
-          margin: 2,
-          marginTop: 8,
-          color: "#D68240",
-          fontWeight: "bold",
-          pointerEvents: "none",
-        }}
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ margin: 2, marginTop: 4, marginBottom:0 }}
       >
-        محبوب ترین ها
-      </Typography>
+        <Typography
+          variant="h5"
+          sx={{
+            color: "#D68240",
+            fontWeight: "bold",
+            pointerEvents: "none",
+          }}
+        >
+          محبوب ترین ها
+        </Typography>
+        <Button
+          variant="text"
+          sx={{
+            color: "#D68240",
+            fontWeight: "bold",
+            fontSize: "14px",
+            textDecoration: "underline",
+          }}
+		  style={{backgroundColor:"transparent", color:"#D68240"}}
+          onClick={() => navigate(`/search?name=`)}
+        >
+          مشاهده همه
+        </Button>
+      </Box>
       <Grid
         container
-        spacing={2}
+        spacing={1}
         backgroundColor={"#F4DCC9"}
         padding={3}
         width={"100%"}
       >
-        {restaurants.map((restaurant) => {
+        {restaurants.slice(0,6).map((restaurant) => {
           const isFavorite = favorites[restaurant.id];
 
           return (
@@ -263,7 +281,7 @@ const ProductSlider = () => {
                 cursor: "pointer",
                 padding: 2,
                 margin: 1,
-                minWidth: 250,
+                minWidth: 230,
                 borderRadius: "20px",
                 boxShadow: 0,
                 "&:hover": {

@@ -173,7 +173,8 @@ const ProductSlider = () => {
     const fetchRestaurants = async () => {
       try {
         const response = await publicAxiosInstance.get("/restaurant/profiles");
-        const sortedRestaurants = response.data.sort(
+        console.log(response.data);
+        const sortedRestaurants = response.data.restaurants.sort(
           (a, b) => b.score - a.score
         );
         setRestaurants(sortedRestaurants);

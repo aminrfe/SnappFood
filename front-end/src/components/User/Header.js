@@ -46,6 +46,8 @@ const Header = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [restaurantList, setRestaurantList] = useState([]);
+  const [allRestaurants, setAllRestaurants] = useState([]);
+  const [items, setItems] = useState([]);
   const [debounceTimeout, setDebounceTimeout] = useState(null);
   const navigate = useNavigate();
 
@@ -78,20 +80,25 @@ const Header = () => {
   const fetchRestaurantList = async (query) => {
     if (query.trim() === "") {
       setRestaurantList([]);
+      setItems([]);
       return;
     }
 
     try {
-      const params = { name: query };
+      const params = { query };
 
       const response = await axiosInstance.get("/restaurant/profiles", {
         params,
       });
 
-      setRestaurantList(response.data);
+      const restaurants = await axiosInstance.get("/restaurant/profiles");
+      setAllRestaurants(restaurants.data.restaurants);
+      setRestaurantList(response.data.restaurants);
+      setItems(response.data.items);
     } catch (error) {
       console.error("Error fetching restaurant list:", error);
       setRestaurantList([]);
+      setItems([]);
     }
   };
 
@@ -112,7 +119,7 @@ const Header = () => {
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      navigate(`/search?name=${searchTerm}`);
+      navigate(`/search?query=${searchTerm}`);
     }
   };
 
@@ -141,7 +148,7 @@ const Header = () => {
             onChange={handleSearchChange}
             onKeyPress={handleKeyPress}
           />
-          {restaurantList.length > 0 && (
+          {(restaurantList.length > 0 || items.length > 0) && (
             <div
               style={{
                 position: "absolute",
@@ -152,14 +159,17 @@ const Header = () => {
                 borderRadius: "8px",
                 boxShadow: "0 8px 16px rgba(0,0,0,0.1)",
                 zIndex: "100",
+                maxHeight: "500px",
+                overflowY: "auto",
               }}
+              onMouseDown={(e) => e.stopPropagation()}
             >
               <ul style={{ listStyle: "none", margin: 0, padding: "10px" }}>
                 {restaurantList.map((restaurant) => (
                   <li
                     key={restaurant.id}
-                    role="button" 
-                    tabIndex={0} 
+                    role="button"
+                    tabIndex={0}
                     style={{
                       padding: "10px",
                       cursor: "pointer",
@@ -167,10 +177,10 @@ const Header = () => {
                       display: "flex",
                       alignItems: "center",
                     }}
-                    onClick={() => navigate(`/restaurant/${restaurant.id}`)} 
+                    onClick={() => navigate(`/restaurant/${restaurant.id}`)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
-                        navigate(`/restaurant/${restaurant.id}`); 
+                        navigate(`/restaurant/${restaurant.id}`);
                       }
                     }}
                   >
@@ -208,6 +218,92 @@ const Header = () => {
                     </div>
                   </li>
                 ))}
+                {/* New Section for Items */}
+                {items.length > 0 && (
+                  <React.Fragment>
+                    <hr
+                      style={{
+                        margin: "10px 0",
+                        border: "none",
+                        borderTop: "1px solid #f0f0f0",
+                      }}
+                    />
+                    <li
+                      style={{
+                        fontWeight: "bold",
+                        color: "#555",
+                        padding: "5px 10px",
+                      }}
+                    >
+                      آیتم‌ها
+                    </li>
+                    {items.map((item) => {
+                      const restaurant = allRestaurants.find(
+                        (rest) => rest.id === item.restaurant
+                      );
+
+                      return (
+                        <li
+                          key={item.item_id}
+                          role="button"
+                          tabIndex={0}
+                          style={{
+                            padding: "10px",
+                            cursor: "pointer",
+                            borderBottom: "1px solid #f0f0f0",
+                            display: "flex",
+                            alignItems: "center",
+                          }}
+                          onClick={() =>
+                            navigate(
+                              `/restaurant/${item.restaurant}/${item.item_id}`
+                            )
+                          }
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              navigate(
+                                `/restaurant/${item.restaurant}/${item.item_id}`
+                              );
+                            }
+                          }}
+                        >
+                          {item.photo && (
+                            <img
+                              src={`http://127.0.0.1:8000${item.photo}`}
+                              alt={item.name}
+                              style={{
+                                width: "80px",
+                                height: "80px",
+                                borderRadius: "4px",
+                                marginRight: "10px",
+                              }}
+                            />
+                          )}
+                          <div>
+                            <div
+                              style={{
+                                fontWeight: "bold",
+                                marginRight: "10px",
+                                color: "#555",
+                              }}
+                            >
+                              {item.name}
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "12px",
+                                color: "#555",
+                                marginRight: "10px",
+                              }}
+                            >
+                              {restaurant.name}
+                            </div>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </React.Fragment>
+                )}
               </ul>
             </div>
           )}

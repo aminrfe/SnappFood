@@ -121,7 +121,9 @@ const RestaurantListPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [restaurants, setRestaurants] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("name") || "");
+  const [allRestaurants, setAllRestaurants] = useState([]);
+  const [items, setItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("query") || "");
   const [businessType, setBusinessType] = useState(
     searchParams.get("business_type") || "all"
   );
@@ -143,7 +145,10 @@ const RestaurantListPage = () => {
       const response = await publicAxiosInstance.get("/restaurant/profiles", {
         params: filters,
       });
-      setRestaurants(response.data);
+      const restaurants = await publicAxiosInstance.get("/restaurant/profiles");
+      setAllRestaurants(restaurants.data.restaurants);
+      setRestaurants(response.data.restaurants);
+      setItems(response.data.items);
     } catch (err) {
       setError("خطا در دریافت اطلاعات رستوران‌ها");
     }
@@ -152,7 +157,7 @@ const RestaurantListPage = () => {
   useEffect(() => {
     const filters = {};
     if (searchTerm.trim()) {
-      filters.name = searchTerm.trim();
+      filters.query = searchTerm.trim();
     }
     if (businessType !== "all") {
       filters.business_type = businessType;
@@ -160,7 +165,6 @@ const RestaurantListPage = () => {
 
     fetchRestaurants(filters);
 
-    // به‌روزرسانی URL با پارامترهای جستجو
     const params = new URLSearchParams(filters);
     navigate(`/search?${params.toString()}`);
   }, [searchTerm, businessType]);
@@ -228,6 +232,11 @@ const RestaurantListPage = () => {
     setBusinessType(type);
   };
 
+  const findRestaurantName = (restaurantId) => {
+    const restaurant = allRestaurants.find((rest) => rest.id === restaurantId);
+    return restaurant.name;
+  };
+
   return (
     <Box
       sx={{
@@ -244,7 +253,7 @@ const RestaurantListPage = () => {
       >
         <TextField
           variant="outlined"
-          placeholder="جستجوی نام فروشگاه..."
+          placeholder="جستجوی نام فروشگاه یا غذا..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           sx={{
@@ -383,7 +392,74 @@ const RestaurantListPage = () => {
         ))}
       </Grid>
 
-      {restaurants.length === 0 && !error && (
+      {searchTerm && items.length > 0 && (
+        <>
+          <Typography variant="h5" sx={{ marginY: 3 }}>
+            آیتم‌ها
+          </Typography>
+          <Grid container spacing={3}>
+            {items.map((item) => (
+              <Grid item xs={12} sm={6} md={2} key={item.item_id}>
+                <Card
+                  sx={{
+                    cursor: "pointer",
+                    padding: 1,
+                    paddingBottom: 0,
+                    minHeight: "330px",
+                    borderRadius: "16px",
+                    "&:hover": {
+                      boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                    },
+                  }}
+                  onClick={() =>
+                    navigate(`/restaurant/${item.restaurant}/${item.item_id}`)
+                  }
+                >
+                  <CardMedia
+                    component="img"
+                    height="150"
+                    image={`http://localhost:8000${item.photo}`}
+                    alt={item.name}
+                    sx={{ borderRadius: 2 }}
+                  />
+                  <CardContent>
+                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ marginTop: 1 }}
+                    >
+                      رستوران: {findRestaurantName(item.restaurant)}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ marginTop: 1 }}
+                    >
+                      {item.description || " "}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        marginTop: 0.5,
+                      }}
+                    >
+                      <Typography variant="body2" color="text.secondary">
+                        قیمت:
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {Math.floor(item.price / 1000) || "نامشخص"} هزار تومان
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </>
+      )}
+
+      {restaurants.length === 0 && items.length === 0 && !error && (
         <Typography sx={{ textAlign: "center", marginTop: 3 }}>
           هیچ موردی یافت نشد.
         </Typography>

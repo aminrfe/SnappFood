@@ -43,13 +43,13 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const Header = () => {
-	const [isLoggedIn, setIsLoggedIn] = useState(false);
-	const [searchTerm, setSearchTerm] = useState("");
-	const [restaurantList, setRestaurantList] = useState([]);
-	const [allRestaurants, setAllRestaurants] = useState([]);
-	const [items, setItems] = useState([]);
-	const [debounceTimeout, setDebounceTimeout] = useState(null);
-	const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [restaurantList, setRestaurantList] = useState([]);
+  const [allRestaurants, setAllRestaurants] = useState([]);
+  const [items, setItems] = useState([]);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
+  const navigate = useNavigate();
 
 	const checkAuthentication = () => {
 		const accessToken = localStorage.getItem("access");
@@ -77,30 +77,32 @@ const Header = () => {
 		navigate(`/customer/profile`);
 	};
 
-	const fetchRestaurantList = async (query) => {
-		if (query.trim() === "") {
-			setRestaurantList([]);
-			setItems([]);
-			return;
-		}
+  const fetchRestaurantList = async (query) => {
+    if (query.trim() === "") {
+      setRestaurantList([]);
+      setItems([]);
+      return;
+    }
 
-		try {
-			const params = { query };
+    try {
+      const params = { query };
+
 
 			const response = await axiosInstance.get("/restaurant/profiles", {
 				params,
 			});
 
-			const restaurants = await axiosInstance.get("/restaurant/profiles");
-			setAllRestaurants(restaurants.data.restaurants);
-			setRestaurantList(response.data.restaurants);
-			setItems(response.data.items);
-		} catch (error) {
-			console.error("Error fetching restaurant list:", error);
-			setRestaurantList([]);
-			setItems([]);
-		}
-	};
+      const restaurants = await axiosInstance.get("/restaurant/profiles");
+      setAllRestaurants(restaurants.data.restaurants);
+      setRestaurantList(response.data.restaurants);
+      setItems(response.data.items);
+    } catch (error) {
+      console.error("Error fetching restaurant list:", error);
+      setRestaurantList([]);
+      setItems([]);
+    }
+  };
+
 
 	const handleSearchChange = (e) => {
 		const value = e.target.value;
@@ -351,6 +353,7 @@ const Header = () => {
 			</Toolbar>
 		</AppBar>
 	);
+
 };
 
 export default Header;

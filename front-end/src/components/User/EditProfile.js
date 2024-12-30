@@ -195,8 +195,8 @@ const EditProfile = () => {
             onClick={({ lat, lng }) => handleMapClick({ lat, lng })}
           >
             <div
-              lat={mapMarker.lat}
-              lng={mapMarker.lng}
+              data-lat={mapMarker.lat} 
+              data-lng={mapMarker.lng}
               style={{
                 color: "red",
                 fontSize: "24px",

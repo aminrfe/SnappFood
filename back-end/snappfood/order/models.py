@@ -40,3 +40,13 @@ class OrderItem(models.Model):
     count = models.PositiveIntegerField() 
     price = models.DecimalField(max_digits=10, decimal_places=2)
     discount = models.PositiveIntegerField(default=0, help_text="Discount percentage (0 to 100)")
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='reviews')
+    score = models.PositiveSmallIntegerField()
+    description = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ('user', 'order')

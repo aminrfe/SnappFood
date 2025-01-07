@@ -8,6 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from restaurant.models import RestaurantProfile, Item
 from restaurant.serializers import ItemSerializer
+from order.serializers import OrderCreateSerializer, OrderSerializer
+from order.models import Order, OrderItem
 from .models import CustomerProfile, Favorite, Cart, CartItem
 from .serializers import CustomerProfileSerializer, FavoriteSerializer, AddToCartSerializer, UpdateCartItemSerializer, CartSerializer
 from .permissions import IsCustomer
@@ -399,3 +401,77 @@ class MenuItemDetailView(generics.RetrieveAPIView):
             return Item.objects.get(restaurant_id=restaurant_id, item_id=item_id)
         except Item.DoesNotExist:
             raise NotFound("Item not found")
+
+class OrderListCreateView(generics.ListCreateAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)
+
+    @swagger_auto_schema(
+        operation_summary="Retrieve the order list",
+        responses={
+            200: openapi.Response(
+                description="List of orders retrieved successfully",
+                schema=OrderSerializer(many=True)
+            ),
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            500: openapi.Response(description="Internal server error"),
+        },
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_summary="Create an order",
+        request_body=OrderCreateSerializer,
+        responses={
+            201: openapi.Response("Order created successfully!"),
+            400: openapi.Response(description="Invalid input"),
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            500: openapi.Response(description="Internal server error"),
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        serializer = OrderCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            validated_data = serializer.validated_data
+            cart_id = validated_data['cart_id']
+            cart = get_object_or_404(Cart, id=cart_id)
+            restaurant = get_object_or_404(RestaurantProfile, id=cart.restaurant)
+            delivery_method = validated_data['delivery_method']
+            payment_method = validated_data['payment_method']
+            description = validated_data.get('description', '')
+
+            delivery_price = 0 if delivery_method == 'delivery' else restaurant.delivery_price
+            total_price = cart.total_price + delivery_price
+
+            order = Order.objects.create(
+                user=cart.user,
+                restaurant=cart.restaurant,
+                total_price=total_price,
+                delivery_method=delivery_method,
+                payment_method=payment_method,
+                description=description,
+            )
+
+            cart_items = cart.cart_items.all()
+            for cart_item in cart_items:
+                OrderItem.objects.create(
+                    order=order,
+                    item=cart_item.item,
+                    count=cart_item.count,
+                    price=cart_item.price,
+                    discount=cart_item.discount,
+                )
+ 
+            cart.delete()
+
+            return Response({
+                "order_id": order.order_id,
+                "message": "Order created successfully!"
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Avg
 from user.models import User
-from order.models import Order, OrderItem
+from order.models import Order, OrderItem, Review
 
 
 def validate_photo_size(value):

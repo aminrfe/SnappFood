@@ -270,3 +270,83 @@ class TestCartItemDeleteView(APITestCase):
         })
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+class TestMenuItemsView(APITestCase):
+    def setUp(self):
+        self.manager_user = User.objects.create_user(
+            phone_number="1234567890",
+            password="manager_menu_pass",
+            first_name="ManagerMenu",
+            role="restaurant_manager",
+        )
+        self.restaurant = RestaurantProfile.objects.create(manager=self.manager_user, name="Menu Restaurant", delivery_price=5.00)
+        self.item1 = Item.objects.create(
+            item_id=10,
+            name="Steak",
+            price=20.00,
+            discount=0,
+            restaurant=self.restaurant
+        )
+        self.item2 = Item.objects.create(
+            item_id=20,
+            name="Fries",
+            price=5.00,
+            discount=0,
+            restaurant=self.restaurant
+        )
+
+        self.url = reverse("menu-items", kwargs={"restaurant_id": self.restaurant.id})
+
+    def test_get_menu_items_success(self):
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]["name"], "Steak")
+        self.assertEqual(response.data[1]["name"], "Fries")
+
+    def test_get_menu_items_restaurant_not_found(self):
+
+        url = reverse("menu-items", kwargs={"restaurant_id": 999})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("detail", response.data)
+
+class TestMenuItemDetailView(APITestCase):
+    def setUp(self):
+        self.manager_user = User.objects.create_user(
+            phone_number="0987654321",
+            password="manager_item_detail_pass",
+            first_name="ManagerItemDetail",
+            role="restaurant_manager",
+        )
+        self.restaurant = RestaurantProfile.objects.create(manager=self.manager_user, name="Detail Menu Restaurant", delivery_price=5.00)
+        self.item = Item.objects.create(
+            item_id=100,
+            name="Soup",
+            price=3.00,
+            discount=0,
+            restaurant=self.restaurant
+        )
+        self.url = reverse("menu-item-detail", kwargs={
+            "restaurant_id": self.restaurant.id,
+            "item_id": self.item.item_id
+        })
+
+    def test_get_menu_item_success(self):
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["name"], "Soup")
+        self.assertEqual(response.data["price"], "3.00") 
+
+    def test_get_menu_item_not_found(self):
+
+        url = reverse("menu-item-detail", kwargs={
+            "restaurant_id": self.restaurant.id,
+            "item_id": 999
+        })
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("detail", response.data)

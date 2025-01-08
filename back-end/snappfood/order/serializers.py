@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from customer.models import Cart
-from .models import Order, OrderItem
+from .models import Order, OrderItem, Review
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
@@ -40,3 +40,13 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['order_id', 'restaurant', 'order_date', 'total_price', 'state', 
                   'delivery_method', 'payment_method', 'description', 'order_items']
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'user', 'order', 'score', 'description']
+        read_only_fields = ['user']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

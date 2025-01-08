@@ -8,8 +8,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from restaurant.models import RestaurantProfile, Item
 from restaurant.serializers import ItemSerializer
-from order.serializers import OrderCreateSerializer, OrderSerializer
-from order.models import Order, OrderItem
+from order.serializers import OrderCreateSerializer, OrderSerializer, ReviewSerializer
+from order.models import Order, OrderItem, Review
 from .models import CustomerProfile, Favorite, Cart, CartItem
 from .serializers import CustomerProfileSerializer, FavoriteSerializer, AddToCartSerializer, UpdateCartItemSerializer, CartSerializer
 from .permissions import IsCustomer
@@ -475,3 +475,46 @@ class OrderListCreateView(generics.ListCreateAPIView):
                 "message": "Order created successfully!"
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CreateReviewView(generics.CreateAPIView):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    @swagger_auto_schema(
+        operation_summary="Create a new review for an order",
+        operation_description=(
+            "This endpoint allows a customer to create a review for an order. "
+            "The customer must be authenticated and the order must belong to the customer."
+        ),
+        responses={
+            201: openapi.Response(
+                description="Review successfully created",
+                schema=ReviewSerializer,
+            ),
+            400: openapi.Response(description="Invalid data or review already exists for this order"),
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            500: openapi.Response(description="Internal server error"),
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        order_id = request.data.get('order')
+        user = request.user
+
+        try:
+            order = Order.objects.get(id=order_id, user=user)
+        except Order.DoesNotExist:
+            return Response(
+                {"detail": "You can only review orders that you have placed."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if Review.objects.filter(order=order, user=user).exists():
+            return Response(
+                {"detail": "You have already reviewed this order."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return super().post(request, *args, **kwargs)

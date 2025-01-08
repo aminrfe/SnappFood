@@ -217,3 +217,56 @@ class TestCartDetailView(APITestCase):
         response = self.client.delete(self.detail_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertFalse(Cart.objects.filter(id=self.cart.id).exists())
+
+class TestCartItemDeleteView(APITestCase):
+    def setUp(self):
+        self.customer_user = User.objects.create_user(
+            phone_number="5554443333",
+            password="cart_item_pass",
+            first_name="Dave",
+            role="customer"
+        )
+        self.customer_profile = CustomerProfile.objects.create(
+            user=self.customer_user,
+            address="ItemDelete Address",
+        )
+
+        self.manager_user = User.objects.create_user(
+            phone_number="2223334444",
+            password="manager_item_delete_pass",
+            first_name="ManagerItemDelete",
+            role="restaurant_manager",
+        )
+
+        self.restaurant = RestaurantProfile.objects.create(manager=self.manager_user, name="ItemDelete Restaurant", delivery_price=5.00)
+        self.item = Item.objects.create(
+            item_id=2,
+            name="Pizza",
+            price=12.00,
+            discount=0,
+            restaurant=self.restaurant
+        )
+
+        self.client.force_authenticate(user=self.customer_user)
+
+        self.cart = Cart.objects.create(user=self.customer_user, restaurant=self.restaurant, total_price=12.00)
+        self.cart_item = CartItem.objects.create(cart=self.cart, item=self.item, count=1, price=12.00, discount=0)
+
+        self.delete_url = reverse("cart-item-delete", kwargs={
+            "id": self.cart.id,
+            "cart_item_id": self.cart_item.id,
+        })
+
+    def test_delete_cart_item_success(self):
+        response = self.client.delete(self.delete_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(CartItem.objects.filter(id=self.cart_item.id).exists())
+        self.assertFalse(Cart.objects.filter(id=self.cart.id).exists())
+
+    def test_delete_cart_item_not_found(self):
+        url = reverse("cart-item-delete", kwargs={
+            "id": self.cart.id,
+            "cart_item_id": 9999,
+        })
+        response = self.client.delete(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

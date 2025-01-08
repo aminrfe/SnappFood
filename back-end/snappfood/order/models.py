@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings 
+from user.models import User
 
 class Order(models.Model):
     DELIVERY_METHOD_CHOICES = [

@@ -504,7 +504,7 @@ class CreateReviewView(generics.CreateAPIView):
         user = request.user
 
         try:
-            order = Order.objects.get(id=order_id, user=user)
+            order = Order.objects.get(order_id=order_id, user=user)
         except Order.DoesNotExist:
             return Response(
                 {"detail": "You can only review orders that you have placed."},

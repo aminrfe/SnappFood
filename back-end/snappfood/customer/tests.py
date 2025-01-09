@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 
 from .models import CustomerProfile, Favorite, Cart, CartItem
 from restaurant.models import RestaurantProfile, Item
+from order.models import Order, OrderItem, Review
 from .serializers import CustomerProfileSerializer
 
 User = get_user_model()
@@ -349,4 +350,138 @@ class TestMenuItemDetailView(APITestCase):
         })
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("detail", response.data)
+
+class TestOrderListCreateView(APITestCase):
+    def setUp(self):
+        self.customer_user = User.objects.create_user(
+            phone_number="1230984567",
+            password="order_pass",
+            first_name="Eve",
+            role="customer",
+        )
+        self.customer_profile = CustomerProfile.objects.create(
+            user=self.customer_user,
+            address="Order Lane",
+        )
+
+        self.manager_user = User.objects.create_user(
+            phone_number="4567891230",
+            password="manager_order_pass",
+            first_name="ManagerOrder",
+            role="restaurant_manager",
+        )
+
+        self.restaurant = RestaurantProfile.objects.create(manager=self.manager_user, name="Order Restaurant", delivery_price=5.00)
+        self.item = Item.objects.create(
+            item_id=50,
+            name="Taco",
+            price=8.00,
+            discount=0,
+            restaurant=self.restaurant
+        )
+        self.cart = Cart.objects.create(user=self.customer_user, restaurant=self.restaurant, total_price=8.00)
+        self.cart_item = CartItem.objects.create(
+            cart=self.cart, item=self.item, count=1, price=8.00, discount=0
+        )
+        self.client.force_authenticate(user=self.customer_user)
+
+        self.list_create_url = reverse("order-list-create")
+
+
+    def test_post_create_order_success(self):
+        data = {
+            "cart_id": self.cart.id,
+            "delivery_method": "delivery",  
+            "payment_method": "online",    
+            "description": "No onions please",
+        }
+        response = self.client.post(self.list_create_url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("order_id", response.data)
+        self.assertIn("message", response.data)
+        self.assertEqual(response.data["message"], "Order created successfully!")
+
+        self.assertFalse(Cart.objects.filter(id=self.cart.id).exists())
+
+        order = Order.objects.filter(user=self.customer_user).first()
+        self.assertIsNotNone(order)
+        self.assertEqual(order.restaurant, self.restaurant)
+        self.assertEqual(order.total_price, 13.00)  # 8 + 5
+        self.assertEqual(order.delivery_method, "delivery")
+        self.assertEqual(order.payment_method, "online")
+        self.assertEqual(order.description, "No onions please")
+
+        order_item = OrderItem.objects.filter(order=order, item=self.item).first()
+        self.assertIsNotNone(order_item)
+        self.assertEqual(order_item.count, 1)
+        self.assertEqual(order_item.price, 8.00)
+
+class TestCreateReviewView(APITestCase):
+    def setUp(self):
+        self.customer_user = User.objects.create_user(
+            phone_number="9991112222",
+            password="review_pass",
+            first_name="Zoe",
+            role="customer",
+        )
+        self.customer_profile = CustomerProfile.objects.create(
+            user=self.customer_user,
+            address="Review Address",
+        )
+        self.client.force_authenticate(user=self.customer_user)
+
+        self.manager_user = User.objects.create_user(
+            phone_number="3334445555",
+            password="manager_review_pass",
+            first_name="ManagerReview",
+            role="restaurant_manager",
+        )
+        self.restaurant = RestaurantProfile.objects.create(manager=self.manager_user, name="Review Restaurant", delivery_price=5.00)
+        self.order = Order.objects.create(
+            user=self.customer_user,
+            restaurant=self.restaurant,
+            total_price=25.00,
+            delivery_method="pickup",
+            payment_method="online",
+            state="completed",
+        )
+        self.url = reverse("create-review")
+
+    def test_create_review_success(self):
+        data = {
+            "order": self.order.order_id,
+            "score": 5,
+            "description": "Great food!"
+        }
+        response = self.client.post(self.url, data=data, format="json")
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn("score", response.data)
+        self.assertIn("description", response.data)
+
+        review = Review.objects.filter(order=self.order, user=self.customer_user).first()
+        self.assertIsNotNone(review)
+        self.assertEqual(review.score, 5)
+        self.assertEqual(review.description, "Great food!")
+
+    def test_create_review_for_non_existent_order(self):
+        data = {
+            "order": 9999,  
+            "score": 4,
+            "description": "This won't work"
+        }
+        response = self.client.post(self.url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("detail", response.data)
+
+    def test_create_review_already_exists(self):
+        data = {
+            "order": self.order.order_id,
+            "score": 5,
+            "description": "Awesome!"
+        }
+        self.client.post(self.url, data=data, format="json")
+        response = self.client.post(self.url, data=data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("detail", response.data)

@@ -518,3 +518,45 @@ class CreateReviewView(generics.CreateAPIView):
             )
 
         return super().post(request, *args, **kwargs)
+    
+class OrderHistoryView(generics.ListAPIView):
+    serializer_class = OrderSerializer
+    permission_classes = [IsAuthenticated, IsCustomer]
+
+    DEFAULT_LIMIT = 10
+
+    @swagger_auto_schema(
+        operation_description="Retrieve the authenticated user's order history limited to a specified number of most recent orders.",
+        manual_parameters=[openapi.Parameter(
+            'limit',
+            openapi.IN_QUERY,
+            description=f"Maximum number of orders to return (default: {DEFAULT_LIMIT})",
+            type=openapi.TYPE_INTEGER,
+            minimum=1
+        )],
+        responses={
+            200: OrderSerializer(many=True),
+            400: openapi.Response(description="Bad Request"),
+            401: openapi.Response(description="Unauthorized"),
+            403: openapi.Response(description="Forbidden"),
+            500: openapi.Response(description="Internal server error"),
+        },
+    )
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        limit = request.query_params.get('limit', self.DEFAULT_LIMIT)
+
+        try:
+            limit = int(limit)
+            if limit < 1:
+                raise ValueError("Limit must be a positive integer.")
+        except ValueError:
+            return Response(
+                {"error": "Invalid 'limit' parameter. It must be a positive integer."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        orders = Order.objects.filter(user=user).order_by('-order_date')[:limit]
+        serializer = self.get_serializer(orders, many=True)
+        return Response(serializer.data)

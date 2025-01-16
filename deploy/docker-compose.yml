@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.backend
+    container_name: backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ../back-end/snappfood/.env
+    volumes:
+    - ./media:/app/media
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "3000:80"
+
+  db:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: snappfood
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data

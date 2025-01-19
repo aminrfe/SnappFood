@@ -28,6 +28,7 @@ import RestaurantReportPage from "./components/Restaurant/ReportPage.js";
 import CartPage from "./components/User/CartPage.js";
 import CartCompletion from "./components/User/CartCompletion.js";
 import CartsList from "./components/User/CartsList";
+import TrackOrderPage from "./components/User/TrackOrder.js"; 
 
 function App() {
   function isAuthenticated() {
@@ -51,17 +52,18 @@ function App() {
                   </>
                 }
               />
-
               <Route path="/login" element={<LoginPage />} />
               <Route path="/user/signup" element={<UserSignUp />} />
               <Route
                 path="/restaurant/:id/:item_id"
                 element={<FoodItemPage />}
               />
-              <Route path="/restuarant/signup" element={<RestaurantSignUp />} />
+              <Route
+                path="/restuarant/signup"
+                element={<RestaurantSignUp />}
+              />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
-
               <Route
                 path="/favorites"
                 element={
@@ -174,6 +176,18 @@ function App() {
                   )
                 }
               />
+              <Route path="/track-order" element={<TrackOrderPage />} /> 
+              {/*
+              <Route
+                path="/track-order"
+                element={
+                  isAuthenticated() ? (
+                    <TrackOrderPage />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />*/}
             </Routes>
           </Router>
         </UserProvider>

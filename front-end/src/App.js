@@ -176,8 +176,7 @@ function App() {
                   )
                 }
               />
-              <Route path="/track-order" element={<TrackOrderPage />} /> 
-              {/*
+
               <Route
                 path="/track-order"
                 element={
@@ -187,7 +186,7 @@ function App() {
                     <Navigate to="/login" />
                   )
                 }
-              />*/}
+              />
             </Routes>
           </Router>
         </UserProvider>

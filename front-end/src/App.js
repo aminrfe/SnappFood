@@ -28,7 +28,8 @@ import RestaurantReportPage from "./components/Restaurant/ReportPage.js";
 import CartPage from "./components/User/CartPage.js";
 import CartCompletion from "./components/User/CartCompletion.js";
 import CartsList from "./components/User/CartsList";
-import TrackOrderPage from "./components/User/TrackOrder.js"; 
+import TrackOrderPage from "./components/User/TrackOrder.js";
+import ReviewPage from "./components/User/ReviewPage";
 
 function App() {
   function isAuthenticated() {
@@ -176,12 +177,26 @@ function App() {
                   )
                 }
               />
-
               <Route
                 path="/track-order"
                 element={
                   isAuthenticated() ? (
                     <TrackOrderPage />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              {/* 
+              <Route
+                path="/review"
+                element={<ReviewPage />}
+              />*/}
+              <Route
+                path="/review"
+                element={
+                  isAuthenticated() ? (
+                    <ReviewPage />
                   ) : (
                     <Navigate to="/login" />
                   )

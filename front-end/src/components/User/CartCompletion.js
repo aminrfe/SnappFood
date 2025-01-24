@@ -28,7 +28,7 @@ const CartPage = () => {
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [description, setDescription] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState("pickup");
+  const [deliveryMethod, setDeliveryMethod] = useState("delivery");
   const [searchParams] = useSearchParams();
   const restaurantId = searchParams.get("restaurant_id");
   const [totalPrice, setTotalPrice] = useState(0);
@@ -343,7 +343,20 @@ const CartPage = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={() => navigate("/checkout")}
+            onClick={() =>
+              navigate("/checkout", {
+                state: {
+                  totalPrice: finalAmount,
+                  discount: discount,
+                  tax: tax,
+                  shippingCost: DELIVERY_COST,
+                  itemsTotal: totalAfterDiscount,
+                  deliveryMethod: deliveryMethod, // ارسال مقدار "delivery" یا "pickup"
+                  cartID: cartID, // ارسال شناسه سبد خرید
+                  description: description, // ارسال توضیحات
+                },
+              })
+            }
             sx={{ fontSize: "1.1rem" }}
             style={{ padding: "10px 15px" }}
           >

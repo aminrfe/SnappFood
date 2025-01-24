@@ -12,31 +12,51 @@ import {
   FormControl,
   Divider,
 } from "@mui/material";
+import axiosInstance from "../../utills/axiosInstance";
 import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const CheckoutPage = () => {
-    const location = useLocation();
-    const {
-      totalPrice,
-      discount,
-      tax,
-      shippingCost,
-      itemsTotal,
-      deliveryMethod,
-      cartID,
-      description,
-    } = location.state || {};
+  const location = useLocation();
+  const {
+    totalPrice,
+    discount,
+    tax,
+    shippingCost,
+    itemsTotal,
+    deliveryMethod,
+    cartID,
+    description,
+  } = location.state || {};
   const navigate = useNavigate();
-  const [selectedAddress, setSelectedAddress] = useState("savedAddress");
   const [paymentMethod, setPaymentMethod] = useState("online");
-
-  const handleAddressChange = (event) => {
-    setSelectedAddress(event.target.value);
-  };
 
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
+  };
+
+  const handleOrderSubmit = async () => {
+    try {
+      const response = await axiosInstance.post("/customer/orders", {
+        cart_id: cartID,
+        delivery_method: deliveryMethod,
+        payment_method: paymentMethod,
+        description: description,
+      });
+
+      if (response.status === 201) {
+        // نمایش پیام موفقیت با alert
+        alert("سفارش با موفقیت ثبت شد!");
+
+        // هدایت به صفحه پیگیری سفارش
+        navigate("/track-order");
+      }
+    } catch (error) {
+      console.error("خطا در ثبت سفارش:", error.response?.data || error);
+
+      // نمایش پیام خطا با alert
+      alert("خطا در ثبت سفارش! لطفا دوباره تلاش کنید.");
+    }
   };
 
   return (
@@ -91,12 +111,8 @@ const CheckoutPage = () => {
             انتخاب آدرس
           </Typography>
           <FormControl>
-            <RadioGroup
-              value={selectedAddress}
-              onChange={handleAddressChange}
-            >
+            <RadioGroup>
               <FormControlLabel
-                value="savedAddress"
                 control={<Radio />}
                 label="آدرس ذخیره شده شما"
               />
@@ -187,6 +203,7 @@ const CheckoutPage = () => {
           <Button
             variant="contained"
             color="primary"
+            onClick={handleOrderSubmit}
             sx={{ fontSize: "1.1rem", padding: "10px 15px" }}
           >
             پرداخت

@@ -441,7 +441,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
             validated_data = serializer.validated_data
             cart_id = validated_data['cart_id']
             cart = get_object_or_404(Cart, id=cart_id)
-            restaurant = get_object_or_404(RestaurantProfile, id=cart.restaurant)
+            restaurant = cart.restaurant
             delivery_method = validated_data['delivery_method']
             payment_method = validated_data['payment_method']
             description = validated_data.get('description', '')

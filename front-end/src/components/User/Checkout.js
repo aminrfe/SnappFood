@@ -148,7 +148,7 @@ const CheckoutPage = () => {
                 label="پرداخت آنلاین"
               />
               <FormControlLabel
-                value="onDelivery"
+                value="in_person"
                 control={<Radio />}
                 label="پرداخت در محل"
               />

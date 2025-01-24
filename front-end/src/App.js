@@ -30,6 +30,7 @@ import CartCompletion from "./components/User/CartCompletion.js";
 import CartsList from "./components/User/CartsList";
 import TrackOrderPage from "./components/User/TrackOrder.js";
 import ReviewPage from "./components/User/ReviewPage";
+import CheckoutPage from "./components/User/Checkout.js";
 
 function App() {
   function isAuthenticated() {
@@ -152,6 +153,16 @@ function App() {
                 element={
                   isAuthenticated() ? (
                     <CartCompletion />
+                  ) : (
+                    <Navigate to="/login" />
+                  )
+                }
+              />
+              <Route
+                path="/checkout"
+                element={
+                  isAuthenticated() ? (
+                    <CheckoutPage />
                   ) : (
                     <Navigate to="/login" />
                   )

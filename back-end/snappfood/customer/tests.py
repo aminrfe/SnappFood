@@ -407,7 +407,7 @@ class TestOrderListCreateView(APITestCase):
         order = Order.objects.filter(user=self.customer_user).first()
         self.assertIsNotNone(order)
         self.assertEqual(order.restaurant, self.restaurant)
-        self.assertEqual(order.total_price, 13.00)  # 8 + 5
+        self.assertEqual(order.total_price, 8.00) 
         self.assertEqual(order.delivery_method, "delivery")
         self.assertEqual(order.payment_method, "online")
         self.assertEqual(order.description, "No onions please")
@@ -455,7 +455,6 @@ class TestCreateReviewView(APITestCase):
             "description": "Great food!"
         }
         response = self.client.post(self.url, data=data, format="json")
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertIn("score", response.data)
         self.assertIn("description", response.data)

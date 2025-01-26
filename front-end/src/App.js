@@ -60,10 +60,7 @@ function App() {
                 path="/restaurant/:id/:item_id"
                 element={<FoodItemPage />}
               />
-              <Route
-                path="/restuarant/signup"
-                element={<RestaurantSignUp />}
-              />
+              <Route path="/restuarant/signup" element={<RestaurantSignUp />} />
               <Route path="/restaurant/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route
@@ -189,7 +186,7 @@ function App() {
                 }
               />
               <Route
-                path="/track-order"
+                path="customer/orders/:id/track-order"
                 element={
                   isAuthenticated() ? (
                     <TrackOrderPage />
@@ -204,13 +201,9 @@ function App() {
                 element={<ReviewPage />}
               />*/}
               <Route
-                path="/review"
+                path="customer/orders/:id/review"
                 element={
-                  isAuthenticated() ? (
-                    <ReviewPage />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
+                  isAuthenticated() ? <ReviewPage /> : <Navigate to="/login" />
                 }
               />
             </Routes>

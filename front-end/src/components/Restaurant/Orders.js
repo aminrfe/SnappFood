@@ -15,82 +15,79 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import moment from "moment-jalaali";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import axiosInstance from "../../utills/axiosInstance";
 
-const OrderList = () => {
-  // const orders = [
-  // 	{
-  // 		id: 1,
-  // 		order_date: "پنجشنبه 15 تیر - ساعت 19:43:21",
-  // 		delivery_method: "پیک",
-  // 		payment_method: "آنلاین",
-  // 		address: "خیابان آزادی، پلاک ۱۲۳",
-  // 		status: "در حال آماده سازی",
-  // 		total_price: "۳۵۰,۰۰۰ تومان",
-  // 		description: "این سفارش باید سریع تحویل داده شود.",
-  // 		order_items: [
-  // 			{ name: "محصول ۱", count: 2 },
-  // 			{ name: "محصول ۲", count: 1 },
-  // 		],
-  // 	},
-  // 	{
-  // 		id: 2,
-  // 		order_date: "شنبه 17 تیر - ساعت 21:31:09",
-  // 		delivery_method: "حضوری",
-  // 		payment_method: "درب منزل",
-  // 		address: "خیابان ولیعصر، پلاک ۴۵۶",
-  // 		status: "در حال آماده سازی",
-  // 		total_price: "۲۰۰,۰۰۰ تومان",
-  // 		description: "به همراه یک پک قاشق اضافه ارسال شود.",
-  // 		order_items: [{ name: "محصول ۳", count: 1 }],
-  // 	},
-  // ];
+const getStatusInFarsi = (status) => {
+  switch (status) {
+    case "pending":
+      return "در انتظار تایید";
+    case "preparing":
+      return "در حال آماده سازی";
+    case "delivering":
+      return "ارسال شده";
+    case "completed":
+      return "تحویل داده شده";
+    default:
+      return status; 
+  }
+};
 
+const deliveryMethodMap = {
+  pickup: "دریافت حضوری",
+  delivery: "ارسال با پیک",
+};
+
+const paymentMethodMap = {
+  in_person: "نقدی",
+  online: "آنلاین",
+};
+
+const OrderList = () => {
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [status, setStatus] = useState("");
-  const [orderStatuses, setOrderStatuses] = useState({});
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axiosInstance.get("/restaurant/orders");
-        const ordersWithId = response.data.map((order, index) => ({
-          ...order,
-          id: index + 1,
-        }));
-        setOrders(ordersWithId);
-      } catch (err) {
-        console.log("خطا در دریافت اطلاعات");
-      }
-    };
     fetchOrders();
   }, []);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await axiosInstance.get("/restaurant/orders");
+      const ordersWithId = response.data.map((order, index) => ({
+        ...order,
+        id: index + 1,
+        status: getStatusInFarsi(order.status),
+      }));
+      setOrders(ordersWithId);
+    } catch (err) {
+      console.log("خطا در دریافت اطلاعات");
+    }
+  };
 
   const handleOpenDialog = (order) => {
     setSelectedOrder(order);
     setOpen(true);
-    setStatus(orderStatuses[order.id] || "");
   };
 
   const handleCloseDialog = async () => {
     if (selectedOrder) {
       try {
         await axiosInstance.patch(
-          `/restaurant/orders/${selectedOrder.id}/status`,
+          `/restaurant/orders/${selectedOrder.order_id}/status`,
           {
             state: status,
           }
         );
-        setOrderStatuses((prev) => ({ ...prev, [selectedOrder.id]: status }));
       } catch (err) {
         console.error("خطا در به‌روزرسانی وضعیت سفارش:", err);
       }
     }
+    fetchOrders();
     setOpen(false);
-    setStatus("");
   };
 
   return (
@@ -140,19 +137,21 @@ const OrderList = () => {
                   سفارش شماره {index + 1}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  تاریخ سفارش: {order.order_date}
+                  تاریخ سفارش:{" "}
+                  {moment(order.order_date).format("jYYYY/jMM/jDD")} در ساعت{" "}
+                  {moment(order.order_date).format("HH:mm")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  روش ارسال: {order.delivery_method}
+                  روش ارسال: {deliveryMethodMap[order.delivery_method]}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  روش پرداخت: {order.payment_method}
+                  روش پرداخت: {paymentMethodMap[order.payment_method]}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   آدرس: {order.address}
                 </Typography>
                 <Typography variant="body2" color="primary">
-                  وضعیت فعلی: {orderStatuses[order.id] || order.status}
+                  وضعیت فعلی: {getStatusInFarsi(order.state)}
                 </Typography>
               </Box>
               <Box>
@@ -160,7 +159,8 @@ const OrderList = () => {
                   variant="body1"
                   sx={{ fontWeight: "bold", marginBottom: "1rem" }}
                 >
-                  قیمت کل: {order.total_price}
+                  قیمت کل: {Math.floor(order.total_price).toLocaleString()}{" "}
+                  تومان
                 </Typography>
               </Box>
             </AccordionSummary>
@@ -176,7 +176,7 @@ const OrderList = () => {
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
-                  alignItems: "flex-start", 
+                  alignItems: "flex-start",
                   flexWrap: "wrap",
                 }}
               >
@@ -215,7 +215,7 @@ const OrderList = () => {
                   sx={{
                     fontWeight: "normal !important",
                     border: "1px solid #d68240",
-                    alignSelf: "flex-start", 
+                    alignSelf: "flex-start",
                   }}
                 >
                   وارد کردن وضعیت سفارش
@@ -268,9 +268,9 @@ const OrderList = () => {
                 marginBottom: "1rem",
               }}
             >
-              <MenuItem value="در حال آماده سازی">در حال آماده سازی</MenuItem>
-              <MenuItem value="ارسال شده">ارسال شده</MenuItem>
-              <MenuItem value="تحویل داده شده">تحویل داده شده</MenuItem>
+              <MenuItem value="preparing">در حال آماده سازی</MenuItem>
+              <MenuItem value="delivering">ارسال شده</MenuItem>
+              <MenuItem value="completed">تحویل داده شده</MenuItem>
             </Select>
           </FormControl>
 

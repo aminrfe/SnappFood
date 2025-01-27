@@ -238,7 +238,7 @@ const ProductSlider = () => {
         display="flex"
         justifyContent="space-between"
         alignItems="center"
-        sx={{ margin: 2, marginTop: 4, marginBottom:0 }}
+        sx={{ margin: 2, marginTop: 4, marginBottom: 0 }}
       >
         <Typography
           variant="h5"
@@ -258,7 +258,7 @@ const ProductSlider = () => {
             fontSize: "14px",
             textDecoration: "underline",
           }}
-		  style={{backgroundColor:"transparent", color:"#D68240"}}
+          style={{ backgroundColor: "transparent", color: "#D68240" }}
           onClick={() => navigate(`/search?name=`)}
         >
           مشاهده همه
@@ -271,7 +271,7 @@ const ProductSlider = () => {
         padding={3}
         width={"100%"}
       >
-        {restaurants.slice(0,6).map((restaurant) => {
+        {restaurants.slice(0, 6).map((restaurant) => {
           const isFavorite = favorites[restaurant.id];
 
           return (
@@ -393,8 +393,14 @@ const HomePage = () => {
 
   useEffect(() => {
     const resID = localStorage.getItem("res_id"); // نقش کاربر (رستوران، مشتری و غیره) در localStorage ذخیره شده
-    if (resID !== "undefines" || resID !== undefined || resID !== null || resID!=="") {
-      navigate(`restaurant/${resID}/profile`); // رستوران‌ها را به صفحه پروفایل هدایت می‌کند
+    if (
+      resID !== "undefined" &&
+      resID !== undefined &&
+      resID !== null &&
+      resID !== ""
+    ) {
+      if (!resID) navigate("/");
+      else navigate(`restaurant/${resID}/profile`);
     }
   }, [navigate]);
 

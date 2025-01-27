@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -9,14 +9,79 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
-import food1 from "../../assets/imgs/food1.png";
+import { useParams } from "react-router-dom";
+import axiosInstance from "../../utills/axiosInstance";
 
 const ReviewPage = () => {
-  const [rating, setRating] = useState(0); 
-  const [comment, setComment] = useState(""); 
+  const { id } = useParams();
+  const [order, setOrder] = useState(null);
+  const [restaurant, setRestaurant] = useState(null);
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState("");
 
-  const handleSubmit = () => {
-    alert(`امتیاز: ${rating}, نظر: ${comment}`);
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const orderResponse = await axiosInstance.get("/customer/orders");
+        const orderData = orderResponse.data;
+        const selectedOrder = orderData.find(
+          (order) => order.order_id === parseInt(id)
+        );
+        if (selectedOrder) {
+          setOrder(selectedOrder);
+          const restaurantId = selectedOrder.restaurant;
+          const restaurantResponse = await axiosInstance.get(
+            "/restaurant/profiles"
+          );
+          const restaurantData = restaurantResponse.data.restaurants;
+
+          const selectedRestaurant = restaurantData.find(
+            (restaurant) => restaurant.id === restaurantId
+          );
+          if (selectedRestaurant) {
+            setRestaurant(selectedRestaurant);
+          } else {
+            console.error("Restaurant not found");
+          }
+        } else {
+          console.error("Order not found");
+        }
+      } catch (error) {
+        console.error("Error fetching order or restaurant data:", error);
+      }
+    };
+
+    fetchOrders();
+  }, [id]);
+
+  const handleSubmit = async () => {
+    if (rating === 0 || !comment.trim()) {
+      alert("لطفاً امتیاز و نظر خود را وارد کنید.");
+      return;
+    }
+
+    const reviewData = {
+      order: parseInt(id),
+      score: parseInt(rating),
+      description: comment,
+    };
+
+    try {
+      const response = await axiosInstance.post(
+        "/customer/reviews/create",
+        reviewData
+      );
+
+      if (response.status === 201) {
+        alert("نظر با موفقیت ثبت شد.");
+        console.log(response.data);
+      } else {
+        alert("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("خطای سرور. لطفاً دوباره تلاش کنید.");
+    }
   };
 
   return (
@@ -30,7 +95,6 @@ const ReviewPage = () => {
         textAlign: "center",
       }}
     >
-
       <Card
         sx={{
           backgroundColor: "#FFF8F1",
@@ -39,7 +103,6 @@ const ReviewPage = () => {
           boxShadow: 2,
         }}
       >
-
         <Typography
           variant="h6"
           sx={{
@@ -59,16 +122,22 @@ const ReviewPage = () => {
             mb: 2,
           }}
         >
-          <CardMedia
-            component="img"
-            image={food1}
-            alt="Food Image"
-            sx={{
-              width: "250px",
-              height: "auto",
-              borderRadius: "16px",
-            }}
-          />
+          {restaurant ? (
+            <CardMedia
+              component="img"
+              image={`http://127.0.0.1:8000${restaurant.photo}`}
+              alt={restaurant.name || "Restaurant Image"}
+              sx={{
+                width: "250px",
+                height: "auto",
+                borderRadius: "16px",
+              }}
+            />
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              در حال بارگذاری اطلاعات رستوران...
+            </Typography>
+          )}
         </Box>
 
         <Typography
@@ -89,24 +158,22 @@ const ReviewPage = () => {
           }}
         >
           <Rating
-            name="user-rating" 
+            name="user-rating"
             value={rating}
-            onChange={(event, newValue) => {
-              console.log(`Selected Rating: ${newValue}`); 
-              setRating(newValue);
-            }}
+            onChange={(event, newValue) => setRating(newValue)}
             size="large"
+            precision={1}
             sx={{
               "& .MuiRating-iconFilled": {
-                color: "#D68240", 
+                color: "#ebcc34",
               },
               "& .MuiRating-iconHover": {
-                color: "#b56633", 
+                color: "#ebcc34",
               },
+              pointerEvents: "auto",
             }}
           />
         </Box>
-
 
         <Typography
           variant="body2"
@@ -124,7 +191,7 @@ const ReviewPage = () => {
           minRows={3}
           placeholder="نظر خود را اینجا بنویسید..."
           value={comment}
-          onChange={(e) => setComment(e.target.value)}
+          onChange={(e) => setComment(e.target.value)} // ذخیره نظر وارد‌شده
           sx={{
             backgroundColor: "#FFEFE7",
             borderRadius: "8px",

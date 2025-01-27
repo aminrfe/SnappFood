@@ -30,7 +30,7 @@ const getStatusInFarsi = (status) => {
     case "completed":
       return "تحویل داده شده";
     default:
-      return status; 
+      return status;
   }
 };
 
@@ -123,7 +123,8 @@ const OrderList = () => {
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               sx={{
-                backgroundColor: "#F4DCC9",
+                backgroundColor:
+                  order.state === "completed" ? "#DFF6DD" : "#F4DCC9",
                 padding: "1rem",
                 alignItems: "center",
                 display: "flex",
@@ -212,9 +213,9 @@ const OrderList = () => {
                 <Button
                   variant="contained"
                   onClick={() => handleOpenDialog(order)}
+                  disabled={order.state === "completed"}
                   sx={{
                     fontWeight: "normal !important",
-                    border: "1px solid #d68240",
                     alignSelf: "flex-start",
                   }}
                 >

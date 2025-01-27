@@ -389,6 +389,15 @@ const UpFooter = () => {
 };
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const resID = localStorage.getItem("res_id"); // نقش کاربر (رستوران، مشتری و غیره) در localStorage ذخیره شده
+    if (resID !== "undefines" || resID !== undefined || resID !== null || resID!=="") {
+      navigate(`restaurant/${resID}/profile`); // رستوران‌ها را به صفحه پروفایل هدایت می‌کند
+    }
+  }, [navigate]);
+
   return (
     <div>
       <HeroSection />

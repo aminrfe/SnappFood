@@ -152,6 +152,9 @@ const Header = () => {
 					/>
 					{(restaurantList.length > 0 || items.length > 0) && (
 						<div
+							role="button"
+							tabIndex="0"
+							aria-label="Interactive panel"
 							style={{
 								position: "absolute",
 								top: "50px",
@@ -163,9 +166,16 @@ const Header = () => {
 								zIndex: "100",
 								maxHeight: "500px",
 								overflowY: "auto",
+								
 							}}
 							onMouseDown={(e) => e.stopPropagation()}
+							onKeyDown={(e) => {
+								if (e.key === "Enter" || e.key === " ") {
+									e.stopPropagation();
+								}
+							}}
 						>
+
 							<ul style={{ listStyle: "none", margin: 0, padding: "10px" }}>
 								{restaurantList.map((restaurant) => (
 									<li key={restaurant.id} style={{ listStyle: "none" }}>

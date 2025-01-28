@@ -35,8 +35,8 @@ const CartsList = () => {
     }
   };
 
-  const handleContinueShopping = (id) => {
-    navigate(`/cart?restaurant_id=${id}`);
+  const handleContinueShopping = (resID) => {
+    navigate(`/customer/carts?restaurant_id=${resID}`);
   };
 
   useEffect(() => {
@@ -146,7 +146,7 @@ const CartsList = () => {
                         height: 150,
                         borderRadius: "8px",
                       }}
-                      onClick={() => navigate(`/restaurant/${item.restaurant}`)}
+                      onClick={() => navigate(`//${item.restaurant}`)}
                     />
                     <Typography
                       variant="h6"

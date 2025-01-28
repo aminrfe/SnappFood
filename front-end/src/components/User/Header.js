@@ -190,7 +190,7 @@ const Header = () => {
 												display: "flex",
 												alignItems: "center",
 											}}
-											onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+											onClick={() => navigate(`/customer/restaurants/${restaurant.id}`)}
 										>
 											{restaurant.photo && (
 												<img
@@ -267,13 +267,13 @@ const Header = () => {
 													}}
 													onClick={() =>
 														navigate(
-															`/restaurant/${item.restaurant}/${item.item_id}`,
+															`/customer/restaurants/${item.restaurant}/${item.item_id}`,
 														)
 													}
 													onKeyDown={(e) => {
 														if (e.key === "Enter" || e.key === " ") {
 															navigate(
-																`/restaurant/${item.restaurant}/${item.item_id}`,
+																`customer/restaurants/${item.restaurant}/${item.item_id}`,
 															);
 														}
 													}}
@@ -342,7 +342,7 @@ const Header = () => {
 								cursor: "pointer",
 								"&:hover": { color: "#000" },
 							}}
-							onClick={() => navigate("/cart-list")}
+							onClick={() => navigate("/customer/cart-list")}
 						/>
 						<Button
 							variant="contained"

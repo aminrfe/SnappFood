@@ -7,9 +7,14 @@ import {
   CardContent,
   Button,
   Grid,
+  Toolbar,
+  AppBar,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 
 const MyOrders = () => {
+   const navigate = useNavigate();
   const orders = [
     {
       id: 1,
@@ -48,42 +53,74 @@ const MyOrders = () => {
       image: require("../../assets/imgs/food1.png"),
     },
     {
-        id: 5,
-        title: "سفارش شماره چهار",
-        date: "۱۸:۰۷ | یک شنبه",
-        price: 365500,
-        status: "تحویل شده",
-        details: "اطلاعات مربوط به سفارش شامل توضیحات و...",
-        image: require("../../assets/imgs/food1.png"),
+      id: 5,
+      title: "سفارش شماره چهار",
+      date: "۱۸:۰۷ | یک شنبه",
+      price: 365500,
+      status: "تحویل شده",
+      details: "اطلاعات مربوط به سفارش شامل توضیحات و...",
+      image: require("../../assets/imgs/food1.png"),
     },
     {
-        id: 6,
-        title: "سفارش شماره چهار",
-        date: "۱۸:۰۷ | یک شنبه",
-        price: 365500,
-        status: "تحویل شده",
-        details: "اطلاعات مربوط به سفارش شامل توضیحات و...",
-        image: require("../../assets/imgs/food1.png"),
+      id: 6,
+      title: "سفارش شماره چهار",
+      date: "۱۸:۰۷ | یک شنبه",
+      price: 365500,
+      status: "تحویل شده",
+      details: "اطلاعات مربوط به سفارش شامل توضیحات و...",
+      image: require("../../assets/imgs/food1.png"),
     },
   ];
 
   return (
-    <Box sx={{ padding: { xs: 2, sm: 3 }, backgroundColor: "#F5F5F5", minHeight: "100vh" }}>
-      <Typography
-        variant="h5"
+    <Box
+      sx={{
+        backgroundColor: "#F5F5F5",
+        minHeight: "100vh",
+      }}
+    >
+      <AppBar
+        position="static"
         sx={{
-          textAlign: "center",
-          marginBottom: 3,
-          color: "#D68240",
-          fontWeight: "bold",
+          backgroundColor: "#F4DCC9",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
-        سفارش‌های من
-      </Typography>
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            <img
+              src={FoodiLogo}
+              alt="Foodi Logo"
+              style={{ width: "100px", cursor: "pointer" }}
+            />
+          </a>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#D68240",
+              fontWeight: "bold",
+              flex: 1,
+              textAlign: "center",
+              userSelect: "none",
+              pointerEvents: "none",
+              paddingRight: "50px",
+            }}
+          >
+           سفارش های من
+          </Typography>
+          <Box />
+        </Toolbar>
+      </AppBar>
 
-      <Grid container spacing={2} justifyContent="center">
+      <Grid container spacing={2} justifyContent="center" padding="20px">
         {orders.map((order) => (
-          <Grid item xs={12} sm={6} md={4} key={order.id}>
+          <Grid item xs={12} sm={6} md={4} key={order.id} >
             <Card
               sx={{
                 display: "flex",

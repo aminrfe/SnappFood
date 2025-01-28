@@ -128,7 +128,7 @@ const CartPage = () => {
             />
           </a>
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               color: "#D68240",
               fontWeight: "bold",
@@ -189,7 +189,7 @@ const CartPage = () => {
             objectFit: "cover",
           }}
           onClick={() =>
-            navigate(`/restaurant/${restaurantId}/${item.item}`)
+            navigate(`/customer/restaurants/${restaurantId}/${item.item}`)
           }
         />
 
@@ -353,7 +353,7 @@ const CartPage = () => {
                 }}
                 style={{ padding: "10px 15px" }}
                 onClick={() =>
-                  navigate(`/cart-completion?restaurant_id=${restaurantId}`)
+                  navigate(`/customer/carts/${cartID}/cart-completion?restaurant_id=${restaurantId}`)
                 }
               >
                 تکمیل خرید

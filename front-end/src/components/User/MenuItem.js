@@ -68,10 +68,9 @@ const FoodItemPage = () => {
       const response = await publicAxiosInstance.get(
         `/customer/items/${item_id}/reviews/`
       );
-      console.log(response.data);
       const reviews = response.data.map((review) => ({
         id: review.id,
-        name: review.user,
+        name: `${review.first_name} ${review.last_name}`,
         date: new Date().toLocaleDateString("fa-IR"),
         rating: review.score,
         comment: review.description,
@@ -352,7 +351,6 @@ const FoodItemPage = () => {
                 >
                   <Box display="flex" alignItems="center" gap={1}>
                     <Avatar sx={{ bgcolor: "#D68240" }}>
-                      {comment.name}
                     </Avatar>
                     <Box>
                       <Typography

@@ -192,7 +192,7 @@ const MyOrders = () => {
 
 							<CardActions>
 								<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-									{order.status === "completed" ? (
+									{order.state === "completed" ? (
 										<Button variant="contained" disabled>
 											تحویل شده
 										</Button>

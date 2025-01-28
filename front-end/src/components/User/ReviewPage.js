@@ -9,11 +9,12 @@ import {
   Card,
   CardMedia,
 } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
 
 const ReviewPage = () => {
   const { id } = useParams();
+   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [restaurant, setRestaurant] = useState(null);
   const [rating, setRating] = useState(0);
@@ -74,7 +75,8 @@ const ReviewPage = () => {
 
       if (response.status === 201) {
         alert("نظر با موفقیت ثبت شد.");
-        console.log(response.data);
+        navigate("/");
+        
       } else {
         alert("مشکلی پیش آمده است. لطفاً دوباره تلاش کنید.");
       }

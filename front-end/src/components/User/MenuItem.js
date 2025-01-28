@@ -25,36 +25,13 @@ const FoodItemPage = () => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartID, setCartID] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const comments = [
-    {
-      id: 1,
-      name: "اسم کاربر 1",
-      date: "۱۸ آبان ۱۴۰۳",
-      rating: 4,
-      comment: "Really convenient and the points system helps benefit loyalty",
-    },
-    {
-      id: 2,
-      name: "اسم کاربر 2",
-      date: "۱۸ آبان ۱۴۰۳",
-      rating: 4,
-      comment: "Really convenient and the points system helps benefit",
-    },
-    {
-      id: 3,
-      name: "اسم کاربر 3",
-      date: "۱۸ آبان ۱۴۰۳",
-      rating: 4,
-      comment:
-        "glitches here and there, but nothing too egregious. Obviously needs to roll out to more remote.",
-    },
-  ];
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     checkLoginStatus();
     fetchFoodItem();
     fetchCartData();
+    fetchComments();
   }, [id, item_id, isLoggedIn]);
 
   const checkLoginStatus = async () => {
@@ -65,7 +42,7 @@ const FoodItemPage = () => {
 
   const handleViewCartClick = async () => {
     if (isLoggedIn) {
-      navigate(`/cart?restaurant_id=${id}`);
+      navigate(`/customer/carts?restaurant_id=${id}`);
     } else {
       alert("ابتدا وارد حساب کاربری خود شوید.");
     }
@@ -82,6 +59,24 @@ const FoodItemPage = () => {
     }
   };
 
+  const fetchComments = async () => {
+    try {
+      const response = await publicAxiosInstance.get(
+        `/customer/items/${item_id}/reviews/`
+      );
+      const reviews = response.data.map((review) => ({
+        id: review.id,
+        name: review.user,
+        date: new Date().toLocaleDateString("fa-IR"),
+        rating: review.score,
+        comment: review.description,
+      }));
+      setComments(reviews);
+    } catch (error) {
+      console.error("Error fetching comments:", error);
+    }
+  };
+
   const fetchCartData = async () => {
     if (!isLoggedIn) return;
     try {
@@ -93,18 +88,20 @@ const FoodItemPage = () => {
         (cart) => cart.restaurant === parseInt(id)
       );
 
-      const myCart = filteredData[0].cart_items || [];
-      const item = myCart.find((i) => i.item === parseInt(item_id));
+      if (filteredData[0]) {
+        const myCart = filteredData[0].cart_items || [];
+        const item = myCart.find((i) => i.item === parseInt(item_id));
 
-      if (item) {
-        setItem(item);
-      } else {
-        setItem({ count: 0 });
+        if (item) {
+          setItem(item);
+        } else {
+          setItem({ count: 0 });
+        }
+
+        setCartID(parseInt(filteredData[0].id));
+        setTotalPrice(parseInt(filteredData[0].total_price));
+        setCartItems(myCart);
       }
-
-      setCartID(parseInt(filteredData[0].id));
-      setTotalPrice(parseInt(filteredData[0].total_price));
-      setCartItems(myCart);
     } catch (error) {
       console.error("خطا در دریافت اطلاعات سبد خرید:", error);
     }
@@ -161,9 +158,10 @@ const FoodItemPage = () => {
           xs: 2,
           sm: 3,
           md: 4,
+          marginTop: "40px",
         },
         display: "flex",
-        alignItems: "center",
+        // alignItems: "center",
         justifyContent: "center",
       }}
     >
@@ -279,7 +277,7 @@ const FoodItemPage = () => {
         >
           <Typography
             variant="h5"
-            align="center"
+            // align="center"
             gutterBottom
             sx={{ mb: 5, fontWeight: "bold", pointerEvents: "none" }}
           >
@@ -292,56 +290,66 @@ const FoodItemPage = () => {
               pr: 1,
             }}
           >
-            {comments.map((comment) => (
-              <Grid
-                item
-                key={comment.id}
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 1,
-                  borderBottom: "1px solid #e0e0e0",
-                  pb: 2,
-                  mb: 2,
-                }}
+            {comments.length === 0 ? (
+              <Typography
+                variant="h7"
+                color="text.secondary"
+                style={{ marginTop: "30px" }}
               >
-                <Box display="flex" alignItems="center" gap={1}>
-                  <Avatar sx={{ bgcolor: "#D68240" }}>
-                    {comment.name.charAt(0)}
-                  </Avatar>
-                  <Box>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ pointerEvents: "none" }}
-                    >
-                      {comment.name}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      color="textSecondary"
-                      sx={{ pointerEvents: "none" }}
-                    >
-                      {comment.date}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box>
-                  <Rating
-                    value={comment.rating}
-                    readOnly
-                    precision={0.5}
-                    sx={{ color: "orange" }}
-                  />
-                </Box>
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  sx={{ pointerEvents: "none" }}
+                هنوز نظری برای این آیتم ثبت نشده است.
+              </Typography>
+            ) : (
+              comments.map((comment) => (
+                <Grid
+                  item
+                  key={comment.id}
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                    borderBottom: "1px solid #e0e0e0",
+                    pb: 2,
+                    mb: 2,
+                  }}
                 >
-                  {comment.comment}
-                </Typography>
-              </Grid>
-            ))}
+                  <Box display="flex" alignItems="center" gap={1}>
+                    <Avatar sx={{ bgcolor: "#D68240" }}>
+                      {comment.name.charAt(0)}
+                    </Avatar>
+                    <Box>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ pointerEvents: "none" }}
+                      >
+                        {comment.name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="textSecondary"
+                        sx={{ pointerEvents: "none" }}
+                      >
+                        {comment.date}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box>
+                    <Rating
+                      value={comment.rating}
+                      readOnly
+                      precision={0.5}
+                      sx={{ color: "orange" }}
+                    />
+                  </Box>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ pointerEvents: "none" }}
+                  >
+                    {comment.comment}
+                  </Typography>
+                </Grid>
+              ))
+            )}
           </Box>
         </Box>
       </Grid>

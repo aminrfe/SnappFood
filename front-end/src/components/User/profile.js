@@ -31,7 +31,7 @@ const UserProfilePage = () => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const handleEditClick = () => {
-    navigate("/user/edit-profile");
+    navigate("/customer/edit-profile");
   };
 
   const handleSignUpClick = () => {
@@ -39,7 +39,11 @@ const UserProfilePage = () => {
   };
 
   const handleFavorites = () => {
-    navigate("/favorites");
+    navigate("/customer/favorites");
+  };
+
+  const handleOrdersHistory = () => {
+    navigate("/customer/orders");
   };
 
   const handleOpenLogoutDialog = () => {
@@ -113,7 +117,12 @@ const UserProfilePage = () => {
           }}
         >
           <AccountCircleIcon sx={{ fontSize: 48, color: "#ff7a59" }} />
-          <Box sx={{ textAlign: { xs: "center", sm: "left" }, mt: { xs: 2, sm: 0 } }}>
+          <Box
+            sx={{
+              textAlign: { xs: "center", sm: "left" },
+              mt: { xs: 2, sm: 0 },
+            }}
+          >
             <Typography
               variant="h6"
               fontWeight="bold"
@@ -123,7 +132,8 @@ const UserProfilePage = () => {
                 fontSize: "1rem",
               }}
             >
-              {user?.user?.first_name + " " + user?.user?.last_name || "نام و نام خانوادگی"}
+              {user?.user?.first_name + " " + user?.user?.last_name ||
+                "نام و نام خانوادگی"}
             </Typography>
             <Typography
               variant="body2"
@@ -147,7 +157,7 @@ const UserProfilePage = () => {
             p: 1,
           }}
         >
-          <ListItem button onClick={() => navigate("/orders")}>
+          <ListItem button onClick={handleOrdersHistory}>
             <ListItemIcon>
               <ShoppingBagIcon color="warning" />
             </ListItemIcon>
@@ -188,9 +198,7 @@ const UserProfilePage = () => {
             },
           }}
         >
-          <DialogTitle id="logout-dialog-title">
-            تأیید خروج
-          </DialogTitle>
+          <DialogTitle id="logout-dialog-title">تأیید خروج</DialogTitle>
           <DialogContent>
             <DialogContentText id="logout-dialog-description">
               آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟

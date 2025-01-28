@@ -79,7 +79,7 @@ const RestaurantPage = () => {
 
   const handleViewCartClick = async () => {
     if (isAuthenticated) {
-      navigate(`/cart?restaurant_id=${id}`);
+      navigate(`/customer/carts?restaurant_id=${id}`);
     } else {
       alert("ابتدا وارد حساب کاربری خود شوید.");
     }
@@ -338,7 +338,7 @@ const RestaurantPage = () => {
               foodData.map((food) => (
                 <Card
                   key={food.item_id}
-                  onClick={() => navigate(`/restaurant/${id}/${food.item_id}`)}
+                  onClick={() => navigate(`/customer/restaurants/${id}/${food.item_id}`)}
                   sx={{
                     display: "flex",
                     mb: 2,

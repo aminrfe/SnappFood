@@ -45,11 +45,8 @@ const CheckoutPage = () => {
       });
 
       if (response.status === 201) {
-        // نمایش پیام موفقیت با alert
         alert("سفارش با موفقیت ثبت شد!");
-
-        // هدایت به صفحه پیگیری سفارش
-        navigate("/track-order");
+        navigate(`/customer/orders/${response.data.order_id}/track-order`);
       }
     } catch (error) {
       console.error("خطا در ثبت سفارش:", error.response?.data || error);
@@ -122,7 +119,7 @@ const CheckoutPage = () => {
             <Button
               variant="outlined"
               color="primary"
-              onClick={() => navigate("/user/edit-profile")}
+              onClick={() => navigate("/customer/edit-profile")}
             >
               تغییر آدرس
             </Button>

@@ -116,9 +116,9 @@ const OrderList = () => {
         </Typography>
       ) : (
         orders.map((order, index) => (
-          <Accordion
+<Accordion
             key={order.id}
-            sx={{ marginBottom: "1rem", width: "900px", boxShadow: "none" }}
+            sx={{ marginBottom: "1rem", width: "70%", boxShadow: "none" }}
           >
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -134,34 +134,60 @@ const OrderList = () => {
               }}
             >
               <Box sx={{ flexGrow: 1, textAlign: "left" }}>
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                <Typography
+                  variant="h6"
+                  sx={{ fontWeight: "bold", fontSize: { xs: "1rem", sm: "1.25rem" } }}
+                >
                   سفارش شماره {index + 1}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                >
                   تاریخ سفارش:{" "}
                   {moment(order.order_date).format("jYYYY/jMM/jDD")} در ساعت{" "}
                   {moment(order.order_date).format("HH:mm")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                >
                   روش ارسال: {deliveryMethodMap[order.delivery_method]}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                >
                   روش پرداخت: {paymentMethodMap[order.payment_method]}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                >
                   آدرس: {order.address}
                 </Typography>
-                <Typography variant="body2" color="primary">
+                <Typography
+                  variant="body2"
+                  color="primary"
+                  sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                >
                   وضعیت فعلی: {getStatusInFarsi(order.state)}
                 </Typography>
               </Box>
               <Box>
                 <Typography
                   variant="body1"
-                  sx={{ fontWeight: "bold", marginBottom: "1rem" }}
+                  sx={{
+                    fontWeight: "bold",
+                    marginBottom: "1rem",
+                    fontSize: { xs: "0.875rem", sm: "1rem" },
+                  }}
                 >
-                  قیمت کل: {Math.floor(order.total_price).toLocaleString()}{" "}
-                  تومان
+                  قیمت کل: {Math.floor(order.total_price).toLocaleString()} تومان
                 </Typography>
               </Box>
             </AccordionSummary>
@@ -185,26 +211,42 @@ const OrderList = () => {
                 <Box>
                   <Typography
                     variant="body1"
-                    sx={{ fontWeight: "bold", marginBottom: "0.5rem" }}
+                    sx={{
+                      fontWeight: "bold",
+                      marginBottom: "0.5rem",
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
                   >
                     آیتم‌های سفارش:
                   </Typography>
                   <List>
                     {order.order_items.map((item, idx) => (
-                      <ListItem key={idx} sx={{ paddingLeft: 0 }}>
+                      <ListItem
+                        key={idx}
+                        sx={{ paddingLeft: 0, fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                      >
                         <ListItemText
                           primary={`${item.name} - تعداد: ${item.count}`}
+                          sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                         />
                       </ListItem>
                     ))}
                   </List>
                   <Typography
                     variant="body1"
-                    sx={{ fontWeight: "bold", marginTop: "0.5rem" }}
+                    sx={{
+                      fontWeight: "bold",
+                      marginTop: "0.5rem",
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                    }}
                   >
                     توضیحات سفارش:
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                  >
                     {order.description || "بدون توضیحات"}
                   </Typography>
                 </Box>
@@ -217,6 +259,7 @@ const OrderList = () => {
                   sx={{
                     fontWeight: "normal !important",
                     alignSelf: "flex-start",
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
                   }}
                 >
                   وارد کردن وضعیت سفارش
@@ -224,6 +267,7 @@ const OrderList = () => {
               </Box>
             </AccordionDetails>
           </Accordion>
+
         ))
       )}
 

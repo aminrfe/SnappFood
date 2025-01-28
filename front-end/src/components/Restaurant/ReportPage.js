@@ -82,6 +82,7 @@ const RestaurantReportPage = () => {
         const response = await axios.get(
           `/restaurant/sales-reports?filter=${filter}`
         );
+        // console.log(response.data);
         setData(response.data); // Update state with API response
       } catch (err) {
         setError("خطایی در دریافت داده‌ها رخ داده است.");
@@ -161,7 +162,7 @@ const RestaurantReportPage = () => {
               }}
             >
               <img
-                src={item.photo}
+                src={ `http://127.0.0.1:8000/media/${item.photo}`}
                 alt={item.name}
                 style={{
                   width: "75px",

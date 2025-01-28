@@ -9,12 +9,15 @@ import {
   Card,
   CardMedia,
   CardContent,
+  Avatar,
+  Rating,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import publicAxiosInstance from "../../utills/publicAxiosInstance";
 import axiosInstance from "../../utills/axiosInstance";
+import Divider from "@mui/material/Divider";
 
 const RestaurantPage = () => {
   const [name, setName] = useState("");
@@ -33,6 +36,31 @@ const RestaurantPage = () => {
   const [favorites, setFavorites] = useState({});
   const [foodData, setFoodData] = useState([]);
   const [addedToCart, setAddedToCart] = useState({});
+
+  const comments = [
+    {
+      id: 1,
+      name: "اسم کاربر 1",
+      date: "۱۸ آبان ۱۴۰۳",
+      rating: 4,
+      comment: "Really convenient and the points system helps benefit loyalty",
+    },
+    {
+      id: 2,
+      name: "اسم کاربر 2",
+      date: "۱۸ آبان ۱۴۰۳",
+      rating: 4,
+      comment: "Really convenient and the points system helps benefit",
+    },
+    {
+      id: 3,
+      name: "اسم کاربر 3",
+      date: "۱۸ آبان ۱۴۰۳",
+      rating: 4,
+      comment:
+        "glitches here and there, but nothing too egregious. Obviously needs to roll out to more remote.",
+    },
+  ];
 
   useEffect(() => {
     setRestaurantId(id);
@@ -223,240 +251,317 @@ const RestaurantPage = () => {
   const parsedDeliveryCost = Number(deliveryCost);
 
   return (
-		<Grid
-			container
-			gap={8}
-			sx={{
-				width: "100%",
-				p: {
-					xs: 2,
-					sm: 3,
-					md: 4,
-				},
-				display: "flex",
-				justifyContent: "center",
-			}}
-		>
-			<Grid>
-				<Box
-					sx={{
-						position: "relative",
-						width: "fit-content",
-						mx: "auto",
-					}}
-				>
-					<img
-						src={`${logo}`}
-						alt="Food"
-						onError={(e) => {
-							e.target.onerror = null;
-							e.target.src = "https://via.placeholder.com/100";
-						}}
-						style={{
-							height: "300px",
-							display: "block",
-							borderRadius: 18,
-						}}
-					/>
-					<IconButton
-						sx={{
-							position: "absolute",
-							bottom: 8,
-							left: 8,
-							color: favorites[restaurantId] ? "red" : "white",
-						}}
-						onClick={toggleFavorite}
-					>
-						{favorites[restaurantId] ? (
-							<FavoriteIcon />
-						) : (
-							<FavoriteBorderIcon />
-						)}
-					</IconButton>
-				</Box>
-				<Box
-					display="flex"
-					justifyContent="center"
-					flexDirection="row"
-					gap={2}
-					alignItems="center"
-					py={2}
-				>
-					<Chip label={score} />
-					<Chip label={cityName} />
-					<Chip
-						label={
-							parsedDeliveryCost === 0
-								? "رایگان"
-								: `${Math.floor(
-										parseFloat(deliveryCost),
-								  ).toLocaleString()} تومان`
-						}
-					/>
-				</Box>
-				<Box display="flex" justifyContent="center" alignItems="center">
-					<Typography variant="h6" sx={{ pointerEvents: "none", py: 1 }}>
-						{name}
-					</Typography>
-				</Box>
-				<Typography
-					variant="body2"
-					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
-				>
-					ساعت کاری: {openingTime} تا {closingTime}
-				</Typography>
-				<Typography
-					variant="body2"
-					color="grey"
-					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
-				>
-					آدرس: {address}
-				</Typography>
-				<Typography
-					variant="body2"
-					sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
-				>
-					{description}
-				</Typography>
-				<Button
-					variant="contained"
-					color="success"
-					fullWidth
-					onClick={handleViewCartClick}
-				>
-					مشاهده سبد خرید
-				</Button>
-			</Grid>
+    <Grid
+      container
+      gap={8}
+      sx={{
+        width: "100%",
+        p: {
+          xs: 2,
+          sm: 3,
+          md: 4,
+        },
+        display: "flex",
+        justifyContent: "center",
+      }}
+    >
+      <Grid>
+        <Box
+          sx={{
+            position: "relative",
+            width: "fit-content",
+            mx: "auto",
+          }}
+        >
+          <img
+            src={`${logo}`}
+            alt="Food"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://via.placeholder.com/100";
+            }}
+            style={{
+              height: "300px",
+              display: "block",
+              borderRadius: 18,
+            }}
+          />
+          <IconButton
+            sx={{
+              position: "absolute",
+              bottom: 8,
+              left: 8,
+              color: favorites[restaurantId] ? "red" : "white",
+            }}
+            onClick={toggleFavorite}
+          >
+            {favorites[restaurantId] ? (
+              <FavoriteIcon />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
+          </IconButton>
+        </Box>
+        <Box
+          display="flex"
+          justifyContent="center"
+          flexDirection="row"
+          gap={2}
+          alignItems="center"
+          py={2}
+        >
+          <Chip label={score} />
+          <Chip label={cityName} />
+          <Chip
+            label={
+              parsedDeliveryCost === 0
+                ? "رایگان"
+                : `${Math.floor(
+                    parseFloat(deliveryCost)
+                  ).toLocaleString()} تومان`
+            }
+          />
+        </Box>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Typography variant="h6" sx={{ pointerEvents: "none", py: 1 }}>
+            {name}
+          </Typography>
+        </Box>
+        <Typography
+          variant="body2"
+          sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
+        >
+          ساعت کاری: {openingTime} تا {closingTime}
+        </Typography>
+        <Typography
+          variant="body2"
+          color="grey"
+          sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
+        >
+          آدرس: {address}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{ my: 1, pointerEvents: "none", width: { lg: "500px" } }}
+        >
+          {description}
+        </Typography>
+        <Button
+          variant="contained"
+          color="success"
+          fullWidth
+          onClick={handleViewCartClick}
+        >
+          مشاهده سبد خرید
+        </Button>
+      </Grid>
 
-			<Grid>
-				<Box sx={{ width: { lg: "700px" } }}>
-					<Box sx={{ cursor: "pointer" }}>
-						{foodData.length > 0 ? (
-							foodData.map((food) => (
-								<Card
-									key={food.item_id}
-									onClick={() => navigate(`/restaurant/${id}/${food.item_id}`)}
-									sx={{
-										display: "flex",
-										mb: 2,
-										boxShadow: "none",
-										paddingBottom: 2,
-										borderRadius: 0,
-										borderBottom: "1px solid gray",
-									}}
-								>
-									<Box sx={{ position: "relative" }}>
-										<CardMedia
-											component="img"
-											image={
-												food.photo
-													? food.photo
-													: "https://via.placeholder.com/120"
-											}
-											alt={food.name}
-											sx={{ width: 120, borderRadius: 3 }}
-										/>
-										{food.discount > 0 && (
-											<Box
-												sx={{
-													position: "absolute",
-													top: 8,
-													right: 8,
-													backgroundColor: "red",
-													color: "white",
-													fontSize: "12px",
-													fontWeight: "bold",
-													padding: "2px 6px",
-													borderRadius: "3px",
-												}}
-											>
-												{food.discount}٪ تخفیف
-											</Box>
-										)}
-									</Box>
+      <Grid>
+        <Box sx={{ width: { lg: "700px" } }}>
+          <Box sx={{ cursor: "pointer" }}>
+            {foodData.length > 0 ? (
+              foodData.map((food) => (
+                <Card
+                  key={food.item_id}
+                  onClick={() => navigate(`/restaurant/${id}/${food.item_id}`)}
+                  sx={{
+                    display: "flex",
+                    mb: 2,
+                    boxShadow: "none",
+                    paddingBottom: 2,
+                    borderRadius: 0,
+                    borderBottom: "1px solid gray",
+                  }}
+                >
+                  <Box sx={{ position: "relative" }}>
+                    <CardMedia
+                      component="img"
+                      image={
+                        food.photo
+                          ? food.photo
+                          : "https://via.placeholder.com/120"
+                      }
+                      alt={food.name}
+                      sx={{ width: 120, borderRadius: 3 }}
+                    />
+                    {food.discount > 0 && (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 8,
+                          right: 8,
+                          backgroundColor: "red",
+                          color: "white",
+                          fontSize: "12px",
+                          fontWeight: "bold",
+                          padding: "2px 6px",
+                          borderRadius: "3px",
+                        }}
+                      >
+                        {food.discount}٪ تخفیف
+                      </Box>
+                    )}
+                  </Box>
 
-									<CardContent sx={{ flex: 1 }}>
-										<Typography variant="h6" sx={{ pointerEvents: "none" }}>
-											{food.name}
-										</Typography>
-										<Typography
-											variant="body2"
-											color="text.secondary"
-											sx={{ pointerEvents: "none" }}
-										>
-											{food.description}
-										</Typography>
-										<Box sx={{ paddingTop: 2 }}>
-											{food.discount > 0 ? (
-												<>
-													<Typography
-														variant="body2"
-														color="text.secondary"
-														sx={{
-															textDecoration: "line-through",
-															display: "inline-block",
-															marginRight: "8px",
-														}}
-													>
-														{Math.floor(food.price).toLocaleString()} تومان
-													</Typography>
-													<Typography
-														variant="body1"
-														color="#D68240"
-														sx={{ display: "inline-block" }}
-													>
-														{Math.floor(
-															food.price * (1 - food.discount / 100),
-														).toLocaleString()}{" "}
-														تومان
-													</Typography>
-												</>
-											) : (
-												<Typography
-													variant="body1"
-													sx={{ pointerEvents: "none" }}
-												>
-													{Math.floor(food.price).toLocaleString()} تومان
-												</Typography>
-											)}
-										</Box>
-									</CardContent>
+                  <CardContent sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ pointerEvents: "none" }}>
+                      {food.name}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{ pointerEvents: "none" }}
+                    >
+                      {food.description}
+                    </Typography>
+                    <Box sx={{ paddingTop: 2 }}>
+                      {food.discount > 0 ? (
+                        <>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                              textDecoration: "line-through",
+                              display: "inline-block",
+                              marginRight: "8px",
+                            }}
+                          >
+                            {Math.floor(food.price).toLocaleString()} تومان
+                          </Typography>
+                          <Typography
+                            variant="body1"
+                            color="#D68240"
+                            sx={{ display: "inline-block" }}
+                          >
+                            {Math.floor(
+                              food.price * (1 - food.discount / 100)
+                            ).toLocaleString()}{" "}
+                            تومان
+                          </Typography>
+                        </>
+                      ) : (
+                        <Typography
+                          variant="body1"
+                          sx={{ pointerEvents: "none" }}
+                        >
+                          {Math.floor(food.price).toLocaleString()} تومان
+                        </Typography>
+                      )}
+                    </Box>
+                  </CardContent>
 
-									<Button
-										variant="contained"
-										onClick={(event) => {
-											event.stopPropagation();
-											handleAddToCart(food);
-										}}
-										disabled={!!addedToCart[food.item_id]}
-										sx={{
-											backgroundColor: addedToCart[food.item_id]
-												? "gray"
-												: "#D68240",
-											color: addedToCart[food.item_id] ? "white" : "black",
-											alignSelf: "center",
-											margin: 1,
-											borderRadius: 20,
-										}}
-									>
-										{addedToCart[food.item_id] ? "افزوده شد" : "افزودن"}
-									</Button>
-								</Card>
-							))
-						) : (
-							<Typography
-								variant="body2"
-								color="text.secondary"
-								sx={{ textAlign: "center" }}
-							>
-								هیچ غذایی در منو وجود ندارد.
-							</Typography>
-						)}
-					</Box>
-				</Box>
-			</Grid>
-		</Grid>
-	);
+                  <Button
+                    variant="contained"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleAddToCart(food);
+                    }}
+                    disabled={!!addedToCart[food.item_id]}
+                    sx={{
+                      backgroundColor: addedToCart[food.item_id]
+                        ? "gray"
+                        : "#D68240",
+                      color: addedToCart[food.item_id] ? "white" : "black",
+                      alignSelf: "center",
+                      margin: 1,
+                      borderRadius: 20,
+                    }}
+                  >
+                    {addedToCart[food.item_id] ? "افزوده شد" : "افزودن"}
+                  </Button>
+                </Card>
+              ))
+            ) : (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ textAlign: "center" }}
+              >
+                هیچ غذایی در منو وجود ندارد.
+              </Typography>
+            )}
+          </Box>
+        </Box>
+      </Grid>
+
+      <Grid>
+        <Box
+          sx={{
+            width: { lg: "1300px" },
+            backgroundColor: "white",
+            borderRadius: "8px",
+          }}
+        >
+          <Typography
+            variant="h5"
+            align="center"
+            gutterBottom
+            sx={{ mb: 5, fontWeight: "bold", pointerEvents: "none" }}
+          >
+            نظر کاربران
+          </Typography>
+          <Box
+            sx={{
+              maxHeight: "700px",
+              overflowY: "auto",
+              pr: 1,
+            }}
+          >
+            {comments.map((comment) => (
+              <Grid
+                item
+                key={comment.id}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  borderBottom: "1px solid #e0e0e0",
+                  pb: 2,
+                  mb: 2,
+                }}
+              >
+                <Box display="flex" alignItems="center" gap={1}>
+                  <Avatar sx={{ bgcolor: "#D68240" }}>
+                    {comment.name.charAt(0)}
+                  </Avatar>
+                  <Box>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ pointerEvents: "none" }}
+                    >
+                      {comment.name}
+                    </Typography>
+                    <Typography
+                      variant="caption"
+                      color="textSecondary"
+                      sx={{ pointerEvents: "none" }}
+                    >
+                      {comment.date}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box>
+                  <Rating
+                    value={comment.rating}
+                    readOnly
+                    precision={0.5}
+                    sx={{ color: "orange" }}
+                  />
+                </Box>
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  sx={{ pointerEvents: "none" }}
+                >
+                  {comment.comment}
+                </Typography>
+              </Grid>
+            ))}
+          </Box>
+        </Box>
+      </Grid>
+    </Grid>
+  );
 };
 
 export default RestaurantPage;

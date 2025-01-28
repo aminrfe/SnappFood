@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate  } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -13,6 +13,7 @@ import MotorbikeImage from "../../assets/imgs/motorbike.png";
 
 const TrackOrderPage = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
 
@@ -45,6 +46,7 @@ const TrackOrderPage = () => {
             break;
           case "completed":
             setActiveStep(3);
+            navigate(`/customer/orders/${id}/review`);
             break;
           default:
             setActiveStep(0);
@@ -57,7 +59,7 @@ const TrackOrderPage = () => {
     fetchOrder();
     const interval = setInterval(fetchOrder, 5000); 
     return () => clearInterval(interval); 
-  }, [id]);
+  }, [id, navigate]);
 
   if (!order) {
     return (

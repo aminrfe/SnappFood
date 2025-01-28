@@ -9,15 +9,15 @@ import {
   Card,
   CardMedia,
   CardContent,
-  Avatar,
-  Rating,
+  Toolbar,
+  AppBar,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import publicAxiosInstance from "../../utills/publicAxiosInstance";
 import axiosInstance from "../../utills/axiosInstance";
-import Divider from "@mui/material/Divider";
+import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 
 const RestaurantPage = () => {
   const [name, setName] = useState("");
@@ -231,15 +231,51 @@ const RestaurantPage = () => {
       gap={8}
       sx={{
         width: "100%",
-        p: {
-          xs: 2,
-          sm: 3,
-          md: 4,
-        },
         display: "flex",
         justifyContent: "center",
+
       }}
     >
+      {/* هدر */}
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: "#F4DCC9",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            <img
+              src={FoodiLogo}
+              alt="Foodi Logo"
+              style={{ width: "100px", cursor: "pointer" }}
+            />
+          </a>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#D68240",
+              fontWeight: "bold",
+              flex: 1,
+              textAlign: "center",
+              userSelect: "none",
+              pointerEvents: "none",
+              paddingRight: "50px",
+            }}
+          >
+            صفحه رستوران
+          </Typography>
+          <Box />
+        </Toolbar>
+      </AppBar>
+
       <Grid>
         <Box
           sx={{
@@ -338,7 +374,9 @@ const RestaurantPage = () => {
               foodData.map((food) => (
                 <Card
                   key={food.item_id}
-                  onClick={() => navigate(`/customer/restaurants/${id}/${food.item_id}`)}
+                  onClick={() =>
+                    navigate(`/customer/restaurants/${id}/${food.item_id}`)
+                  }
                   sx={{
                     display: "flex",
                     mb: 2,

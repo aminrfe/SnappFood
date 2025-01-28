@@ -215,7 +215,7 @@ const CartPage = () => {
             fontWeight="bold"
             sx={{
               cursor: "pointer",
-              fontSize: { xs: "0.9rem", sm: "1rem" }, // تغییر اندازه فونت
+              fontSize: { xs: "0.9rem", sm: "1rem" }, 
             }}
           >
             {item.name}

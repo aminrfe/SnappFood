@@ -128,7 +128,7 @@ const CartPage = () => {
             />
           </a>
           <Typography
-            variant="h5"
+            variant="h6"
             sx={{
               color: "#D68240",
               fontWeight: "bold",

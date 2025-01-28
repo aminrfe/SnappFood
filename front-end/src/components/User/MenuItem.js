@@ -7,6 +7,8 @@ import {
   Chip,
   Avatar,
   Rating,
+  Toolbar,
+  AppBar
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,6 +17,8 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import axiosInstance from "../../utills/publicAxiosInstance.js";
 import privateAxiosInstance from "../../utills/axiosInstance.js";
 import publicAxiosInstance from "../../utills/publicAxiosInstance.js";
+import FoodiLogo from "../../assets/imgs/foodiIcon.png";
+
 
 const FoodItemPage = () => {
   const navigate = useNavigate();
@@ -64,6 +68,7 @@ const FoodItemPage = () => {
       const response = await publicAxiosInstance.get(
         `/customer/items/${item_id}/reviews/`
       );
+      console.log(response.data);
       const reviews = response.data.map((review) => ({
         id: review.id,
         name: review.user,
@@ -154,17 +159,50 @@ const FoodItemPage = () => {
       gap={8}
       sx={{
         width: "100%",
-        p: {
-          xs: 2,
-          sm: 3,
-          md: 4,
-          marginTop: "40px",
-        },
         display: "flex",
         // alignItems: "center",
         justifyContent: "center",
       }}
     >
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: "#F4DCC9",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            <img
+              src={FoodiLogo}
+              alt="Foodi Logo"
+              style={{ width: "100px", cursor: "pointer" }}
+            />
+          </a>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#D68240",
+              fontWeight: "bold",
+              flex: 1,
+              textAlign: "center",
+              userSelect: "none",
+              pointerEvents: "none",
+              paddingRight: "50px",
+            }}
+          >
+            صفحه آیتم منو
+          </Typography>
+          <Box />
+        </Toolbar>
+      </AppBar>
+
       <Grid sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Box
           sx={{ position: "relative", width: "fit-content", margin: "auto" }}
@@ -314,7 +352,7 @@ const FoodItemPage = () => {
                 >
                   <Box display="flex" alignItems="center" gap={1}>
                     <Avatar sx={{ bgcolor: "#D68240" }}>
-                      {comment.name.charAt(0)}
+                      {comment.name}
                     </Avatar>
                     <Box>
                       <Typography

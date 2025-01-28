@@ -165,123 +165,133 @@ const CartPage = () => {
           <>
             {/* لیست آیتم‌ها */}
             <Grid container spacing={2}>
-              {cartItems.map((item) => (
-                <Grid item xs={12} key={item.id}>
-                  <Card
-                    sx={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      p: 2,
-                      boxShadow: 2,
-                      borderRadius: 2,
-                    }}
-                  >
-                    {/* تصویر */}
-                    <CardMedia
-                      component="img"
-                      image={
-                        item.photo
-                          ? item.photo
-                          : "https://via.placeholder.com/120"
-                      }
-                      alt={item.name}
-                      sx={{
-                        width: 100,
-                        height: 100,
-                        borderRadius: 2,
-                        objectFit: "cover",
-                      }}
-                      onClick={() =>
-                        navigate(`/restaurant/${restaurantId}/${item.item}`)
-                      }
-                    />
+  {cartItems.map((item) => (
+    <Grid item xs={12} key={item.id}>
+      <Card
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          p: 2,
+          boxShadow: 2,
+          borderRadius: 2,
+        }}
+      >
+        {/* تصویر */}
+        <CardMedia
+          component="img"
+          image={item.photo ? item.photo : "https://via.placeholder.com/120"}
+          alt={item.name}
+          sx={{
+            width: 100,
+            height: 100,
+            borderRadius: 2,
+            objectFit: "cover",
+          }}
+          onClick={() =>
+            navigate(`/restaurant/${restaurantId}/${item.item}`)
+          }
+        />
 
-                    {/* جزئیات */}
-                    <CardContent sx={{ flex: 1 }}>
-                      <Typography
-                        variant="h6"
-                        fontWeight="bold"
-                        sx={{ cursor: "pointer" }}
-                      >
-                        {item.name}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ pointerEvents: "none", userSelect: "none" }}
-                      >
-                        {item.description}
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        color="#D68240"
-                        sx={{
-                          pointerEvents: "none",
-                          userSelect: "none",
-                          textDecoration:
-                            item.discount > 0 ? "line-through" : "none",
-                          color: item.discount > 0 ? "gray" : "#D68240",
-                          display: "inline",
-                        }}
-                      >
-                        {Math.floor(item.price).toLocaleString()} تومان
-                      </Typography>
-                      {item.discount > 0 && (
-                        <Typography
-                          color="#D68240"
-                          sx={{
-                            fontWeight: "bold",
-                            display: "inline",
-                            marginLeft: "15px",
-                          }}
-                        >
-                          {Math.floor(
-                            item.price - (item.price * item.discount) / 100
-                          ).toLocaleString()}{" "}
-                          تومان
-                        </Typography>
-                      )}
-                    </CardContent>
+        {/* جزئیات */}
+        <CardContent
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: 1,
+          }}
+        >
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            sx={{
+              cursor: "pointer",
+              fontSize: { xs: "0.9rem", sm: "1rem" }, // تغییر اندازه فونت
+            }}
+          >
+            {item.name}
+          </Typography>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ pointerEvents: "none", userSelect: "none" }}
+          >
+            {item.description}
+          </Typography>
+          <Typography
+            variant="subtitle1"
+            color="#D68240"
+            sx={{
+              pointerEvents: "none",
+              userSelect: "none",
+              textDecoration: item.discount > 0 ? "line-through" : "none",
+              color: item.discount > 0 ? "gray" : "#D68240",
+              fontSize: { xs: "0.8rem", sm: "1rem" }, // تغییر اندازه فونت
+              display: "inline",
+            }}
+          >
+            {Math.floor(item.price).toLocaleString()} تومان
+          </Typography>
+          {item.discount > 0 && (
+            <Typography
+              color="#D68240"
+              sx={{
+                fontWeight: "bold",
+                display: "inline",
+                marginLeft: "15px",
+                fontSize: { xs: "0.9rem", sm: "1rem" }, // تغییر اندازه فونت
+              }}
+            >
+              {Math.floor(
+                item.price - (item.price * item.discount) / 100
+              ).toLocaleString()}{" "}
+              تومان
+            </Typography>
+          )}
+        </CardContent>
 
-                    {/* دکمه‌های تغییر تعداد */}
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                    >
-                      {/* دکمه حذف */}
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteItem(item.id)}
-                      >
-                        <Delete />
-                      </IconButton>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleQuantityChange(item.id, 1)}
-                      >
-                        <Add />
-                      </IconButton>
-                      <Typography
-                        variant="h6"
-                        sx={{ pointerEvents: "none", userSelect: "none" }}
-                      >
-                        {item.count}
-                      </Typography>
-                      <IconButton
-                        color="primary"
-                        onClick={() => handleQuantityChange(item.id, -1)}
-                      >
-                        <Remove />
-                      </IconButton>
-                    </Box>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
+        {/* دکمه‌های تغییر تعداد */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <IconButton
+            color="error"
+            onClick={() => handleDeleteItem(item.id)}
+          >
+            <Delete />
+          </IconButton>
+          <IconButton
+            color="primary"
+            onClick={() => handleQuantityChange(item.id, 1)}
+          >
+            <Add />
+          </IconButton>
+          <Typography
+            variant="h6"
+            sx={{
+              pointerEvents: "none",
+              userSelect: "none",
+              fontSize: { xs: "0.9rem", sm: "1rem" }, // تغییر اندازه فونت
+            }}
+          >
+            {item.count}
+          </Typography>
+          <IconButton
+            color="primary"
+            onClick={() => handleQuantityChange(item.id, -1)}
+          >
+            <Remove />
+          </IconButton>
+        </Box>
+      </Card>
+    </Grid>
+  ))}
+</Grid>
 
             {/* جمع کل */}
             <Divider sx={{ my: 4 }} />

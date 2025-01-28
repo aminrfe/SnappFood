@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  IconButton,
-  Button,
+	Box,
+	Card,
+	CardMedia,
+	CardContent,
+	Typography,
+	IconButton,
+	Button,
+	useMediaQuery,
 } from "@mui/material";
 import Footer from "./Footer";
 import Grid from "@mui/material/Grid2";
@@ -17,63 +18,73 @@ import axiosInstance from "../../utills/axiosInstance";
 import publicAxiosInstance from "../../utills/publicAxiosInstance";
 
 const HeroSection = () => {
-  return (
-    <Box
-      sx={{
-        width: "100%",
-        display: "flex",
-        paddingTop: "100px",
-        paddingBottom: "40px",
-        backgroundColor: "#fff",
-      }}
-    >
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} md={6} marginLeft={12}>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              color: "#000",
-              fontWeight: "bold",
-              textAlign: { xs: "center", md: "left" },
-              pointerEvents: "none",
-            }}
-          >
-            توی کوتاه‌ترین زمان ممکن
-          </Typography>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              color: "#D68240",
-              fontWeight: "bold",
-              marginTop: "15px",
-              marginLeft: "25px",
-              textAlign: { xs: "center", md: "left" },
-              pointerEvents: "none",
-            }}
-          >
-            غذای مورد علاقت رو سفارش بده.
-          </Typography>
-        </Grid>
-
-        <Grid>
-          <img
-            src={BigPizza}
-            alt="Hero Pizza"
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.src = "https://via.placeholder.com/100";
-            }}
-            style={{
-              marginRight: "15vw",
-              width: "600px",
-            }}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  );
+	return (
+		<Box
+			sx={{
+				width: "100%",
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				paddingTop: "100px",
+				paddingBottom: "40px",
+				backgroundColor: "#fff",
+			}}
+		>
+			<Grid
+				container
+				spacing={2}
+				alignItems="center"
+				justifyContent="center"
+				direction={{ xs: "column", sm: "row" }}
+				sx={{ width: "100%" }}
+			>
+				<Grid item xs={12} sm={6} md={6} lg={6}>
+					<Typography
+						variant="h4"
+						component="h1"
+						sx={{
+							color: "#000",
+							fontWeight: "bold",
+							textAlign: { xs: "center", sm: "left" },
+							pointerEvents: "none",
+							fontSize: { xs: "1.5rem", md: "2rem" },
+						}}
+					>
+						توی کوتاه‌ترین زمان ممکن
+					</Typography>
+					<Typography
+						variant="h4"
+						component="h1"
+						sx={{
+							color: "#D68240",
+							fontWeight: "bold",
+							marginTop: "15px",
+							textAlign: { xs: "center", sm: "left" },
+							pointerEvents: "none",
+							fontSize: { xs: "1.5rem", md: "2.1rem" },
+						}}
+					>
+						غذای مورد علاقت رو سفارش بده.
+					</Typography>
+				</Grid>
+				<Grid item xs={12} sm={6} md={6} lg={6}>
+					<img
+						src={BigPizza}
+						alt="Hero Pizza"
+						onError={(e) => {
+							e.target.onerror = null;
+							e.target.src = "https://via.placeholder.com/100";
+						}}
+						style={{
+							width: "100%",
+							maxWidth: "600px",
+							height: "auto",
+						}}
+					/>
+				</Grid>
+			</Grid>
+		</Box>
+	);
 };
 
 const CategoryCards = () => {
@@ -92,7 +103,7 @@ const CategoryCards = () => {
   ];
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", padding: { xs: 2, sm: 3 } }}>
       <Typography
         variant="h5"
         sx={{
@@ -107,25 +118,31 @@ const CategoryCards = () => {
       <Grid
         container
         spacing={2}
-        backgroundColor={"#F4DCC9"}
-        padding={3}
-        width={"100%"}
         sx={{
-          alignItems: "center",
+          backgroundColor: "#F4DCC9",
+          padding: { xs: 2, sm: 3 },
           justifyContent: "center",
-          display: "flex",
         }}
       >
         {categories.map((category, index) => (
-          <Grid xs={6} sm={4} md={2.4} key={index}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            lg={2.4}
+            key={index}
+            sx={{ display: "flex", justifyContent: "center" }}
+          >
             <Card
               onClick={() => handleCategoryClick(category.type)}
               sx={{
                 cursor: "pointer",
                 textAlign: "center",
-                padding: 2,
+                padding: 1.5,
                 margin: 1,
-                width: "200px",
+                width: { xs: "140px", sm: "200px", md: "155px", lg: "180px" },
+                maxWidth: "200px",
                 borderRadius: "20px",
                 boxShadow: 0,
                 "&:hover": {
@@ -136,12 +153,16 @@ const CategoryCards = () => {
             >
               <Typography
                 variant="h3"
-                sx={{ pointerEvents: "none", paddingTop: "11px" }}
+                sx={{
+                  pointerEvents: "none",
+                  paddingTop: "11px",
+                  fontSize: { xs: "1.5rem", md: "2rem" },
+                }}
               >
                 {category.icon}
               </Typography>
               <CardContent sx={{ paddingBottom: "10px !important" }}>
-                <Typography sx={{ pointerEvents: "none" }}>
+                <Typography sx={{ pointerEvents: "none", fontSize: "0.9rem" }}>
                   {category.title}
                 </Typography>
               </CardContent>
@@ -345,11 +366,27 @@ const ProductSlider = () => {
 
 const UpFooter = () => {
   const navigate = useNavigate();
+  const isSmallScreen = useMediaQuery((theme) => theme.breakpoints.down("sm"));
+  const isMediumScreen = useMediaQuery((theme) =>
+    theme.breakpoints.between("sm", "md")
+  );
+
   return (
-    <Grid container>
-      <Box marginLeft={12} marginTop={8} marginBottom={8} marginRight={15}>
+    <Grid
+      container
+      alignItems="center"
+      direction={isSmallScreen ? "column" : "row"}
+      sx={{ padding: isSmallScreen ? 2 : 0 }}
+    >
+      <Box
+        marginLeft={isSmallScreen ? 0 : 12}
+        marginTop={isSmallScreen ? 4 : 8}
+        marginBottom={isSmallScreen ? 0 : 8}
+        marginRight={isSmallScreen ? 0 : 15}
+        textAlign={"left"}
+      >
         <Typography
-          variant="h4"
+          variant={isSmallScreen ? "h5" : "h4"}
           sx={{
             marginBottom: 2,
             color: "#D68240",
@@ -360,7 +397,7 @@ const UpFooter = () => {
           صاحب یک کسب و کار هستید؟
         </Typography>
         <Typography
-          variant="h5"
+          variant={isSmallScreen ? "body1" : "h5"}
           sx={{
             marginBottom: 2,
             color: "black",
@@ -375,8 +412,9 @@ const UpFooter = () => {
         color="primary"
         onClick={() => navigate("/restuarant/signup")}
         sx={{
-          marginTop: "100px !important",
-          width: "155px",
+          marginLeft: isSmallScreen ? 0 : 10,
+          marginBottom: isMediumScreen ? "50px !important" : 0,
+          width: isSmallScreen ? "100%" : "155px",
           height: "50px",
           borderRadius: "50px !important",
           fontWeight: "400 !important",

@@ -35,11 +35,15 @@ class OrderCreateSerializer(serializers.Serializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     order_items = OrderItemSerializer(many=True, read_only=True)
+    restaurant_name = serializers.CharField(source='restaurant.name', read_only=True)
+    latitude = serializers.DecimalField(source='user.customer_profile.latitude', max_digits=9, decimal_places=6, read_only=True)
+    longitude = serializers.DecimalField(source='user.customer_profile.longitude', max_digits=9, decimal_places=6, read_only=True)
+    address = serializers.CharField(source='user.customer_profile.address', read_only=True)
 
     class Meta:
         model = Order
-        fields = ['order_id', 'restaurant', 'order_date', 'total_price', 'state', 
-                  'delivery_method', 'payment_method', 'description', 'order_items']
+        fields = ['order_id', 'restaurant', 'restaurant_name', 'order_date', 'total_price', 'state', 
+                  'delivery_method', 'payment_method', 'description', 'latitude', 'longitude', 'address', 'order_items']
 
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:

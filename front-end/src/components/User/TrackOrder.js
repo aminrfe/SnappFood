@@ -140,8 +140,7 @@ const TrackOrderPage = () => {
           alternativeLabel
           sx={{
             "& .MuiStepConnector-line": {
-              borderColor: (theme) =>
-                theme.palette.mode === "light" ? "#FFA726" : "#FFA726",
+              borderColor: "#FFA726",
             },
             marginBottom: "40px",
           }}

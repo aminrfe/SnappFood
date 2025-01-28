@@ -137,7 +137,7 @@ const Header = () => {
 				<img
 					src={FoodiImg}
 					alt="Login Illustration"
-					style={{ width: "100px" }}
+					style={{ width: "100px", marginLeft: "15px" }}
 				/>
 				<Search>
 					<SearchIconWrapper>

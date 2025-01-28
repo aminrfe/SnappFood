@@ -11,12 +11,15 @@ import {
   CardContent,
   Toolbar,
   AppBar,
+  Toolbar,
+  AppBar,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import publicAxiosInstance from "../../utills/publicAxiosInstance";
 import axiosInstance from "../../utills/axiosInstance";
+import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 
 const RestaurantPage = () => {
@@ -79,7 +82,6 @@ const RestaurantPage = () => {
 
   const handleViewCartClick = async () => {
     if (isAuthenticated) {
-      navigate(`/customer/carts?restaurant_id=${id}`);
       navigate(`/customer/carts?restaurant_id=${id}`);
     } else {
       alert("ابتدا وارد حساب کاربری خود شوید.");

@@ -139,7 +139,7 @@ const Footer = () => {
 							قوانین سایت
 						</Link>
 					</Grid>
-					<Grid paddingLeft={7}>
+					<Grid px={7}>
 						<Link
 							href="#"
 							sx={{

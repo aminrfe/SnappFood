@@ -31,6 +31,8 @@ import CartsList from "./components/User/CartsList";
 import TrackOrderPage from "./components/User/TrackOrder.js";
 import ReviewPage from "./components/User/ReviewPage";
 import CheckoutPage from "./components/User/Checkout.js";
+import MyOrders from "./components/User/MyOrders"; 
+
 
 function App() {
   function isAuthenticated() {
@@ -195,17 +197,19 @@ function App() {
                   )
                 }
               />
-              {/* 
-              <Route
-                path="/review"
-                element={<ReviewPage />}
-              />*/}
               <Route
                 path="customer/orders/:id/review"
                 element={
                   isAuthenticated() ? <ReviewPage /> : <Navigate to="/login" />
                 }
               />
+              <Route
+                path="/my-orders"
+                element={
+                  isAuthenticated() ? <MyOrders /> : <Navigate to="/login" replace />
+                }
+              />
+
             </Routes>
           </Router>
         </UserProvider>

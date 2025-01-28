@@ -80,6 +80,7 @@ const RestaurantPage = () => {
   const handleViewCartClick = async () => {
     if (isAuthenticated) {
       navigate(`/customer/carts?restaurant_id=${id}`);
+      navigate(`/customer/carts?restaurant_id=${id}`);
     } else {
       alert("ابتدا وارد حساب کاربری خود شوید.");
     }

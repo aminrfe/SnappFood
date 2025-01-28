@@ -180,7 +180,7 @@ const RestaurantProfile = () => {
                 alignItems: "center",
                 cursor: "pointer",
               }}
-              onClick={() => navigate("/restaurant/orders")}
+              onClick={() => navigate(`/restaurant/${id}/orders`)}
             >
               <ShoppingBagIcon sx={{ marginRight: 2, color: "#f28b82" }} />
               <Typography>سفارش‌های فروشگاه</Typography>
@@ -199,7 +199,7 @@ const RestaurantProfile = () => {
                 alignItems: "center",
                 cursor: "pointer",
               }}
-              onClick={() => navigate("/restaurant/report")}
+              onClick={() => navigate(`/restaurant/${id}/report`)}
             >
               <DescriptionIcon sx={{ marginRight: 2, color: "#f28b82" }} />
               <Typography>گزارش مالی فروشگاه</Typography>

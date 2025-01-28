@@ -119,7 +119,7 @@ const FavoritesPage = () => {
                   maxWidth: "100%",
                   "&:hover": { transform: "scale(1.05)", boxShadow: 5 },
                 }}
-                onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+                onClick={() => navigate(`/customer/restaurants/${restaurant.id}`)}
               >
                 <CardMedia
                   component="img"

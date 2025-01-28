@@ -197,7 +197,7 @@ const CartPage = () => {
             objectFit: "cover",
           }}
           onClick={() =>
-            navigate(`/restaurant/${restaurantId}/${item.item}`)
+            navigate(`/customer/restaurants/${restaurantId}/${item.item}`)
           }
         />
 
@@ -390,16 +390,16 @@ const CartPage = () => {
             variant="contained"
             color="primary"
             onClick={() =>
-              navigate("/checkout", {
+              navigate(`/customer/carts/${cartID}/checkout`, {
                 state: {
                   totalPrice: finalAmount,
                   discount: discount,
                   tax: tax,
                   shippingCost: DELIVERY_COST,
                   itemsTotal: totalAfterDiscount,
-                  deliveryMethod: deliveryMethod, // ارسال مقدار "delivery" یا "pickup"
-                  cartID: cartID, // ارسال شناسه سبد خرید
-                  description: description, // ارسال توضیحات
+                  deliveryMethod: deliveryMethod, 
+                  cartID: cartID, 
+                  description: description,
                 },
               })
             }

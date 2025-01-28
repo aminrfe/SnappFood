@@ -277,7 +277,7 @@ const ProductSlider = () => {
           return (
             <Card
               key={restaurant.id}
-              onClick={() => navigate(`restaurant/${restaurant.id}`)}
+              onClick={() => navigate(`/customer/restaurants/${restaurant.id}`)}
               sx={{
                 cursor: "pointer",
                 padding: 2,

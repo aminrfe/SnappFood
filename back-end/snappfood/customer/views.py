@@ -518,6 +518,36 @@ class CreateReviewView(generics.CreateAPIView):
             )
 
         return super().post(request, *args, **kwargs)
+
+
+class GetItemReviewsView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_summary="Get reviews for an item",
+        operation_description="Retrieve all reviews associated with a specific item.",
+        responses={
+            200: openapi.Response(
+                description="Reviews retrieved successfully",
+                schema=ReviewSerializer(many=True),
+            ),
+            400: openapi.Response(description="Invalid item ID"),
+            401: openapi.Response(description="Unauthorized"),
+            500: openapi.Response(description="Internal server error"),
+        },
+    )
+    def get_queryset(self):
+        item_id = self.kwargs.get('item_id')
+        try:
+            item = Item.objects.get(item_id=item_id)
+        except Item.DoesNotExist:
+            raise NotFound("Item not found.")
+
+
+        order_ids = OrderItem.objects.filter(item=item).values_list('order_id', flat=True)
+        return Review.objects.filter(order_id__in=order_ids).select_related("user", "order")
+
     
 class OrderHistoryView(generics.ListAPIView):
     serializer_class = OrderSerializer

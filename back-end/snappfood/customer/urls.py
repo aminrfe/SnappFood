@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CustomerProfileView, FavoriteView, CartListCreateView, CartDetailView, CartItemDeleteView, MenuItemsView, MenuItemDetailView, OrderListCreateView, CreateReviewView
+from .views import CustomerProfileView, FavoriteView, CartListCreateView, CartDetailView, GetItemReviewsView, CartItemDeleteView, MenuItemsView, MenuItemDetailView, OrderListCreateView, CreateReviewView
 
 urlpatterns = [
     path('carts', CartListCreateView.as_view(), name='cart-list-create'),
@@ -11,4 +11,5 @@ urlpatterns = [
     path('favorites', FavoriteView.as_view(), name='customer-favorite-restaurants'),
     path('orders', OrderListCreateView.as_view(), name='order-list-create'),
     path('reviews/create', CreateReviewView.as_view(), name='create-review'),
+    path('items/<int:item_id>/reviews/', GetItemReviewsView.as_view(), name='get-item-reviews'),
 ]

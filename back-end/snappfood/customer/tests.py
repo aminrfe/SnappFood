@@ -484,3 +484,69 @@ class TestCreateReviewView(APITestCase):
         response = self.client.post(self.url, data=data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("detail", response.data)
+
+class TestGetItemReviewsView(APITestCase):
+    def setUp(self):
+        self.customer_user = User.objects.create_user(
+            phone_number="9991112222",
+            password="test_pass",
+            first_name="John",
+            role="customer",
+        )
+        self.client.force_authenticate(user=self.customer_user)
+
+        self.manager_user = User.objects.create_user(
+            phone_number="3334445555",
+            password="manager_pass",
+            first_name="Manager",
+            role="restaurant_manager",
+        )
+        self.restaurant = RestaurantProfile.objects.create(
+            manager=self.manager_user, 
+            name="Test Restaurant", 
+            delivery_price=5.00,
+        )
+
+        self.item = Item.objects.create(
+            restaurant=self.restaurant,
+            name="Pizza",
+            price=10.00,
+            description="Delicious pizza.",
+        )
+        self.order = Order.objects.create(
+            user=self.customer_user,
+            restaurant=self.restaurant,
+            total_price=10.00,
+            delivery_method="pickup",
+            payment_method="online",
+            state="completed",
+        )
+        self.order_item = OrderItem.objects.create(
+            order=self.order,
+            item=self.item,
+            count=1,
+            price=10.00,
+        )
+
+        self.review = Review.objects.create(
+            user=self.customer_user,
+            order=self.order,
+            score=5,
+            description="Amazing pizza!",
+        )
+
+        self.url = reverse("get-item-reviews", kwargs={"item_id": self.item.item_id})
+
+    def test_get_reviews_success(self):
+        response = self.client.get(self.url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["score"], 5)
+        self.assertEqual(response.data[0]["description"], "Amazing pizza!")
+
+    def test_get_reviews_item_not_found(self):
+        url = reverse("get-item-reviews", kwargs={"item_id": 9999})
+        response = self.client.get(url, format="json")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertIn("detail", response.data)
+        self.assertEqual(response.data["detail"], "Item not found.")

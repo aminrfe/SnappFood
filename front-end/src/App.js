@@ -57,16 +57,16 @@ function App() {
                 }
               />
               <Route path="/login" element={<LoginPage />} />
-              <Route path="/user/signup" element={<UserSignUp />} />
+              <Route path="/customer/signup" element={<UserSignUp />} />
               <Route
-                path="/restaurant/:id/:item_id"
+                path="/customer/restaurants/:id/:item_id"
                 element={<FoodItemPage />}
               />
               <Route path="/restuarant/signup" element={<RestaurantSignUp />} />
-              <Route path="/restaurant/:id" element={<RestaurantPage />} />
+              <Route path="/customer/restaurants/:id" element={<RestaurantPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route
-                path="/favorites"
+                path="customer/favorites"
                 element={
                   isAuthenticated() ? (
                     <FavoritesPage />
@@ -82,17 +82,7 @@ function App() {
                 }
               />
               <Route
-                path="/profile"
-                element={
-                  isAuthenticated() ? (
-                    <UserProfilePage />
-                  ) : (
-                    <Navigate to="/login" />
-                  )
-                }
-              />
-              <Route
-                path="/user/edit-profile"
+                path="/customer/edit-profile"
                 element={
                   isAuthenticated() ? (
                     <UserEditProfile />
@@ -132,7 +122,7 @@ function App() {
                 }
               />
               <Route
-                path="/restaurant/report"
+                path="/restaurant/:id/report"
                 element={
                   isAuthenticated() ? (
                     <RestaurantReportPage />
@@ -142,13 +132,13 @@ function App() {
                 }
               />
               <Route
-                path="/cart"
+                path="/customer/carts"
                 element={
                   isAuthenticated() ? <CartPage /> : <Navigate to="/login" />
                 }
               />
               <Route
-                path="/cart-completion"
+                path="/customer/carts/:id/cart-completion"
                 element={
                   isAuthenticated() ? (
                     <CartCompletion />
@@ -158,7 +148,7 @@ function App() {
                 }
               />
               <Route
-                path="/checkout"
+                path="/customer/carts/:id/checkout"
                 element={
                   isAuthenticated() ? (
                     <CheckoutPage />
@@ -168,7 +158,7 @@ function App() {
                 }
               />
               <Route
-                path="/restaurant/orders"
+                path="/restaurant/:id/orders"
                 element={
                   isAuthenticated() ? (
                     <RestaurantOrderList />
@@ -178,7 +168,7 @@ function App() {
                 }
               />
               <Route
-                path="/cart-list"
+                path="/customer/cart-list"
                 element={
                   isAuthenticated() ? (
                     <CartsList />
@@ -188,7 +178,7 @@ function App() {
                 }
               />
               <Route
-                path="customer/orders/:id/track-order"
+                path="/customer/orders/:id/track-order"
                 element={
                   isAuthenticated() ? (
                     <TrackOrderPage />
@@ -204,7 +194,7 @@ function App() {
                 }
               />
               <Route
-                path="/my-orders"
+                path="/customer/orders"
                 element={
                   isAuthenticated() ? <MyOrders /> : <Navigate to="/login" replace />
                 }

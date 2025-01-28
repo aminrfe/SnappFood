@@ -324,7 +324,7 @@ const RestaurantListPage = () => {
                   border: "2px solid #D68240",
                 },
               }}
-              onClick={() => navigate(`/restaurant/${restaurant.id}`)}
+              onClick={() => navigate(`/customer/restaurants/${restaurant.id}`)}
             >
               <CardMedia
                 component="img"
@@ -412,7 +412,7 @@ const RestaurantListPage = () => {
                     },
                   }}
                   onClick={() =>
-                    navigate(`/restaurant/${item.restaurant}/${item.item_id}`)
+                    navigate(`/customer/restaurants/${item.restaurant}/${item.item_id}`)
                   }
                 >
                   <CardMedia

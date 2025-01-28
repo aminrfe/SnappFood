@@ -12,6 +12,7 @@ import {
   DialogContentText,
   DialogTitle,
   Button,
+  Grid,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
@@ -21,6 +22,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import axiosInstance from "../../utills/axiosInstance";
+import FoodiImg from "../../assets/imgs/foodiIcon.png";
 
 const RestaurantProfile = () => {
   const [name, setName] = useState("");
@@ -81,203 +83,192 @@ const RestaurantProfile = () => {
   };
 
   return (
-    <Box
+    <Grid
+      container
       sx={{
-        display: "flex",
-        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
-        maxWidth: 450,
-        width: "40%",
-        margin: "auto",
-        mt: 4,
-        backgroundColor: "white",
-        borderRadius: 2,
-        boxShadow: 3,
-        p: 2,
-        minHeight: "80vh",
+        minHeight: "100vh",
+        padding: 2,
       }}
     >
-      <Box
+      <Grid
+        item
+        xs={12}
+        sm={10}
+        md={8}
+        lg={6}
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          bgcolor: "#f5d5c0",
-          width: "100%",
-          maxWidth: 400,
-          padding: 2,
+          backgroundColor: "white",
           borderRadius: 2,
+          boxShadow: 3,
+          p: 2,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
-          <Avatar sx={{ bgcolor: "#f28b82", marginRight: 1 }} />
-          <Box>
-            <Typography
-              variant="h6"
-              sx={{ pointerEvents: "none", userSelect: "none" }}
-            >
-              {name}
-            </Typography>
-            <Typography
-              variant="body2"
-              color="textSecondary"
-              sx={{ pointerEvents: "none", userSelect: "none" }}
-            >
-              {phoneNumber}
-            </Typography>
-          </Box>
-        </Box>
-        <IconButton onClick={handleProfileEditClick}>
-          <EditIcon sx={{ color: "#ff7a59", fontSize: 25 }} />
-        </IconButton>
-      </Box>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "2rem" }}>
+          <img
+              src={FoodiImg}
+              alt="Foodi Logo"
+              style={{ width: "80px" }}
+          />
+      </div>
 
-      {/* Action Cards */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          maxWidth: 400,
-          marginTop: 3,
-        }}
-      >
-        <Card
+        <Box
           sx={{
-            marginBottom: 2,
-            bgcolor: "#f5d5c0",
-          }}
-        >
-          <CardContent
-            style={{ cursor: "pointer" }}
-            sx={{ display: "flex", alignItems: "center" }}
-            onClick={handleMenuClick}
-          >
-            <RestaurantMenuIcon sx={{ marginRight: 2, color: "#f28b82" }} />
-            <Typography>منوی فروشگاه</Typography>
-          </CardContent>
-        </Card>
-
-        <Card
-          sx={{
-            marginBottom: 2,
-            bgcolor: "#f5d5c0",
-          }}
-        >
-          <CardContent
-            style={{ cursor: "pointer" }}
-            onClick={() => navigate("/restaurant/orders")}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <ShoppingBagIcon sx={{ marginRight: 2, color: "#f28b82" }} />
-            <Typography>سفارش های فروشگاه</Typography>
-          </CardContent>
-        </Card>
-
-        <Card
-          sx={{
-            marginBottom: 2,
-            bgcolor: "#f5d5c0",
-          }}
-        >
-          <CardContent
-            style={{ cursor: "pointer" }}
-            sx={{ display: "flex", alignItems: "center" }}
-            onClick={() => navigate("/restaurant/report")}
-          >
-            <DescriptionIcon sx={{ marginRight: 2, color: "#f28b82" }} />
-            <Typography>گزارش مالی فروشگاه</Typography>
-          </CardContent>
-        </Card>
-
-        <Card sx={{ bgcolor: "#f5d5c0" }}>
-          <CardContent
-            style={{ cursor: "pointer" }}
-            onClick={handleOpenLogoutDialog}
-            sx={{ display: "flex", alignItems: "center" }}
-          >
-            <LogoutIcon sx={{ marginRight: 2, color: "#f28b82" }} />
-            <Typography>خروج از حساب کاربری</Typography>
-          </CardContent>
-        </Card>
-      </Box>
-
-      <Dialog
-        open={openLogoutDialog}
-        onClose={handleCloseLogoutDialog}
-        aria-labelledby="logout-dialog-title"
-        aria-describedby="logout-dialog-description"
-        sx={{
-          "& .MuiDialog-paper": {
-            padding: "15px 16px",
-            borderRadius: "12px",
-          },
-        }}
-      >
-        <DialogTitle
-          id="logout-dialog-title"
-          sx={{
-            padding: "10px 8px",
-            fontSize: "18px",
-            pointerEvents: "none",
-            userSelect: "none",
-          }}
-        >
-          تأیید خروج
-        </DialogTitle>
-        <DialogContent
-          sx={{
-            padding: "8px 8px",
-            pointerEvents: "none",
-            userSelect: "none",
-          }}
-        >
-          <DialogContentText id="logout-dialog-description">
-            آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions
-          sx={{
-            padding: "8px 8px",
             display: "flex",
-            justifyContent: "center",
-            gap: "12px",
+            alignItems: "center",
+            justifyContent: "space-between",
+            bgcolor: "#f5d5c0",
+            padding: 2,
+            borderRadius: 2,
+            flexDirection: { xs: "column", sm: "row" },
           }}
         >
-          <Button
-            onClick={handleCloseLogoutDialog}
+          <Box sx={{ display: "flex", alignItems: "center", mb: { xs: 2, sm: 0 } }}>
+            <Avatar sx={{ bgcolor: "#f28b82", marginRight: 1 }} />
+            <Box>
+              <Typography variant="h6" sx={{ textAlign: "center" }}>
+                {name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {phoneNumber}
+              </Typography>
+            </Box>
+          </Box>
+          <IconButton onClick={handleProfileEditClick}>
+            <EditIcon sx={{ color: "#ff7a59", fontSize: 25 }} />
+          </IconButton>
+        </Box>
+
+        {/* Action Cards */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            marginTop: 3,
+            gap: 2,
+          }}
+        >
+          <Card
             sx={{
-              bgcolor: "#e4a073",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              "&:hover": {
-                bgcolor: "#d48b6c",
-              },
+              bgcolor: "#f5d5c0",
+              "&:hover": { transform: "scale(1.02)" },
             }}
           >
-            خیر
-          </Button>
-          <Button
-            onClick={handleLogOutClick}
-            variant="contained"
+            <CardContent
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={handleMenuClick}
+            >
+              <RestaurantMenuIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+              <Typography>منوی فروشگاه</Typography>
+            </CardContent>
+          </Card>
+
+          <Card
             sx={{
-              bgcolor: "#f57c00",
-              color: "white",
-              fontSize: "16px",
-              fontWeight: "bold",
-              borderRadius: "8px",
-              "&:hover": {
-                bgcolor: "#e56c00",
-              },
+              bgcolor: "#f5d5c0",
+              "&:hover": { transform: "scale(1.02)" },
             }}
           >
-            بله
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+            <CardContent
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/restaurant/orders")}
+            >
+              <ShoppingBagIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+              <Typography>سفارش‌های فروشگاه</Typography>
+            </CardContent>
+          </Card>
+
+          <Card
+            sx={{
+              bgcolor: "#f5d5c0",
+              "&:hover": { transform: "scale(1.02)" },
+            }}
+          >
+            <CardContent
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={() => navigate("/restaurant/report")}
+            >
+              <DescriptionIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+              <Typography>گزارش مالی فروشگاه</Typography>
+            </CardContent>
+          </Card>
+
+          <Card
+            sx={{
+              bgcolor: "#f5d5c0",
+              "&:hover": { transform: "scale(1.02)" },
+            }}
+          >
+            <CardContent
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                cursor: "pointer",
+              }}
+              onClick={handleOpenLogoutDialog}
+            >
+              <LogoutIcon sx={{ marginRight: 2, color: "#f28b82" }} />
+              <Typography>خروج از حساب کاربری</Typography>
+            </CardContent>
+          </Card>
+        </Box>
+
+        <Dialog
+          open={openLogoutDialog}
+          onClose={handleCloseLogoutDialog}
+          sx={{
+            "& .MuiDialog-paper": {
+              padding: "15px 16px",
+              borderRadius: "12px",
+            },
+          }}
+        >
+          <DialogTitle id="logout-dialog-title">
+            تأیید خروج
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="logout-dialog-description">
+              آیا مطمئن هستید که می‌خواهید از حساب کاربری خود خارج شوید؟
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={handleCloseLogoutDialog}
+              sx={{
+                bgcolor: "#e4a073",
+                color: "white",
+                "&:hover": { bgcolor: "#d48b6c" },
+              }}
+            >
+              خیر
+            </Button>
+            <Button
+              onClick={handleLogOutClick}
+              variant="contained"
+              sx={{
+                bgcolor: "#f57c00",
+                "&:hover": { bgcolor: "#e56c00" },
+              }}
+            >
+              بله
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Grid>
+    </Grid>
   );
 };
 

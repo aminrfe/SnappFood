@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from restaurant.models import RestaurantProfile, Item
 from restaurant.serializers import ItemSerializer
-from order.serializers import OrderCreateSerializer, OrderSerializer, ReviewSerializer
+from order.serializers import OrderCreateSerializer, OrderSerializer, ReviewSerializer, GetReviewSerializer
 from order.models import Order, OrderItem, Review
 from .models import CustomerProfile, Favorite, Cart, CartItem
 from .serializers import CustomerProfileSerializer, FavoriteSerializer, AddToCartSerializer, UpdateCartItemSerializer, CartSerializer
@@ -521,18 +521,28 @@ class CreateReviewView(generics.CreateAPIView):
 
 
 class GetItemReviewsView(generics.ListAPIView):
-    serializer_class = ReviewSerializer
+    serializer_class = GetReviewSerializer
 
     @swagger_auto_schema(
         operation_summary="Get reviews for an item",
         operation_description="Retrieve all reviews associated with a specific item.",
+        manual_parameters=[
+            openapi.Parameter(
+                name="item_id",
+                in_=openapi.IN_PATH,
+                description="ID of the item to fetch reviews for",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
         responses={
             200: openapi.Response(
                 description="Reviews retrieved successfully",
-                schema=ReviewSerializer(many=True),
+                schema=GetReviewSerializer(many=True),
             ),
             400: openapi.Response(description="Invalid item ID"),
             401: openapi.Response(description="Unauthorized"),
+            404: openapi.Response(description="Item not found"),
             500: openapi.Response(description="Internal server error"),
         },
     )

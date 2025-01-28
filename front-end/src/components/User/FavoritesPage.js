@@ -7,12 +7,15 @@ import {
   CardContent,
   IconButton,
   Grid,
+  Toolbar,
+  AppBar
 } from "@mui/material";
 
 import Delete from "@mui/icons-material/Delete";
 import Favorite from "@mui/icons-material/Favorite";
 import axiosInstance from "../../utills/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import FoodiLogo from "../../assets/imgs/foodiIcon.png";
 
 const FavoritesPage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -81,19 +84,46 @@ const FavoritesPage = () => {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography
-        variant="h5"
+    <Box sx={{ padding: 0 }}>
+            <AppBar
+        position="static"
         sx={{
-          textAlign: "center",
-          marginBottom: 4,
-          color: "#D68240",
-          fontWeight: "bold",
+          backgroundColor: "#F4DCC9",
+          boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
-        لیست علاقه‌مندی‌های من
-      </Typography>
-      <Grid container spacing={3} justifyContent="center">
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <a
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigate("/");
+            }}
+          >
+            <img
+              src={FoodiLogo}
+              alt="Foodi Logo"
+              style={{ width: "100px", cursor: "pointer" }}
+            />
+          </a>
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#D68240",
+              fontWeight: "bold",
+              flex: 1,
+              textAlign: "center",
+              userSelect: "none",
+              pointerEvents: "none",
+              paddingRight: "50px",
+            }}
+          >
+            لیست علاقه‌مندی‌های من
+          </Typography>
+          <Box />
+        </Toolbar>
+      </AppBar>
+      <Grid container spacing={3} justifyContent="center" paddingTop={5}>
         {fullFavoritesData.length === 0 ? (
           <Typography
             variant="h6"

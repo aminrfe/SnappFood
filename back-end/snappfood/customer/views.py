@@ -522,7 +522,6 @@ class CreateReviewView(generics.CreateAPIView):
 
 class GetItemReviewsView(generics.ListAPIView):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         operation_summary="Get reviews for an item",

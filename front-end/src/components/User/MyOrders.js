@@ -107,22 +107,31 @@ const MyOrders = () => {
 						<Card
 							key={order.id}
 							sx={{
-								flexDirection: { xs: "column", sm: "row" },
+								flexDirection: "column",
 								marginBottom: "1rem",
 								width: "70%",
 								backgroundColor: "#FFF5ED",
 								boxShadow: 2,
 								borderRadius: 2,
-								alignItems: "center",
 								display: "flex",
-								justifyContent: "space-between",
+								position: "relative",
+								overflow: "hidden",
 							}}
 						>
-							<CardContent>
+							<CardContent
+								sx={{
+									display: "flex",
+									flexDirection: { xs: "column", sm: "row" },
+									justifyContent: "space-between",
+									alignItems: "center",
+									gap: 2,
+								}}
+							>
 								<Box
 									sx={{
 										display: "flex",
 										flexDirection: "column",
+										flexGrow: 1,
 										alignItems: "flex-start",
 									}}
 								>
@@ -138,7 +147,7 @@ const MyOrders = () => {
 										fontWeight="bold"
 										sx={{ marginBottom: 1, color: "#333" }}
 									>
-										رستوران {order.restaurant_name}
+										{order.restaurant_name}
 									</Typography>
 									<Typography
 										variant="body2"
@@ -159,30 +168,21 @@ const MyOrders = () => {
 									<Typography
 										variant="body2"
 										color="text.secondary"
-										sx={{
-											fontSize: { xs: "0.75rem", sm: "0.875rem" },
-											marginBottom: 1,
-										}}
+										sx={{ marginBottom: 1 }}
 									>
 										آدرس: {order.address}
 									</Typography>
 									<Typography
 										variant="body2"
 										color="text.secondary"
-										sx={{
-											fontSize: { xs: "0.75rem", sm: "0.875rem" },
-											marginBottom: 1,
-										}}
+										sx={{ marginBottom: 1 }}
 									>
 										روش ارسال: {deliveryMethodMap[order.delivery_method]}
 									</Typography>
 									<Typography
 										variant="body2"
 										color="text.secondary"
-										sx={{
-											fontSize: { xs: "0.75rem", sm: "0.875rem" },
-											marginBottom: 2,
-										}}
+										sx={{ marginBottom: 2 }}
 									>
 										روش پرداخت: {paymentMethodMap[order.payment_method]}
 									</Typography>
@@ -195,16 +195,32 @@ const MyOrders = () => {
 										تومان
 									</Typography>
 								</Box>
-							</CardContent>
 
-							<CardActions>
-								<Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+								<Box
+									sx={{
+										display: "flex",
+										flexDirection: "column",
+										gap: 1,
+										flexShrink: 0,
+										justifyContent: "center",
+										alignItems: "center",
+									}}
+								>
 									{order.state === "completed" ? (
-										<Button variant="contained" disabled>
+										<Button
+											variant="contained"
+											disabled
+											sx={{
+												width: "122px",
+											}}
+										>
 											تحویل شده
 										</Button>
 									) : (
 										<Button
+											sx={{
+												width: "122px",
+											}}
 											variant="contained"
 											onClick={(event) => {
 												event.stopPropagation();
@@ -217,6 +233,9 @@ const MyOrders = () => {
 										</Button>
 									)}
 									<Button
+										sx={{
+											width: "122px",
+										}}
 										variant="contained"
 										onClick={(event) => {
 											event.stopPropagation();
@@ -226,15 +245,19 @@ const MyOrders = () => {
 										سفارش مجدد
 									</Button>
 								</Box>
+							</CardContent>
 
+							<CardActions>
 								<Button
 									onClick={() => handleCollapseToggle(index)}
 									sx={{
-										backgroundColor: "#D68240",
+										background: "linear-gradient(90deg, #FF8A00, #D68240)",
 										color: "white",
 										padding: "6px 12px",
 										borderRadius: "4px",
-										"&:hover": { backgroundColor: "#D68240" },
+										"&:hover": {
+											background: "linear-gradient(90deg, #D68240, #FF8A00)",
+										},
 									}}
 								>
 									<ExpandMoreIcon />

@@ -256,7 +256,7 @@ const Header = () => {
 											return (
 												<li
 													key={item.item_id}
-													role="button"
+													// role="button"
 													tabIndex={0}
 													style={{
 														padding: "10px",

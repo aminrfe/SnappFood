@@ -164,7 +164,7 @@ const RestaurantProfile = () => {
               onClick={handleMenuClick}
             >
               <RestaurantMenuIcon sx={{ marginRight: 2, color: "#f28b82" }} />
-              <Typography>منوی فروشگاه</Typography>
+              <Typography>{"منوی فروشگاه"}</Typography>
             </CardContent>
           </Card>
 

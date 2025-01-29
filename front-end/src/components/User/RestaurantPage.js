@@ -42,6 +42,7 @@ const RestaurantPage = () => {
   }, [id]);
 
   useEffect(() => {
+    fetchProfileData();
     if (restaurantId) {
       fetchProfileData();
     }

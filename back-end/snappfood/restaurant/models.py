@@ -45,7 +45,7 @@ class RestaurantProfile(models.Model):
     delivery_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     address = models.TextField(blank=True, null=True) 
     description = models.TextField(blank=True, null=True)
-    state = models.CharField(max_length=30, choices=STATE_CHOICES, default='approved')
+    state = models.CharField(max_length=30, choices=STATE_CHOICES, default='pending')
     open_hour = models.TimeField(blank=True, default="9:00")
     close_hour = models.TimeField(blank=True, default="23:00")
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)

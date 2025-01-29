@@ -8,3 +8,4 @@ back-end/snappfood/db.sqlite3
 !**/migrations/__init__.py
 .scannerwork/*
 deploy/postgres-data/*
+back-end/snappfood/.coverage

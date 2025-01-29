@@ -85,8 +85,16 @@ function Login() {
         if (response.data.state === "approved") {
           navigate(`/restaurant/${response.data.restaurant_id}/profile`);
         } else if (response.data.state === "pending") {
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          localStorage.removeItem("res_id");
+          localStorage.removeItem("phone");
           alert("فروشگاه شما در انتظار تایید ادمین است");
         } else if (response.data.state === "rejected") {
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          localStorage.removeItem("res_id");
+          localStorage.removeItem("phone");
           alert("فروشگاه شما توسط ادمین رد شده است");
         }
       } else {

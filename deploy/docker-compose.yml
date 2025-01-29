@@ -21,7 +21,7 @@ services:
       dockerfile: deploy/Dockerfile.frontend
     container_name: frontend
     ports:
-      - "3000:80"
+      - "3000:3000"
 
   db:
     image: postgres:15

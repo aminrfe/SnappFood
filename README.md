@@ -56,10 +56,10 @@ If running without Docker, ensure the following are installed:
     DJANGO_SECRET_KEY=your_secret_key
     DATABASE_ENGINE=django.db.backends.postgresql
     DATABASE_NAME=snappfood
-    DATABASE_USER=your_db_user
-    DATABASE_PASSWORD=your_db_password
-    DATABASE_HOST=your_db_host
-    DATABASE_PORT=your_db_port
+    DATABASE_USER=postgres
+    DATABASE_PASSWORD=1234
+    DATABASE_HOST=db
+    DATABASE_PORT=5432
     DJANGO_SUPERUSER_PHONE_NUMBER=9112223344
     DJANGO_SUPERUSER_PASSWORD=1234
     ```

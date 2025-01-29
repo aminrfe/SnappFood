@@ -134,6 +134,13 @@ const MyOrders = () => {
 										سفارش شماره {order.order_id}
 									</Typography>
 									<Typography
+										variant="h7"
+										fontWeight="bold"
+										sx={{ marginBottom: 1, color: "#333" }}
+									>
+										رستوران {order.restaurant_name}
+									</Typography>
+									<Typography
 										variant="body2"
 										color="text.secondary"
 										sx={{ marginBottom: 3 }}

@@ -82,21 +82,17 @@ function Login() {
       localStorage.setItem("phone", phoneNumber);
 
       if (response.data.restaurant_id) {
-        const restaurantResponse = await axios.get(
-          `http://127.0.0.1:8000/api/restaurant/profiles/${response.data.restaurant_id}`
-        );
-        console.log(restaurantResponse.data);
-
-        if (restaurantResponse.data.state === "approved") {
+        if (response.data.state === "approved") {
           navigate(`/restaurant/${response.data.restaurant_id}/profile`);
-        } else if (restaurantResponse.data.state === "pending") {
+        } else if (response.data.state === "pending") {
           alert("فروشگاه شما در انتظار تایید ادمین است");
+        } else if (response.data.state === "rejected") {
+          alert("فروشگاه شما توسط ادمین رد شده است");
         }
       } else {
         navigate("/");
         window.location.reload();
       }
-      
     } catch (error) {
       if (error.response?.status === 401) {
         setError("اطلاعات ورود صحیح نیست.");

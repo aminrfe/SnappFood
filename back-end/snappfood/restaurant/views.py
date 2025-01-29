@@ -233,7 +233,7 @@ class RestaurantListView(APIView):
         current_time = timezone.now()
         localized_time = current_time.astimezone(desired_timezone)
 
-        restaurant_queryset = RestaurantProfile.objects.all()
+        restaurant_queryset = RestaurantProfile.objects.filter(state='approved')
         item_queryset = Item.objects.all()
 
         if query:

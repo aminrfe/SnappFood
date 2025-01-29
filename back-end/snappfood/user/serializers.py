@@ -65,7 +65,7 @@ class RestaurantSignUpSerializer(serializers.ModelSerializer):
         name = validated_data.pop('name')
         business_type = validated_data.pop('business_type')
         city_name = validated_data.pop('city_name')
-        state = 'approved'
+        state = 'pending'
         role = 'restaurant_manager'
 
         manager = User.objects.create_user(

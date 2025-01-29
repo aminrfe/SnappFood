@@ -10,13 +10,12 @@ Welcome to the **SnappFood** project! This repository contains the code for both
 - [:scroll: Available Scripts](#available-scripts)
 - [:busts_in_silhouette: User Roles](#user-roles)
 - [:electric_plug: API Functionalities](#api-functionalities)
-- [:package: Deployment](#deployment)
 
 ## :book: Introduction <a id="introduction"></a>
 
 The **SnappFood** project is a clone of the popular food delivery service that allows users to browse restaurants, view menus, and place orders. This project includes two main components:
 
-1. **Front-end**: User interface for customers, restaurant owners, and administrators.
+1. **Front-end**: User interface for customers, restaurant owners.
 2. **Back-end**: API services and database management.
 
 ## :gear: Technologies <a id="technologies"></a>
@@ -115,7 +114,7 @@ The application supports the following roles:
 
 - **Customer**: Browse restaurants, view menus, and place orders.
 - **Restaurant Owner**: Manage restaurant menus and orders.
-- **Admin**: Full access to users, restaurants, and orders.
+- **Admin**: Full access to manage customers and restaurants.
 
 ## :electric_plug: API Functionalities <a id="api-functionalities"></a>
 
@@ -129,7 +128,7 @@ The back-end API provides the following features:
 
 - Manage carts, orders, and profiles.
 - Browse menus and manage favorite restaurants.
-- Leave reviews for restaurants.
+- Leave reviews for order items.
 
 ### Restaurant Owner Features
 
@@ -139,42 +138,7 @@ The back-end API provides the following features:
 
 ### Admin Features
 
-- Manage users, restaurants, and orders.
+- Manage customers and restaurants.
 - Approve or reject new restaurant registrations.
 
 For detailed API documentation, visit the Swagger interface: [http://localhost:8000/swagger](http://localhost:8000/swagger).
-
-## :package: Deployment <a id="deployment"></a>
-
-You can deploy the project using Docker or manually:
-
-### Using Docker
-
-1. Build and start the containers:
-    ```bash
-    docker-compose up --build
-    ```
-
-2. Access the application:
-    - **Front-end**: [http://localhost:3000](http://localhost:3000)
-    - **Back-end**: [http://localhost:8000](http://localhost:8000)
-
-### Without Docker
-
-1. Set up the back-end:
-    ```bash
-    cd back-end/snappfood
-    python -m venv env
-    source env/bin/activate  # On Windows, use `env\Scripts\activate`
-    pip install -r requirements.txt
-    python manage.py makemigrations
-    python manage.py migrate
-    python manage.py runserver
-    ```
-
-2. Set up the front-end:
-    ```bash
-    cd front-end
-    npm install
-    npm start
-    ```

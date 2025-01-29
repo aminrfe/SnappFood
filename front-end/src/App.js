@@ -31,8 +31,7 @@ import CartsList from "./components/User/CartsList";
 import TrackOrderPage from "./components/User/TrackOrder.js";
 import ReviewPage from "./components/User/ReviewPage";
 import CheckoutPage from "./components/User/Checkout.js";
-import MyOrders from "./components/User/MyOrders"; 
-
+import MyOrders from "./components/User/MyOrders";
 
 function App() {
   function isAuthenticated() {
@@ -63,7 +62,10 @@ function App() {
                 element={<FoodItemPage />}
               />
               <Route path="/restuarant/signup" element={<RestaurantSignUp />} />
-              <Route path="/customer/restaurants/:id" element={<RestaurantPage />} />
+              <Route
+                path="/customer/restaurants/:id"
+                element={<RestaurantPage />}
+              />
               <Route path="/search" element={<SearchPage />} />
               <Route
                 path="customer/favorites"
@@ -101,7 +103,7 @@ function App() {
                   )
                 }
               />
-              <Route
+              {/* <Route
                 path="/restaurant/:id/profile"
                 element={
                   isAuthenticated() ? (
@@ -110,7 +112,9 @@ function App() {
                     <Navigate to="/login" replace />
                   )
                 }
-              />
+              /> */}
+              <Route path="/restaurant/:id/profile" element={<RestaurantProfile />} />
+
               <Route
                 path="/customer/profile"
                 element={
@@ -196,10 +200,13 @@ function App() {
               <Route
                 path="/customer/orders"
                 element={
-                  isAuthenticated() ? <MyOrders /> : <Navigate to="/login" replace />
+                  isAuthenticated() ? (
+                    <MyOrders />
+                  ) : (
+                    <Navigate to="/login" replace />
+                  )
                 }
               />
-
             </Routes>
           </Router>
         </UserProvider>

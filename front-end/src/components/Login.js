@@ -76,13 +76,13 @@ function Login() {
       );
 
       console.log(response.data);
-      localStorage.setItem("access", response.data.access);
-      localStorage.setItem("refresh", response.data.refresh);
-      localStorage.setItem("res_id", response.data.restaurant_id);
-      localStorage.setItem("phone", phoneNumber);
 
       if (response.data.restaurant_id) {
         if (response.data.state === "approved") {
+          localStorage.setItem("access", response.data.access);
+          localStorage.setItem("refresh", response.data.refresh);
+          localStorage.setItem("res_id", response.data.restaurant_id);
+          localStorage.setItem("phone", phoneNumber);
           navigate(`/restaurant/${response.data.restaurant_id}/profile`);
         } else if (response.data.state === "pending") {
           alert("فروشگاه شما در انتظار تایید ادمین است");
@@ -90,6 +90,10 @@ function Login() {
           alert("فروشگاه شما توسط ادمین رد شده است");
         }
       } else {
+        localStorage.setItem("access", response.data.access);
+        localStorage.setItem("refresh", response.data.refresh);
+        localStorage.setItem("res_id", response.data.restaurant_id);
+        localStorage.setItem("phone", phoneNumber);
         navigate("/");
         window.location.reload();
       }

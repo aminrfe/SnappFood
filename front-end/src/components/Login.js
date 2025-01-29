@@ -81,10 +81,18 @@ function Login() {
       localStorage.setItem("res_id", response.data.restaurant_id);
       localStorage.setItem("phone", phoneNumber);
 
-      if (response.data.restaurant_id)
-        navigate(`/restaurant/${response.data.restaurant_id}/profile`);
-      else navigate("/");
-      window.location.reload();
+      if (response.data.restaurant_id) {
+        if (response.data.state === "approved") {
+          navigate(`/restaurant/${response.data.restaurant_id}/profile`);
+        } else if (response.data.state === "pending") {
+          alert("فروشگاه شما در انتظار تایید ادمین است");
+        } else if (response.data.state === "rejected") {
+          alert("فروشگاه شما توسط ادمین رد شده است");
+        }
+      } else {
+        navigate("/");
+        window.location.reload();
+      }
     } catch (error) {
       if (error.response?.status === 401) {
         setError("اطلاعات ورود صحیح نیست.");

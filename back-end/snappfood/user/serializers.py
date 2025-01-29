@@ -11,6 +11,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if self.user.role == "restaurant_manager":
             restaurant = RestaurantProfile.objects.get(manager_id=self.user.id)
             data['restaurant_id'] = restaurant.id
+            data['state'] = restaurant.state
 
         return data
     
